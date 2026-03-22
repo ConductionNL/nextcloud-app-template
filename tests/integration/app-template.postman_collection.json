@@ -10,29 +10,29 @@
 		"basic": [
 			{
 				"key": "username",
-				"value": "{{username}}",
+				"value": "{{admin_user}}",
 				"type": "string"
 			},
 			{
 				"key": "password",
-				"value": "{{password}}",
+				"value": "{{admin_password}}",
 				"type": "string"
 			}
 		]
 	},
 	"variable": [
 		{
-			"key": "baseUrl",
-			"value": "http://localhost",
+			"key": "base_url",
+			"value": "http://localhost:8080",
 			"type": "string"
 		},
 		{
-			"key": "username",
+			"key": "admin_user",
 			"value": "admin",
 			"type": "string"
 		},
 		{
-			"key": "password",
+			"key": "admin_password",
 			"value": "admin",
 			"type": "string"
 		}
@@ -45,7 +45,7 @@
 					"name": "Nextcloud status",
 					"request": {
 						"method": "GET",
-						"url": "{{baseUrl}}/status.php",
+						"url": "{{base_url}}/status.php",
 						"description": "Verify Nextcloud is running."
 					},
 					"event": [

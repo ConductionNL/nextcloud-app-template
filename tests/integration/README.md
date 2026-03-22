@@ -15,10 +15,13 @@ enable-newman: true
 ```bash
 npm install -g newman
 newman run tests/integration/app-template.postman_collection.json \
-  --env-var baseUrl=http://localhost \
-  --env-var username=admin \
-  --env-var password=admin
+  --env-var base_url=http://nextcloud.local \
+  --env-var admin_user=admin \
+  --env-var admin_password=admin
 ```
+
+The variable names (`base_url`, `admin_user`, `admin_password`) match what the CI workflow passes.
+In CI the server runs on `http://localhost:8080` (PHP built-in server); locally use `http://nextcloud.local`.
 
 ## Structure
 
