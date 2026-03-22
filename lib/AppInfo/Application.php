@@ -52,12 +52,15 @@ class Application extends App implements IBootstrap
      */
     public function register(IRegistrationContext $context): void
     {
-        // Register your event listeners and services here.
-        // Example:
-        // $context->registerEventListener(
-        //     event: SomeEvent::class,
-        //     listener: SomeListener::class
-        // );
+        /*
+         * Register your event listeners and services here.
+         * Example:
+         * $context->registerEventListener(
+         *     event: SomeEvent::class,
+         *     listener: SomeListener::class
+         * ).
+         */
+
     }//end register()
 
     /**
