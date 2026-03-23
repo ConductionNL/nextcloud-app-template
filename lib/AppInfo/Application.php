@@ -49,15 +49,20 @@ class Application extends App implements IBootstrap
      * @param IRegistrationContext $context The registration context
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function register(IRegistrationContext $context): void
     {
-        // Register your event listeners and services here.
-        // Example:
-        // $context->registerEventListener(
-        //     event: SomeEvent::class,
-        //     listener: SomeListener::class
-        // );
+        /*
+         * Register your event listeners and services here.
+         * Example:
+         * $context->registerEventListener(
+         *     event: SomeEvent::class,
+         *     listener: SomeListener::class
+         * ).
+         */
+
     }//end register()
 
     /**
