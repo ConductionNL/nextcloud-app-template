@@ -1,16 +1,19 @@
 # Architectural Decision Records
 
-This folder contains Architectural Decision Records (ADRs) for Nextcloud App Template.
+This folder contains app-specific Architectural Decision Records (ADRs) for this app.
 
 ADRs document significant design decisions, their context, the reasoning behind them, and the alternatives that were considered. They provide a historical record of why the app is built the way it is.
+
+> **Note:** Organisation-wide ADRs (ADR-001 through ADR-015) live in `apps-extra/.claude/openspec/architecture/` and apply to all Conduction apps. Only create an app-specific ADR here when the decision is **unique to this app** and not already covered by an org-wide ADR.
+
+ADRs are created and refined during `/opsx:app-explore` sessions.
 
 ## Naming Convention
 
 Files are named `adr-{NNN}-{slug}.md` with sequential numbering:
 
-- `adr-001-use-openregister-for-storage.md`
-- `adr-002-vue2-pinia-frontend.md`
-- `adr-003-eupl-license.md`
+- `adr-001-example-decision.md`
+- `adr-002-another-decision.md`
 
 ## File Format
 
@@ -60,5 +63,4 @@ Write an ADR whenever you make a significant decision that:
 - Affects multiple parts of the codebase
 - Would surprise future developers if they didn't know the reasoning
 - Involves a meaningful trade-off
-
-ADRs are created and refined during `/app-explore` sessions.
+- Is specific to this app (not already covered by an org-wide ADR)

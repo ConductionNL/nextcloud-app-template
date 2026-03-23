@@ -23,17 +23,7 @@
 			</NcAppContent>
 		</template>
 		<template v-else-if="storesReady && hasOpenRegisters">
-			<NcAppNavigation>
-				<template #list>
-					<NcAppNavigationItem
-						:name="t('app-template', 'Dashboard')"
-						:to="'/'">
-						<template #icon>
-							<HomeIcon :size="20" />
-						</template>
-					</NcAppNavigationItem>
-				</template>
-			</NcAppNavigation>
+			<MainMenu />
 			<NcAppContent>
 				<router-view />
 			</NcAppContent>
@@ -47,11 +37,11 @@
 </template>
 
 <script>
-import { NcButton, NcContent, NcAppContent, NcAppNavigation, NcAppNavigationItem, NcEmptyContent, NcLoadingIcon } from '@nextcloud/vue'
+import { NcButton, NcContent, NcAppContent, NcEmptyContent, NcLoadingIcon } from '@nextcloud/vue'
 import { generateUrl, imagePath } from '@nextcloud/router'
-import HomeIcon from 'vue-material-design-icons/Home.vue'
 import { initializeStores } from './store/store.js'
 import { useSettingsStore } from './store/modules/settings.js'
+import MainMenu from './navigation/MainMenu.vue'
 
 export default {
 	name: 'App',
@@ -59,11 +49,9 @@ export default {
 		NcButton,
 		NcContent,
 		NcAppContent,
-		NcAppNavigation,
-		NcAppNavigationItem,
 		NcEmptyContent,
 		NcLoadingIcon,
-		HomeIcon,
+		MainMenu,
 	},
 
 	data() {

@@ -18,7 +18,7 @@
 
 A starting point for building Nextcloud apps following ConductionNL conventions.
 
-> **Requires:** [OpenRegister](https://github.com/ConductionNL/openregister) — all data is stored as OpenRegister objects.
+> **Pre-wired for [OpenRegister](https://github.com/ConductionNL/openregister)** — all data is stored as OpenRegister objects. If your app needs OpenRegister, install it first. If not, remove the dependency from `appinfo/info.xml` and `openspec/app-config.json`.
 
 ## Screenshots
 
@@ -26,7 +26,7 @@ _Add screenshots here once the app has a UI._
 
 ## Features
 
-Features are defined in [`appspec/features/`](appspec/features/). See the [roadmap](openspec/ROADMAP.md) for planned work.
+Features are defined in [`openspec/specs/`](openspec/specs/). See the [roadmap](openspec/ROADMAP.md) for planned work.
 
 ### Core
 - **Dashboard** — Personal overview page with key information at a glance
@@ -54,37 +54,40 @@ _Update this diagram during `/app-explore` sessions as the architecture evolves.
 |--------|-------------|
 | _(define your data objects here)_ | — |
 
-_Data model is defined using OpenRegister schemas. See [`appspec/features/`](appspec/features/) for feature-level design decisions and [`appspec/adr/`](appspec/adr/) for architectural decisions._
+_Data model is defined using OpenRegister schemas. See [`openspec/specs/`](openspec/specs/) for feature-level design decisions and [`openspec/architecture/`](openspec/architecture/) for architectural decisions._
 
 ### Directory Structure
 
 ```
 app-template/
 ├── appinfo/                    # Nextcloud app manifest, routes, navigation
-├── lib/                        # PHP backend — controllers, settings
+├── lib/                        # PHP backend
 │   ├── AppInfo/Application.php
-│   ├── Controller/DashboardController.php
-│   ├── Settings/AdminSettings.php
-│   └── Sections/SettingsSection.php
+│   ├── Controller/             # DashboardController, SettingsController
+│   ├── Service/SettingsService.php
+│   ├── Listener/DeepLinkRegistrationListener.php
+│   ├── Repair/InitializeSettings.php
+│   └── Settings/               # AdminSettings, app_template_register.json
 ├── templates/                  # PHP templates (SPA shells)
 ├── src/                        # Vue 2 frontend
 │   ├── main.js                 # App entry point
-│   ├── settings.js             # Admin settings entry
 │   ├── App.vue                 # Root component
+│   ├── navigation/MainMenu.vue # App navigation sidebar
 │   ├── router/                 # Vue Router
 │   ├── store/                  # Pinia stores
-│   └── views/                  # Route-level views
-├── appspec/                    # App configuration and specification
+│   └── views/                  # Route-level views + UserSettings.vue
+├── openspec/                   # Specifications, decisions, and roadmap
 │   ├── app-config.json         # Canonical app config (id, goal, dependencies, CI)
-│   ├── features/               # High-level feature definitions
-│   └── adr/                    # Architectural Decision Records
-├── openspec/                   # Implementation specifications and roadmap
+│   ├── config.yaml             # OpenSpec CLI configuration
+│   ├── specs/                  # Feature specs (input for OpenSpec changes)
+│   ├── architecture/           # App-specific Architectural Decision Records
 │   ├── ROADMAP.md              # Product roadmap
-│   └── changes/                # OpenSpec change directories
+│   └── changes/                # OpenSpec change directories (created on first change)
+├── tests/                      # Unit and integration tests
+├── l10n/                       # Translations (en, nl)
 ├── .github/workflows/          # CI/CD pipelines
-├── phpcs-custom-sniffs/        # Named parameters enforcement
-├── img/                        # App icons and screenshots
-└── l10n/                       # Translations (en, nl)
+├── Makefile                    # Dev helpers (make dev-link)
+└── img/                        # App icons and screenshots
 ```
 
 ## Requirements
@@ -121,7 +124,7 @@ php occ app:enable app-template
 ### Start the environment
 
 ```bash
-docker compose -f openregister/docker-compose.yml up -d
+docker compose -f ../openregister/docker-compose.yml up -d
 ```
 
 ### Frontend development
@@ -148,7 +151,14 @@ npm run stylelint       # CSS linting
 
 ### Enable locally
 
+Nextcloud requires the app directory name to match the `<id>` in `appinfo/info.xml` (`app-template`).
+When this repo is cloned as `nextcloud-app-template`, create a relative symlink first.
+
+> **Note:** The `js/` build output is not committed. You must build the frontend before enabling the app, or the UI will be blank.
+
 ```bash
+make dev-link
+npm install && npm run build
 docker exec nextcloud php occ app:enable app-template
 ```
 
@@ -175,11 +185,11 @@ docker exec nextcloud php occ app:enable app-template
 
 | Resource | Description |
 |----------|-------------|
-| [`appspec/`](appspec/) | App configuration, features, and architectural decisions |
-| [`appspec/features/`](appspec/features/) | Feature definitions and lifecycle status |
-| [`appspec/adr/`](appspec/adr/) | Architectural Decision Records |
+| [`openspec/app-config.json`](openspec/app-config.json) | App identity, goals, dependencies, and CI configuration |
+| [`openspec/specs/`](openspec/specs/) | Feature specs — what the app should do |
+| [`openspec/architecture/`](openspec/architecture/) | App-specific Architectural Decision Records |
 | [`openspec/ROADMAP.md`](openspec/ROADMAP.md) | Product roadmap |
-| [`openspec/`](openspec/) | Implementation specifications |
+| [`openspec/`](openspec/) | Implementation specifications and changes |
 
 ## Standards & Compliance
 
@@ -193,6 +203,30 @@ docker exec nextcloud php occ app:enable app-template
 - **[OpenRegister](https://github.com/ConductionNL/openregister)** — Object storage layer (required dependency)
 
 _Add related apps here as integrations are built._
+
+## Troubleshooting
+
+### App UI is blank after enabling
+
+The `js/` build output is not committed to the repo. Run the frontend build before enabling the app:
+
+```bash
+npm install && npm run build
+```
+
+### "Could not download app app-template" when running `occ app:enable`
+
+Nextcloud requires the app directory name to exactly match the `<id>` in `appinfo/info.xml`. When this repo is cloned as `nextcloud-app-template`, create a symlink first:
+
+```bash
+make dev-link   # creates apps-extra/app-template -> nextcloud-app-template
+```
+
+Then enable the app again:
+
+```bash
+docker exec nextcloud php occ app:enable app-template
+```
 
 ## Support
 
