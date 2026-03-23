@@ -60,7 +60,7 @@ Vrij en open source onder de EUPL-1.2-licentie.
         <navigation>
             <id>app-template</id>
             <name>App Template</name>
-            <route>app_template.dashboard.page</route>
+            <route>app-template.dashboard.page</route>
             <icon>app.svg</icon>
         </navigation>
     </navigations>
