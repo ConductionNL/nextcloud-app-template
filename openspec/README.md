@@ -1,14 +1,15 @@
-# OpenSpec — Implementation Specifications
+# OpenSpec — Specifications & Architecture
 
-This folder contains implementation specifications and the product roadmap for Nextcloud App Template.
-
-OpenSpec specifications define the **how** of building features. They are created from planned features in `appspec/features/` and follow the artifact progression below.
+This folder contains feature specifications, architectural decisions, and implementation specs for this app.
 
 ## Structure
 
 | File / Folder | Purpose |
 |---|---|
-| `ROADMAP.md` | High-level product roadmap, linked to features in `appspec/features/` |
+| `config.yaml` | OpenSpec project configuration — app identity, context, and rules |
+| `ROADMAP.md` | High-level product roadmap |
+| `specs/` | Feature specs — what the app should do (input for OpenSpec changes) |
+| `architecture/` | App-specific Architectural Decision Records |
 | `changes/` | Individual change directories, each with a full set of specification artifacts |
 
 ## Artifact Progression
@@ -28,42 +29,22 @@ proposal.md ──► specs.md ──► design.md ──► tasks.md ──► 
                                                     archive/
 ```
 
-## Starting a Change
+## Workflow
 
-When a feature in `appspec/features/` reaches `planned` status, create a change spec:
-
-```
-/opsx:ff {feature-name}    # Generate all artifacts at once
-/opsx:new {change-name}    # Or start step by step
-```
-
-The feature definition (goal, user stories, acceptance criteria) becomes the input for the proposal.
-
-## One Feature → Multiple Changes
-
-A single feature may result in multiple OpenSpec changes if the scope is large. For example, a "Document Upload" feature might become:
-- `changes/document-upload-backend/` — schema and API endpoints
-- `changes/document-upload-frontend/` — Vue upload component
-- `changes/document-upload-notifications/` — email/push notifications
-
-Keep changes independently deployable where possible.
+1. **Explore** — Use `/opsx:app-explore` to identify features and capture decisions in `specs/` and `architecture/`
+2. **Plan** — When a feature spec reaches `planned` status, use `/opsx:ff` to create a change spec
+3. **Implement** — Use `/opsx:apply` to implement the tasks
+4. **Verify** — Use `/opsx:verify` to check implementation matches the spec
+5. **Archive** — Use `/opsx:archive` to move completed changes to `changes/archive/`
 
 ## Commands
 
 | Command | Purpose |
 |---------|---------|
+| `/opsx:app-explore` | Think through and update feature specs and ADRs |
 | `/opsx:ff {name}` | Create all artifacts for a new change at once |
 | `/opsx:new {name}` | Start a new change (step-by-step) |
 | `/opsx:continue` | Generate the next artifact in the sequence |
 | `/opsx:apply` | Implement tasks from a change |
 | `/opsx:verify` | Verify implementation matches the spec |
 | `/opsx:archive` | Archive a completed change |
-
-## Relationship to `appspec/`
-
-| `appspec/` | `openspec/` |
-|---|---|
-| **What** the app should do | **How** to build it |
-| Feature concepts and ADRs | Detailed specs and design decisions |
-| Config, identity, goals | Implementation tasks and GitHub Issues |
-| Input for OpenSpec | Output for the development team |

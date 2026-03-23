@@ -1,8 +1,8 @@
-# Features
+# Feature Specs
 
-This folder contains high-level feature definitions for Nextcloud App Template.
+Feature specs define what the app should do — they are the input for OpenSpec changes when you are ready to build.
 
-Features are concepts and goals — not implementation specs. They serve as the input for OpenSpec changes when you are ready to build.
+Specs are created and refined during `/opsx:app-explore` sessions.
 
 ## Feature Lifecycle
 
@@ -24,20 +24,30 @@ needs more thinking
 | `in-progress` | One or more OpenSpec changes have been created from this feature |
 | `done` | All associated OpenSpec changes have been archived |
 
-## File Format
+## Spec Format
 
-Each feature is a Markdown file named `{feature-name}.md`:
+Each feature spec lives at `openspec/specs/{feature-name}/spec.md`:
 
 ```markdown
-# {Feature Name}
+# {Feature Name} Specification
 
 **Status**: idea | planned | in-progress | done
 
-**OpenSpec changes:** _(links to openspec/ change directories when applicable)_
+**OpenSpec changes:** _(links to openspec/changes/ directories when in-progress or done)_
 
-## Goal
+## Purpose
 
 What this feature does and why it matters to users.
+
+## Requirements
+
+### Requirement: {Requirement Name}
+The system MUST/SHOULD/MAY {requirement statement}.
+
+#### Scenario: {Scenario Name}
+- GIVEN {precondition}
+- WHEN {action}
+- THEN the system {MUST/SHOULD} {expected outcome}
 
 ## User Stories
 
@@ -53,9 +63,10 @@ What this feature does and why it matters to users.
 Open questions, constraints, dependencies, related ADRs.
 ```
 
+> For `idea` status, a lightweight spec (Purpose + User Stories + Acceptance Criteria) is fine. Fill in Requirements/Scenarios when moving to `planned`.
+
 ## Important Notes
 
 - A single feature can result in **multiple OpenSpec changes** — break large features into independently deployable slices
-- Features are maintained at the concept level here; implementation details live in `openspec/`
+- Features are maintained at the concept level here; implementation details live in `openspec/changes/`
 - Once a feature moves to `in-progress`, link to the OpenSpec change directories in the `OpenSpec changes` field
-- Features are explored and created during `/app-explore` sessions
