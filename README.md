@@ -26,7 +26,7 @@ _Add screenshots here once the app has a UI._
 
 ## Features
 
-Features are defined in [`appspec/features/`](appspec/features/). See the [roadmap](openspec/ROADMAP.md) for planned work.
+Features are defined in [`openspec/specs/`](openspec/specs/). See the [roadmap](openspec/ROADMAP.md) for planned work.
 
 ### Core
 - **Dashboard** — Personal overview page with key information at a glance
@@ -54,37 +54,40 @@ _Update this diagram during `/app-explore` sessions as the architecture evolves.
 |--------|-------------|
 | _(define your data objects here)_ | — |
 
-_Data model is defined using OpenRegister schemas. See [`appspec/features/`](appspec/features/) for feature-level design decisions and [`appspec/adr/`](appspec/adr/) for architectural decisions._
+_Data model is defined using OpenRegister schemas. See [`openspec/specs/`](openspec/specs/) for feature-level design decisions and [`openspec/architecture/`](openspec/architecture/) for architectural decisions._
 
 ### Directory Structure
 
 ```
 app-template/
 ├── appinfo/                    # Nextcloud app manifest, routes, navigation
-├── lib/                        # PHP backend — controllers, settings
+├── lib/                        # PHP backend
 │   ├── AppInfo/Application.php
-│   ├── Controller/DashboardController.php
-│   ├── Settings/AdminSettings.php
-│   └── Sections/SettingsSection.php
+│   ├── Controller/             # DashboardController, SettingsController
+│   ├── Service/SettingsService.php
+│   ├── Listener/DeepLinkRegistrationListener.php
+│   ├── Repair/InitializeSettings.php
+│   └── Settings/               # AdminSettings, app_template_register.json
 ├── templates/                  # PHP templates (SPA shells)
 ├── src/                        # Vue 2 frontend
 │   ├── main.js                 # App entry point
-│   ├── settings.js             # Admin settings entry
 │   ├── App.vue                 # Root component
+│   ├── navigation/MainMenu.vue # App navigation sidebar
 │   ├── router/                 # Vue Router
 │   ├── store/                  # Pinia stores
-│   └── views/                  # Route-level views
-├── appspec/                    # App configuration and specification
+│   └── views/                  # Route-level views + UserSettings.vue
+├── openspec/                   # Specifications, decisions, and roadmap
 │   ├── app-config.json         # Canonical app config (id, goal, dependencies, CI)
-│   ├── features/               # High-level feature definitions
-│   └── adr/                    # Architectural Decision Records
-├── openspec/                   # Implementation specifications and roadmap
+│   ├── config.yaml             # OpenSpec CLI configuration
+│   ├── specs/                  # Feature specs (input for OpenSpec changes)
+│   ├── architecture/           # App-specific Architectural Decision Records
 │   ├── ROADMAP.md              # Product roadmap
 │   └── changes/                # OpenSpec change directories
+├── tests/                      # Unit and integration tests
+├── l10n/                       # Translations (en, nl)
 ├── .github/workflows/          # CI/CD pipelines
-├── phpcs-custom-sniffs/        # Named parameters enforcement
-├── img/                        # App icons and screenshots
-└── l10n/                       # Translations (en, nl)
+├── Makefile                    # Dev helpers (make dev-link)
+└── img/                        # App icons and screenshots
 ```
 
 ## Requirements
@@ -148,7 +151,11 @@ npm run stylelint       # CSS linting
 
 ### Enable locally
 
+Nextcloud requires the app directory name to match the `<id>` in `appinfo/info.xml` (`app-template`).
+When this repo is cloned as `nextcloud-app-template`, create a relative symlink first:
+
 ```bash
+make dev-link
 docker exec nextcloud php occ app:enable app-template
 ```
 
@@ -175,11 +182,11 @@ docker exec nextcloud php occ app:enable app-template
 
 | Resource | Description |
 |----------|-------------|
-| [`appspec/`](appspec/) | App configuration, features, and architectural decisions |
-| [`appspec/features/`](appspec/features/) | Feature definitions and lifecycle status |
-| [`appspec/adr/`](appspec/adr/) | Architectural Decision Records |
+| [`openspec/app-config.json`](openspec/app-config.json) | App identity, goals, dependencies, and CI configuration |
+| [`openspec/specs/`](openspec/specs/) | Feature specs — what the app should do |
+| [`openspec/architecture/`](openspec/architecture/) | App-specific Architectural Decision Records |
 | [`openspec/ROADMAP.md`](openspec/ROADMAP.md) | Product roadmap |
-| [`openspec/`](openspec/) | Implementation specifications |
+| [`openspec/`](openspec/) | Implementation specifications and changes |
 
 ## Standards & Compliance
 
