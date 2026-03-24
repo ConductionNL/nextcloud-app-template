@@ -21,6 +21,9 @@ declare(strict_types=1);
 
 namespace OCA\AppTemplate\AppInfo;
 
+use OCA\AppTemplate\Listener\DeepLinkRegistrationListener;
+use OCA\AppTemplate\Repair\InitializeSettings;
+use OCA\OpenRegister\Event\DeepLinkRegistrationEvent;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -49,15 +52,21 @@ class Application extends App implements IBootstrap
      * @param IRegistrationContext $context The registration context
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function register(IRegistrationContext $context): void
     {
-        // Register your event listeners and services here.
-        // Example:
-        // $context->registerEventListener(
-        //     event: SomeEvent::class,
-        //     listener: SomeListener::class
-        // );
+        // Register deep link patterns with OpenRegister's unified search provider.
+        // Only fires when OpenRegister is installed and dispatches the event.
+        $context->registerEventListener(
+            event: DeepLinkRegistrationEvent::class,
+            listener: DeepLinkRegistrationListener::class
+        );
+
+        // Initialize register and schemas on install/upgrade.
+        $context->registerRepairStep(InitializeSettings::class);
+
     }//end register()
 
     /**

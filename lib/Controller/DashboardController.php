@@ -55,4 +55,17 @@ class DashboardController extends Controller
     {
         return new TemplateResponse(Application::APP_ID, 'index');
     }//end page()
+
+    /**
+     * Serve the SPA for deep links (Vue history mode). Delegates to {@see page()}.
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     *
+     * @return TemplateResponse
+     */
+    public function catchAll(): TemplateResponse
+    {
+        return $this->page();
+    }//end catchAll()
 }//end class
