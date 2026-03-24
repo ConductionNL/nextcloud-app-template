@@ -1,0 +1,135 @@
+# One-time setup workflow — runs when a new repository is created from this template.
+# Replaces all placeholders with the repo name and description, creates branches, then deletes itself.
+
+name: Template Setup
+
+on:
+  create:
+
+jobs:
+  setup:
+    # Only run on the default branch and only if this is a new repo (not a branch creation)
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && github.event.ref_type == 'repository'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Derive naming variants
+        id: names
+        run: |
+          # Get repo name (kebab-case)
+          REPO_NAME="${{ github.event.repository.name }}"
+          DESCRIPTION="${{ github.event.repository.description }}"
+
+          # Default description if empty
+          if [ -z "$DESCRIPTION" ]; then
+            DESCRIPTION="A Nextcloud app"
+          fi
+
+          # Derive variants
+          KEBAB="$REPO_NAME"
+          SNAKE=$(echo "$KEBAB" | tr '-' '_')
+          PASCAL=$(echo "$KEBAB" | sed -E 's/(^|-)([a-z])/\U\2/g')
+          DISPLAY=$(echo "$KEBAB" | sed -E 's/(^|-)([a-z])/\U\2/g; s/([A-Z])/ \1/g; s/^ //')
+          UPPER_SNAKE=$(echo "$SNAKE" | tr '[:lower:]' '[:upper:]')
+
+          echo "kebab=$KEBAB" >> "$GITHUB_OUTPUT"
+          echo "snake=$SNAKE" >> "$GITHUB_OUTPUT"
+          echo "pascal=$PASCAL" >> "$GITHUB_OUTPUT"
+          echo "display=$DISPLAY" >> "$GITHUB_OUTPUT"
+          echo "upper_snake=$UPPER_SNAKE" >> "$GITHUB_OUTPUT"
+          echo "description=$DESCRIPTION" >> "$GITHUB_OUTPUT"
+
+          echo "App name: $KEBAB ($PASCAL)"
+          echo "Description: $DESCRIPTION"
+
+      - name: Replace placeholders in all files
+        run: |
+          KEBAB="${{ steps.names.outputs.kebab }}"
+          SNAKE="${{ steps.names.outputs.snake }}"
+          PASCAL="${{ steps.names.outputs.pascal }}"
+          DISPLAY="${{ steps.names.outputs.display }}"
+          UPPER_SNAKE="${{ steps.names.outputs.upper_snake }}"
+          DESCRIPTION="${{ steps.names.outputs.description }}"
+          ORG="${{ github.repository_owner }}"
+
+          # Find all text files to process
+          FILES=$(find . \
+            -not -path './.git/*' \
+            -not -path './node_modules/*' \
+            -not -path './vendor/*' \
+            -not -path './js/*' \
+            -not -path './setup.sh' \
+            -not -name 'template-setup.yml' \
+            -type f \
+            \( -name '*.php' -o -name '*.js' -o -name '*.vue' -o -name '*.json' \
+               -o -name '*.xml' -o -name '*.yml' -o -name '*.yaml' -o -name '*.md' \
+               -o -name '*.css' -o -name '*.neon' -o -name '*.config.js' \))
+
+          for file in $FILES; do
+            # Replace template placeholders
+            sed -i "s|app-template|${KEBAB}|g" "$file"
+            sed -i "s|app_template|${SNAKE}|g" "$file"
+            sed -i "s|AppTemplate|${PASCAL}|g" "$file"
+            sed -i "s|App Template|${DISPLAY}|g" "$file"
+            sed -i "s|APP_TEMPLATE|${UPPER_SNAKE}|g" "$file"
+            sed -i "s|nextcloud-app-template|${KEBAB}|g" "$file"
+            # Update GitHub org references
+            sed -i "s|ConductionNL/nextcloud-app-template|${ORG}/${KEBAB}|g" "$file"
+            sed -i "s|ConductionNL/app-template|${ORG}/${KEBAB}|g" "$file"
+          done
+
+          # Update info.xml description
+          if [ -f "appinfo/info.xml" ]; then
+            sed -i "s|<summary lang=\"en\">[^<]*</summary>|<summary lang=\"en\">${DESCRIPTION}</summary>|" "appinfo/info.xml"
+          fi
+
+          # Rename register JSON
+          if [ -f "lib/Settings/app_template_register.json" ]; then
+            mv "lib/Settings/app_template_register.json" "lib/Settings/${SNAKE}_register.json"
+          fi
+
+          # Update settings mount point
+          if [ -f "templates/settings/admin.php" ]; then
+            sed -i "s|app-template-settings|${KEBAB}-settings|g" "templates/settings/admin.php"
+          fi
+
+          echo "Placeholders replaced successfully"
+
+      - name: Remove setup files
+        run: |
+          rm -f setup.sh
+          rm -f .github/workflows/template-setup.yml
+          echo "Setup files removed"
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: Initialize ${{ steps.names.outputs.display }} from template
+
+          Auto-configured from nextcloud-app-template:
+          - Replaced all placeholders with ${{ steps.names.outputs.kebab }}
+          - Renamed register JSON to ${{ steps.names.outputs.snake }}_register.json
+          - Removed setup script and this workflow"
+
+      - name: Push to main and create branches
+        run: |
+          # Push the initialized main branch
+          git push origin main
+
+          # Create beta and development branches
+          git checkout -b beta
+          git push origin beta
+
+          git checkout -b development
+          git push origin development
+
+          echo "Created branches: main, beta, development"

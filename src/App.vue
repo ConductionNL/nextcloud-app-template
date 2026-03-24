@@ -23,20 +23,22 @@
 			</NcAppContent>
 		</template>
 		<template v-else-if="storesReady && hasOpenRegisters">
-			<NcAppNavigation>
-				<template #list>
-					<NcAppNavigationItem
-						:name="t('app-template', 'Dashboard')"
-						:to="'/'">
-						<template #icon>
-							<HomeIcon :size="20" />
-						</template>
-					</NcAppNavigationItem>
-				</template>
-			</NcAppNavigation>
+			<MainMenu />
 			<NcAppContent>
 				<router-view />
 			</NcAppContent>
+			<CnIndexSidebar
+				v-if="sidebarState.active"
+				:schema="sidebarState.schema"
+				:visible-columns="sidebarState.visibleColumns"
+				:search-value="sidebarState.searchValue"
+				:active-filters="sidebarState.activeFilters"
+				:facet-data="sidebarState.facetData"
+				:open="sidebarState.open"
+				@update:open="sidebarState.open = $event"
+				@search="onSidebarSearch"
+				@columns-change="onSidebarColumnsChange"
+				@filter-change="onSidebarFilterChange" />
 		</template>
 		<NcAppContent v-else>
 			<div style="display: flex; justify-content: center; align-items: center; height: 100%;">
@@ -47,9 +49,11 @@
 </template>
 
 <script>
-import { NcButton, NcContent, NcAppContent, NcAppNavigation, NcAppNavigationItem, NcEmptyContent, NcLoadingIcon } from '@nextcloud/vue'
+import Vue from 'vue'
+import { NcButton, NcContent, NcAppContent, NcEmptyContent, NcLoadingIcon } from '@nextcloud/vue'
+import { CnIndexSidebar } from '@conduction/nextcloud-vue'
 import { generateUrl, imagePath } from '@nextcloud/router'
-import HomeIcon from 'vue-material-design-icons/Home.vue'
+import MainMenu from './navigation/MainMenu.vue'
 import { initializeStores } from './store/store.js'
 import { useSettingsStore } from './store/modules/settings.js'
 
@@ -59,16 +63,33 @@ export default {
 		NcButton,
 		NcContent,
 		NcAppContent,
-		NcAppNavigation,
-		NcAppNavigationItem,
 		NcEmptyContent,
 		NcLoadingIcon,
-		HomeIcon,
+		CnIndexSidebar,
+		MainMenu,
+	},
+
+	provide() {
+		return {
+			sidebarState: this.sidebarState,
+		}
 	},
 
 	data() {
 		return {
 			storesReady: false,
+			sidebarState: Vue.observable({
+				active: false,
+				open: true,
+				schema: null,
+				visibleColumns: null,
+				searchValue: '',
+				activeFilters: {},
+				facetData: {},
+				onSearch: null,
+				onColumnsChange: null,
+				onFilterChange: null,
+			}),
 		}
 	},
 
@@ -92,6 +113,26 @@ export default {
 	async created() {
 		await initializeStores()
 		this.storesReady = true
+	},
+
+	methods: {
+		onSidebarSearch(value) {
+			this.sidebarState.searchValue = value
+			if (typeof this.sidebarState.onSearch === 'function') {
+				this.sidebarState.onSearch(value)
+			}
+		},
+		onSidebarColumnsChange(columns) {
+			this.sidebarState.visibleColumns = columns
+			if (typeof this.sidebarState.onColumnsChange === 'function') {
+				this.sidebarState.onColumnsChange(columns)
+			}
+		},
+		onSidebarFilterChange(filter) {
+			if (typeof this.sidebarState.onFilterChange === 'function') {
+				this.sidebarState.onFilterChange(filter)
+			}
+		},
 	},
 }
 </script>

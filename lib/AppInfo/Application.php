@@ -21,6 +21,8 @@ declare(strict_types=1);
 
 namespace OCA\AppTemplate\AppInfo;
 
+use OCA\OpenRegister\Event\DeepLinkRegistrationEvent;
+use OCA\AppTemplate\Listener\DeepLinkRegistrationListener;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -52,12 +54,11 @@ class Application extends App implements IBootstrap
      */
     public function register(IRegistrationContext $context): void
     {
-        // Register your event listeners and services here.
-        // Example:
-        // $context->registerEventListener(
-        //     event: SomeEvent::class,
-        //     listener: SomeListener::class
-        // );
+        // Register deep link listener for Nextcloud unified search integration.
+        $context->registerEventListener(
+            event: DeepLinkRegistrationEvent::class,
+            listener: DeepLinkRegistrationListener::class
+        );
     }//end register()
 
     /**

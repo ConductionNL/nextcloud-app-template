@@ -1,0 +1,48 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "App Template Register",
+    "description": "Register containing all schemas for the App Template application. Replace this with your own schemas.",
+    "version": "0.1.0"
+  },
+  "x-openregister": {
+    "type": "application",
+    "app": "app-template",
+    "openregister": "^v0.2.10",
+    "description": "A template for creating new Nextcloud apps"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "example": {
+        "slug": "example",
+        "icon": "FileDocumentOutline",
+        "version": "1.0.0",
+        "x-schema-org-type": "schema:Thing",
+        "title": "Example",
+        "description": "An example object type. Replace this with your own schema definition.",
+        "type": "object",
+        "required": [
+          "title"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "Name of this item"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["draft", "active", "archived"],
+            "default": "draft",
+            "description": "Current status"
+          }
+        }
+      }
+    }
+  }
+}
