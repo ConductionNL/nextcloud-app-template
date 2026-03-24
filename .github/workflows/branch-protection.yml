@@ -2,10 +2,7 @@ name: Branch Protection
 
 on:
   pull_request:
-    branches: [
-      # main, #(disabled until ruleset check-branch context is fixed (should be 'protect / check-branch'))
-      beta
-    ]
+    branches: [main, beta]
 
 jobs:
   protect:
