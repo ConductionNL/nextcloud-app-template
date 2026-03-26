@@ -35,7 +35,7 @@ Vrij en open source onder de EUPL-1.2-licentie.
 **Ondersteuning:** Voor ondersteuning, neem contact op via support@conduction.nl.
     ]]></description>
     <version>0.1.0</version>
-    <licence>agpl</licence>
+    <licence>eupl</licence>
     <author mail="info@conduction.nl" homepage="https://www.conduction.nl/">Conduction</author>
     <namespace>AppTemplate</namespace>
     <documentation>
@@ -52,7 +52,7 @@ Vrij en open source onder de EUPL-1.2-licentie.
     <screenshot>https://raw.githubusercontent.com/ConductionNL/nextcloud-app-template/main/img/app-store.svg</screenshot>
 
     <dependencies>
-        <nextcloud min-version="28" max-version="33"/>
+        <nextcloud min-version="28" max-version="34"/>
         <php min-version="8.1"/>
     </dependencies>
 
