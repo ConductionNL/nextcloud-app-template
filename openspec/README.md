@@ -14,6 +14,15 @@ This folder contains feature specifications, architectural decisions, and implem
 
 > If `app-config.json` has `"requiresOpenRegister": true`, install [OpenRegister](https://github.com/ConductionNL/openregister) before enabling this app. Set to `false` if your app does not use OpenRegister.
 
+## app-config.json — Key Fields
+
+| Field | Default | Notes |
+|-------|---------|-------|
+| `cicd.enableNewman` | `false` | Enable only when a Postman collection exists in the repo. Newman runs API test collections in CI — enabling it without a collection breaks every pipeline run. **To enable:** add a Postman collection to `tests/`, set `enableNewman: true`, and run `/opsx:app-apply`.  |
+| `cicd.phpVersions` | `["8.3", "8.4"]` | PHP versions to test against. Update when Nextcloud drops support for older PHP versions. |
+| `cicd.nextcloudRefs` | `["stable31", ...]` | Nextcloud branches to test against. Add new stable refs as Nextcloud releases them. |
+| `dependencies.requiresOpenRegister` | `true` | Controls whether the app shows an OpenRegister gate in `src/App.vue` and adds OpenRegister to CI `additional-apps`. |
+
 ## Artifact Progression
 
 Each change in `changes/` moves through these artifacts:

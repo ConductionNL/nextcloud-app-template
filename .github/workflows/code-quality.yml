@@ -14,7 +14,7 @@ jobs:
       app-name: app-template
       php-version: "8.3"
       php-test-versions: '["8.3", "8.4"]'
-      nextcloud-test-refs: '["stable31", "stable32"]'
+      nextcloud-test-refs: '["stable31", "stable32", "stable33"]'
       enable-psalm: true
       enable-phpstan: true
       enable-phpmetrics: true
