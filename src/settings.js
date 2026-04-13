@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: EUPL-1.2
 import Vue from 'vue'
 import { PiniaVuePlugin } from 'pinia'
 import { translate as t, translatePlural as n, loadTranslations } from '@nextcloud/l10n'

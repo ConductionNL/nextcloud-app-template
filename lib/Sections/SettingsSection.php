@@ -1,4 +1,5 @@
 <?php
+// SPDX-License-Identifier: EUPL-1.2
 
 /**
  * AppTemplate Settings Section
@@ -39,8 +40,8 @@ class SettingsSection implements IIconSection
      * @return void
      */
     public function __construct(
-        private IL10N $l,
-        private IURLGenerator $urlGenerator,
+        private readonly IL10N $l,
+        private readonly IURLGenerator $urlGenerator,
     ) {
     }//end __construct()
 

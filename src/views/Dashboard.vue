@@ -1,3 +1,4 @@
+<!-- SPDX-License-Identifier: EUPL-1.2 -->
 <template>
 	<div class="app-template-dashboard">
 		<header class="app-template-dashboard__header">

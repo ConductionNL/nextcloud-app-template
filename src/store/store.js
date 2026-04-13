@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: EUPL-1.2
 import { generateUrl } from '@nextcloud/router'
 import { useObjectStore } from './modules/object.js'
 import { useSettingsStore } from './modules/settings.js'

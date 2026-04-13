@@ -1,5 +1,7 @@
+// SPDX-License-Identifier: EUPL-1.2
 import { defineStore } from 'pinia'
 import { generateUrl } from '@nextcloud/router'
+import { getRequestToken } from '@nextcloud/auth'
 
 export const useSettingsStore = defineStore('settings', {
 	state: () => ({
@@ -19,7 +21,7 @@ export const useSettingsStore = defineStore('settings', {
 			this.loading = true
 			try {
 				const response = await fetch(generateUrl('/apps/app-template/api/settings'), {
-					headers: { requesttoken: OC.requestToken },
+					headers: { requesttoken: getRequestToken() },
 				})
 				if (response.ok) {
 					const data = await response.json()
@@ -43,7 +45,7 @@ export const useSettingsStore = defineStore('settings', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
-						requesttoken: OC.requestToken,
+						requesttoken: getRequestToken(),
 					},
 					body: JSON.stringify(settings),
 				})

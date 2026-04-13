@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: EUPL-1.2
 import Vue from 'vue'
 import Router from 'vue-router'
 import { generateUrl } from '@nextcloud/router'
