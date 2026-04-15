@@ -28,6 +28,28 @@
 			<NcAppContent>
 				<router-view />
 			</NcAppContent>
+			<CnIndexSidebar
+				v-if="sidebarState.active && !objectSidebarState.active"
+				:schema="sidebarState.schema"
+				:visible-columns="sidebarState.visibleColumns"
+				:search-value="sidebarState.searchValue"
+				:active-filters="sidebarState.activeFilters"
+				:facet-data="sidebarState.facetData"
+				:open="sidebarState.open"
+				@update:open="sidebarState.open = $event"
+				@search="onSidebarSearch"
+				@columns-change="onSidebarColumnsChange"
+				@filter-change="onSidebarFilterChange" />
+			<CnObjectSidebar
+				v-if="objectSidebarState.active"
+				:object-type="objectSidebarState.objectType"
+				:object-id="objectSidebarState.objectId"
+				:title="objectSidebarState.title"
+				:subtitle="objectSidebarState.subtitle"
+				:register="objectSidebarState.register"
+				:schema="objectSidebarState.schema"
+				:hidden-tabs="objectSidebarState.hiddenTabs"
+				:open.sync="objectSidebarState.open" />
 		</template>
 		<NcAppContent v-else>
 			<div style="display: flex; justify-content: center; align-items: center; height: 100%;">
@@ -38,7 +60,9 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import { NcButton, NcContent, NcAppContent, NcEmptyContent, NcLoadingIcon } from '@nextcloud/vue'
+import { CnIndexSidebar, CnObjectSidebar } from '@conduction/nextcloud-vue'
 import { generateUrl, imagePath } from '@nextcloud/router'
 import { initializeStores } from './store/store.js'
 import { useSettingsStore } from './store/modules/settings.js'
@@ -52,12 +76,44 @@ export default {
 		NcAppContent,
 		NcEmptyContent,
 		NcLoadingIcon,
+		CnIndexSidebar,
+		CnObjectSidebar,
 		MainMenu,
+	},
+
+	provide() {
+		return {
+			sidebarState: this.sidebarState,
+			objectSidebarState: this.objectSidebarState,
+		}
 	},
 
 	data() {
 		return {
 			storesReady: false,
+			objectSidebarState: Vue.observable({
+				active: false,
+				open: true,
+				objectType: '',
+				objectId: '',
+				title: '',
+				subtitle: '',
+				register: '',
+				schema: '',
+				hiddenTabs: [],
+			}),
+			sidebarState: Vue.observable({
+				active: false,
+				open: true,
+				schema: null,
+				visibleColumns: null,
+				searchValue: '',
+				activeFilters: {},
+				facetData: {},
+				onSearch: null,
+				onColumnsChange: null,
+				onFilterChange: null,
+			}),
 		}
 	},
 
@@ -81,6 +137,26 @@ export default {
 	async created() {
 		await initializeStores()
 		this.storesReady = true
+	},
+
+	methods: {
+		onSidebarSearch(value) {
+			this.sidebarState.searchValue = value
+			if (typeof this.sidebarState.onSearch === 'function') {
+				this.sidebarState.onSearch(value)
+			}
+		},
+		onSidebarColumnsChange(columns) {
+			this.sidebarState.visibleColumns = columns
+			if (typeof this.sidebarState.onColumnsChange === 'function') {
+				this.sidebarState.onColumnsChange(columns)
+			}
+		},
+		onSidebarFilterChange(filter) {
+			if (typeof this.sidebarState.onFilterChange === 'function') {
+				this.sidebarState.onFilterChange(filter)
+			}
+		},
 	},
 }
 </script>
