@@ -10,6 +10,13 @@
 				</template>
 			</NcAppNavigationItem>
 			<NcAppNavigationItem
+				:name="t('app-template', 'Items')"
+				:to="{ name: 'Items' }">
+				<template #icon>
+					<FormatListBulletedIcon :size="20" />
+				</template>
+			</NcAppNavigationItem>
+			<NcAppNavigationItem
 				:name="t('app-template', 'Documentation')"
 				@click="openLink('https://conduction.nl', '_blank')">
 				<template #icon>
@@ -18,21 +25,25 @@
 			</NcAppNavigationItem>
 		</template>
 		<template #footer>
-			<NcAppNavigationItem
-				:name="t('app-template', 'Settings')"
-				:to="{ name: 'Settings' }">
-				<template #icon>
-					<CogIcon :size="20" />
-				</template>
-			</NcAppNavigationItem>
+			<NcAppNavigationSettings>
+				<!-- Add admin/config nav items here (like OpenCatalogi's Catalogs, Themes, etc.) -->
+				<NcAppNavigationItem
+					:name="t('app-template', 'Settings')"
+					@click="$emit('open-settings')">
+					<template #icon>
+						<CogIcon :size="20" />
+					</template>
+				</NcAppNavigationItem>
+			</NcAppNavigationSettings>
 		</template>
 	</NcAppNavigation>
 </template>
 
 <script>
-import { NcAppNavigation, NcAppNavigationItem } from '@nextcloud/vue'
+import { NcAppNavigation, NcAppNavigationItem, NcAppNavigationSettings } from '@nextcloud/vue'
 import BookOpenVariantOutline from 'vue-material-design-icons/BookOpenVariantOutline.vue'
 import CogIcon from 'vue-material-design-icons/Cog.vue'
+import FormatListBulletedIcon from 'vue-material-design-icons/FormatListBulleted.vue'
 import HomeIcon from 'vue-material-design-icons/Home.vue'
 
 export default {
@@ -40,8 +51,10 @@ export default {
 	components: {
 		NcAppNavigation,
 		NcAppNavigationItem,
+		NcAppNavigationSettings,
 		BookOpenVariantOutline,
 		CogIcon,
+		FormatListBulletedIcon,
 		HomeIcon,
 	},
 	methods: {
