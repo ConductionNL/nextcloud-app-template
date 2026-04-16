@@ -4,7 +4,7 @@
 		<header class="app-template-dashboard__header">
 			<h2>{{ t('app-template', 'Dashboard') }}</h2>
 			<p class="app-template-dashboard__lead">
-				{{ t('app-template', 'Starter overview with sample KPIs and activity placeholders. Replace this view with your own data.') }}
+				{{ t('app-template', 'Starter overview with sample kpis and activity placeholders. replace this view with your own data.') }}
 			</p>
 		</header>
 
@@ -43,14 +43,14 @@
 			<CnConfigurationCard :title="t('app-template', 'Recent activity')">
 				<ul class="app-template-dashboard__placeholder-list">
 					<li>{{ t('app-template', 'Placeholder: user opened a record') }}</li>
-					<li>{{ t('app-template', 'Placeholder: status changed to Review') }}</li>
+					<li>{{ t('app-template', 'Placeholder: status changed to review') }}</li>
 					<li>{{ t('app-template', 'Placeholder: comment added') }}</li>
 				</ul>
 			</CnConfigurationCard>
 
 			<CnConfigurationCard :title="t('app-template', 'Quick actions')">
 				<p class="app-template-dashboard__hint">
-					{{ t('app-template', 'Wire buttons here to create records, open lists, or deep links. Use the sidebar for Settings and Documentation.') }}
+					{{ t('app-template', 'Wire buttons here to create records, open lists, or deep links. use the sidebar for settings and documentation.') }}
 				</p>
 			</CnConfigurationCard>
 		</div>

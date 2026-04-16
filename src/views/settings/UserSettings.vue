@@ -2,7 +2,7 @@
 	<NcAppSettingsDialog
 		:open="open"
 		:show-navigation="false"
-		:name="t('app-template', 'App Template settings')"
+		:name="t('app-template', 'App template settings')"
 		@update:open="$emit('update:open', $event)">
 		<NcAppSettingsSection
 			id="general"
