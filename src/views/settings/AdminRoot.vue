@@ -2,7 +2,7 @@
 <template>
 	<div class="app-template-admin">
 		<CnVersionInfoCard
-			:app-name="'App Template'"
+			:app-name="t('app-template', 'App Template')"
 			:app-version="appVersion"
 			:is-up-to-date="true"
 			:show-update-button="true"

@@ -96,7 +96,7 @@ export default {
 		sidebarProps() {
 			const config = this.objectStore.objectTypeRegistry?.item || {}
 			return {
-				title: this.itemData.title || t('app-template', 'Item'),
+				title: this.itemData.title || this.t('app-template', 'Item'),
 				subtitle: this.itemData.identifier || '',
 				register: config.register || '',
 				schema: config.schema || '',
@@ -127,7 +127,7 @@ export default {
 		},
 
 		async confirmDelete() {
-			if (!confirm(t('app-template', 'Are you sure you want to delete this item?'))) return
+			if (!confirm(this.t('app-template', 'Are you sure you want to delete this item?'))) return
 			const success = await this.objectStore.deleteObject('item', this.itemId)
 			if (success) {
 				this.$router.push({ name: 'Items' })
