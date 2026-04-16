@@ -10,8 +10,6 @@ import { generateUrl } from '@nextcloud/router'
 import Dashboard from '../views/Dashboard.vue'
 import ItemList from '../views/items/ItemList.vue'
 import ItemDetail from '../views/items/ItemDetail.vue'
-import AdminRoot from '../views/settings/AdminRoot.vue'
-
 Vue.use(Router)
 
 export default new Router({
@@ -22,7 +20,8 @@ export default new Router({
 		{ path: '/items', name: 'Items', component: ItemList },
 		{ path: '/items/:id', name: 'ItemDetail', component: ItemDetail,
 			props: route => ({ itemId: route.params.id }) },
-		{ path: '/settings', name: 'Settings', component: AdminRoot },
+		// No /settings route — settings opens as NcAppSettingsDialog modal
+		// Admin settings live at /settings/admin/{appid} (managed by NC via AdminSettings.php)
 		{ path: '*', redirect: '/' },
 	],
 })

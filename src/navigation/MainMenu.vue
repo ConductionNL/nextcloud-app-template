@@ -26,9 +26,10 @@
 		</template>
 		<template #footer>
 			<NcAppNavigationSettings>
+				<!-- Add admin/config nav items here (like OpenCatalogi's Catalogs, Themes, etc.) -->
 				<NcAppNavigationItem
 					:name="t('app-template', 'Settings')"
-					:to="{ name: 'Settings' }">
+					@click="$emit('open-settings')">
 					<template #icon>
 						<CogIcon :size="20" />
 					</template>

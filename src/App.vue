@@ -24,10 +24,11 @@
 			</NcAppContent>
 		</template>
 		<template v-else-if="storesReady && hasOpenRegisters">
-			<MainMenu />
+			<MainMenu @open-settings="settingsOpen = true" />
 			<NcAppContent>
 				<router-view />
 			</NcAppContent>
+			<UserSettings :open="settingsOpen" @update:open="settingsOpen = $event" />
 			<CnIndexSidebar
 				v-if="sidebarState.active && !objectSidebarState.active"
 				:schema="sidebarState.schema"
@@ -67,6 +68,7 @@ import { generateUrl, imagePath } from '@nextcloud/router'
 import { initializeStores } from './store/store.js'
 import { useSettingsStore } from './store/modules/settings.js'
 import MainMenu from './navigation/MainMenu.vue'
+import UserSettings from './views/settings/UserSettings.vue'
 
 export default {
 	name: 'App',
@@ -79,6 +81,7 @@ export default {
 		CnIndexSidebar,
 		CnObjectSidebar,
 		MainMenu,
+		UserSettings,
 	},
 
 	provide() {
@@ -91,6 +94,7 @@ export default {
 	data() {
 		return {
 			storesReady: false,
+			settingsOpen: false,
 			objectSidebarState: Vue.observable({
 				active: false,
 				open: true,
