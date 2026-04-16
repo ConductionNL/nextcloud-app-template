@@ -1,4 +1,5 @@
 <?php
+// SPDX-License-Identifier: EUPL-1.2
 
 /**
  * AppTemplate Admin Settings
@@ -37,7 +38,7 @@ class AdminSettings implements ISettings
      * @param IAppManager $appManager The app manager.
      */
     public function __construct(
-        private IAppManager $appManager,
+        private readonly IAppManager $appManager,
     ) {
     }//end __construct()
 
