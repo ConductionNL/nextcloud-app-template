@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: EUPL-1.2
 import Vue from 'vue'
 import { PiniaVuePlugin } from 'pinia'
-import { translate as t, translatePlural as n, loadTranslations } from '@nextcloud/l10n'
+import { translate as t, translatePlural as n } from '@nextcloud/l10n'
 import pinia from './pinia.js'
 import router from './router/index.js'
 import App from './App.vue'
@@ -16,17 +16,17 @@ import './assets/app.css'
 Vue.mixin({ methods: { t, n } })
 Vue.use(PiniaVuePlugin)
 
-loadTranslations('app-template', () => {
-	// Create Vue instance to activate Pinia context, then initialize stores.
-	const app = new Vue({
-		pinia,
-		router,
-		render: h => h(App),
-	})
-
-	// Mount immediately so the App renders (NC32 needs #content to be taken over).
-	app.$mount('#content')
-
-	// Initialize stores after mount.
-	initializeStores()
+// Create Vue instance to activate Pinia context, then initialize stores.
+const app = new Vue({
+	pinia,
+	router,
+	render: h => h(App),
 })
+
+// Mount immediately — do NOT wrap in loadTranslations() callback as it
+// blocks rendering when the l10n JSON file doesn't exist (404).
+app.$mount('#content')
+
+// Initialize stores after mount — fire-and-forget so the UI shows immediately.
+// The App.vue created() hook also awaits initializeStores() for storesReady flag.
+initializeStores()

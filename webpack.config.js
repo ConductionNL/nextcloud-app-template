@@ -56,4 +56,12 @@ webpackConfig.plugins = [
 	}),
 ]
 
+// Disable code splitting — Nextcloud serves chunks from /apps/<id>/js/ but the
+// files live at /custom_apps/<id>/js/, causing ChunkLoadError on lazy imports.
+// Use static imports in router/index.js instead of () => import().
+webpackConfig.optimization = {
+	...(webpackConfig.optimization || {}),
+	splitChunks: false,
+}
+
 module.exports = webpackConfig
