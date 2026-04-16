@@ -18,7 +18,7 @@
 		:object-id="itemId"
 		:sidebar-props="sidebarProps">
 		<!-- Header actions — Save and Delete buttons -->
-		<template #header-actions>
+		<template #actions>
 			<NcButton
 				v-if="!loading"
 				type="primary"
@@ -41,7 +41,7 @@
 			object-type="item"
 			:store="objectStore"
 			:columns="2"
-			:title="t('app-template', 'Item Details')"
+			:title="t('app-template', 'Item details')"
 			@saved="onSaved" />
 
 		<!-- Manual form for new items (no schema data yet) -->
