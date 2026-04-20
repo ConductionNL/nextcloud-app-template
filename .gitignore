@@ -1,7 +1,7 @@
 /.idea/
 /*.iml
 *.Identifier
-.phphunit.result.cache
+.phpunit.result.cache
 
 /vendor/
 /vendor-bin/*/vendor/
@@ -58,11 +58,6 @@ phpqa_output.log
 # Temporary test files that shouldn't be committed
 simple-solr-test.php
 test-solr-connection.php
-
-# Files with unusual extensions or no extensions that could be mistakes
-**/PR *
-**/adds *
-**/implements *
 
 phpqa/
 
