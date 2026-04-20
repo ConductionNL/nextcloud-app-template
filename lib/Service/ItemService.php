@@ -146,7 +146,7 @@ class ItemService
      * OpenRegister owner of the object (via `@self.owner`).
      *
      * @param object|array<string,mixed> $object The object as returned by OpenRegister
-     *                                          (may be an entity or an associative array)
+     *                                           (may be an entity or an associative array)
      * @param string                     $userId The acting user's UID
      *
      * @return bool True if authorized, false otherwise.
@@ -159,7 +159,7 @@ class ItemService
             return true;
         }
 
-        $owner = $this->extractOwner($object);
+        $owner = $this->extractOwner(object: $object);
         return ($owner !== null && $owner === $userId);
     }//end isAuthorized()
 
@@ -178,12 +178,20 @@ class ItemService
     {
         if (is_array($object) === true) {
             $self = ($object['@self'] ?? []);
-            return is_array($self) === true ? (($self['owner'] ?? null)) : null;
+            if (is_array($self) === true) {
+                return ($self['owner'] ?? null);
+            }
+
+            return null;
         }
 
         if (method_exists($object, 'getOwner') === true) {
             $owner = $object->getOwner();
-            return is_string($owner) === true ? $owner : null;
+            if (is_string($owner) === true) {
+                return $owner;
+            }
+
+            return null;
         }
 
         if (method_exists($object, 'jsonSerialize') === true) {

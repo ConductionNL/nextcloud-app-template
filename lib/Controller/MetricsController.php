@@ -78,7 +78,7 @@ class MetricsController extends Controller
     public function index(): DataDisplayResponse
     {
         try {
-            $prefix = self::METRIC_PREFIX;
+            $prefix  = self::METRIC_PREFIX;
             $healthy = (int) $this->settingsService->isOpenRegisterAvailable();
 
             $lines = [

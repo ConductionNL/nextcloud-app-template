@@ -76,8 +76,12 @@ class HealthController extends Controller
     {
         try {
             $openRegister = $this->settingsService->isOpenRegisterAvailable();
-            $status       = ($openRegister === true) ? 'ok' : 'degraded';
-            $httpStatus   = ($openRegister === true) ? Http::STATUS_OK : Http::STATUS_SERVICE_UNAVAILABLE;
+            $status       = 'degraded';
+            $httpStatus   = Http::STATUS_SERVICE_UNAVAILABLE;
+            if ($openRegister === true) {
+                $status     = 'ok';
+                $httpStatus = Http::STATUS_OK;
+            }
 
             return new JSONResponse(
                 [
