@@ -5,11 +5,14 @@
  *
  * Provides the admin settings form for the AppTemplate application.
  *
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ * SPDX-License-Identifier: EUPL-1.2
+ *
  * @category Settings
  * @package  OCA\AppTemplate\Settings
  *
- * @author    Conduction Development Team <dev@conductio.nl>
- * @copyright 2024 Conduction B.V.
+ * @author    Conduction Development Team <info@conduction.nl>
+ * @copyright 2026 Conduction B.V.
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  *
  * @version GIT: <git-id>
@@ -37,7 +40,7 @@ class AdminSettings implements ISettings
      * @param IAppManager $appManager The app manager.
      */
     public function __construct(
-        private IAppManager $appManager,
+        private readonly IAppManager $appManager,
     ) {
     }//end __construct()
 

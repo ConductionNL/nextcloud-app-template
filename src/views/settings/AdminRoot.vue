@@ -1,12 +1,13 @@
+<!-- SPDX-License-Identifier: EUPL-1.2 -->
 <template>
 	<div class="app-template-admin">
 		<CnVersionInfoCard
-			:app-name="'App Template'"
+			:app-name="t('app-template', 'App template')"
 			:app-version="appVersion"
 			:is-up-to-date="true"
 			:show-update-button="true"
-			:title="t('app-template', 'Version Information')"
-			:description="t('app-template', 'Information about the current App Template installation')">
+			:title="t('app-template', 'Version information')"
+			:description="t('app-template', 'Information about the current App template installation')">
 			<template #footer>
 				<div class="cn-support-info">
 					<h4>{{ t('app-template', 'Support') }}</h4>
