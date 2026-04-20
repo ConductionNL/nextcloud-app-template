@@ -53,17 +53,30 @@
 				:label="t('app-template', 'Description')"
 				:value.sync="form.description" />
 		</div>
+
+		<!--
+			ADR-004: use NcDialog for confirmations, NEVER window.confirm() / window.alert().
+			NcDialog is keyboard-navigable, WCAG AA, and themed via NL Design tokens.
+		-->
+		<NcDialog
+			v-if="deleteDialogOpen"
+			:name="t('app-template', 'Delete item')"
+			:message="t('app-template', 'Are you sure you want to delete this item?')"
+			@closing="deleteDialogOpen = false"
+			@button-click="onDeleteConfirm"
+			:buttons="deleteDialogButtons" />
 	</CnDetailPage>
 </template>
 
 <script>
-import { CnDetailPage, CnObjectDataWidget } from '@conduction/nextcloud-vue'
-import { NcButton, NcTextField } from '@nextcloud/vue'
+// ADR-004: @conduction/nextcloud-vue re-exports NC components — use it as the
+// single source so NC and Cn component versions stay in sync.
+import { CnDetailPage, CnObjectDataWidget, NcButton, NcDialog, NcTextField } from '@conduction/nextcloud-vue'
 import { useObjectStore } from '../../store/modules/object.js'
 
 export default {
 	name: 'ItemDetail',
-	components: { CnDetailPage, CnObjectDataWidget, NcButton, NcTextField },
+	components: { CnDetailPage, CnObjectDataWidget, NcButton, NcDialog, NcTextField },
 
 	props: {
 		itemId: {
@@ -75,6 +88,7 @@ export default {
 	data() {
 		return {
 			saving: false,
+			deleteDialogOpen: false,
 			form: { title: '', description: '' },
 		}
 	},
@@ -102,6 +116,12 @@ export default {
 				schema: config.schema || '',
 			}
 		},
+		deleteDialogButtons() {
+			return [
+				{ label: this.t('app-template', 'Cancel'), type: 'secondary' },
+				{ label: this.t('app-template', 'Delete'), type: 'error' },
+			]
+		},
 	},
 
 	async mounted() {
@@ -113,6 +133,7 @@ export default {
 	methods: {
 		async save() {
 			this.saving = true
+			// ADR-004 / ADR-015: wrap every `await store.action()` in try/catch with user feedback.
 			try {
 				const data = this.isNew
 					? this.form
@@ -121,16 +142,29 @@ export default {
 				if (this.isNew && result?.id) {
 					this.$router.replace({ name: 'ItemDetail', params: { id: result.id } })
 				}
+			} catch (error) {
+				console.error('Save failed:', error)
 			} finally {
 				this.saving = false
 			}
 		},
 
-		async confirmDelete() {
-			if (!confirm(this.t('app-template', 'Are you sure you want to delete this item?'))) return
-			const success = await this.objectStore.deleteObject('item', this.itemId)
-			if (success) {
-				this.$router.push({ name: 'Items' })
+		confirmDelete() {
+			// ADR-004: open NcDialog instead of window.confirm().
+			this.deleteDialogOpen = true
+		},
+
+		async onDeleteConfirm(button) {
+			this.deleteDialogOpen = false
+			// NcDialog fires button-click for every button — only proceed on the "Delete" label.
+			if (!button || button.type !== 'error') return
+			try {
+				const success = await this.objectStore.deleteObject('item', this.itemId)
+				if (success) {
+					this.$router.push({ name: 'Items' })
+				}
+			} catch (error) {
+				console.error('Delete failed:', error)
 			}
 		},
 

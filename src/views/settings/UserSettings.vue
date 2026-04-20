@@ -22,7 +22,8 @@
 </template>
 
 <script>
-import { NcAppSettingsDialog, NcAppSettingsSection, NcEmptyContent } from '@nextcloud/vue'
+// ADR-004: NC components come from @conduction/nextcloud-vue.
+import { NcAppSettingsDialog, NcAppSettingsSection, NcEmptyContent } from '@conduction/nextcloud-vue'
 import CogIcon from 'vue-material-design-icons/Cog.vue'
 
 export default {

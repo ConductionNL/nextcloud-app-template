@@ -18,6 +18,10 @@
  * @version GIT: <git-id>
  *
  * @link https://conduction.nl
+ *
+ * @spec openspec/changes/example-change/tasks.md#task-3
+ *   (Illustrative file-level @spec tag per ADR-003 — every PHP class must
+ *   link back to the OpenSpec change that created or last modified it.)
  */
 
 declare(strict_types=1);
@@ -58,6 +62,8 @@ class SettingsService
      * @param LoggerInterface    $logger       The logger
      *
      * @return void
+     *
+     * @spec openspec/changes/example-change/tasks.md#task-3
      */
     public function __construct(
         private IAppConfig $appConfig,
@@ -73,6 +79,8 @@ class SettingsService
      * Check whether OpenRegister is installed and available.
      *
      * @return bool
+     *
+     * @spec openspec/changes/example-change/tasks.md#task-3
      */
     public function isOpenRegisterAvailable(): bool
     {
@@ -86,6 +94,8 @@ class SettingsService
      * fields (openregisters, isAdmin) consumed by the frontend.
      *
      * @return array<string,mixed>
+     *
+     * @spec openspec/changes/example-change/tasks.md#task-3
      */
     public function getSettings(): array
     {
@@ -112,6 +122,8 @@ class SettingsService
      * @param array<string,mixed> $data The data to update
      *
      * @return array<string,mixed> The updated settings
+     *
+     * @spec openspec/changes/example-change/tasks.md#task-3
      */
     public function updateSettings(array $data): array
     {
@@ -130,6 +142,8 @@ class SettingsService
      * @param bool $force Force re-import even if already configured.
      *
      * @return array<string,mixed> Result with success flag, message, and version.
+     *
+     * @spec openspec/changes/example-change/tasks.md#task-3
      */
     public function loadConfiguration(bool $force=false): array
     {
@@ -159,13 +173,14 @@ class SettingsService
                 'message' => 'Import returned an empty result.',
             ];
         } catch (\Throwable $e) {
+            // ADR-005: log the real error server-side, return a static generic message to clients.
             $this->logger->error(
                 'AppTemplate: configuration import failed',
-                ['exception' => $e->getMessage()]
+                ['exception' => $e]
             );
             return [
                 'success' => false,
-                'message' => $e->getMessage(),
+                'message' => 'Configuration import failed.',
             ];
         }//end try
     }//end loadConfiguration()

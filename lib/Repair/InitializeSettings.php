@@ -18,6 +18,9 @@
  * @version GIT: <git-id>
  *
  * @link https://conduction.nl
+ *
+ * @spec openspec/changes/example-change/tasks.md#task-5
+ *   (Illustrative file-level @spec tag per ADR-003.)
  */
 
 declare(strict_types=1);
@@ -41,6 +44,8 @@ class InitializeSettings implements IRepairStep
      * @param LoggerInterface $logger          The logger interface
      *
      * @return void
+     *
+     * @spec openspec/changes/example-change/tasks.md#task-5
      */
     public function __construct(
         private SettingsService $settingsService,
@@ -52,6 +57,8 @@ class InitializeSettings implements IRepairStep
      * Get the name of this repair step.
      *
      * @return string
+     *
+     * @spec openspec/changes/example-change/tasks.md#task-5
      */
     public function getName(): string
     {
@@ -64,6 +71,8 @@ class InitializeSettings implements IRepairStep
      * @param IOutput $output The output interface for progress reporting
      *
      * @return void
+     *
+     * @spec openspec/changes/example-change/tasks.md#task-5
      */
     public function run(IOutput $output): void
     {

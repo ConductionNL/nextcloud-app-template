@@ -62,8 +62,17 @@
 
 <script>
 import Vue from 'vue'
-import { NcButton, NcContent, NcAppContent, NcEmptyContent, NcLoadingIcon } from '@nextcloud/vue'
-import { CnIndexSidebar, CnObjectSidebar } from '@conduction/nextcloud-vue'
+// ADR-004: import NC + Cn components from @conduction/nextcloud-vue ONLY.
+// It re-exports every @nextcloud/vue component plus the Conduction extensions.
+import {
+	NcButton,
+	NcContent,
+	NcAppContent,
+	NcEmptyContent,
+	NcLoadingIcon,
+	CnIndexSidebar,
+	CnObjectSidebar,
+} from '@conduction/nextcloud-vue'
 import { generateUrl, imagePath } from '@nextcloud/router'
 import { initializeStores } from './store/store.js'
 import { useSettingsStore } from './store/modules/settings.js'

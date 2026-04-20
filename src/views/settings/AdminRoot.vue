@@ -34,6 +34,10 @@ export default {
 	data() {
 		return {
 			storesReady: false,
+			// ADR-004 says "never read app state from DOM". This is a narrow exception:
+			// `appVersion` is a one-time boot parameter emitted by the PHP admin template
+			// (not user-mutable state), following Nextcloud's idiomatic settings-page
+			// bootstrap pattern. For any domain data, fetch via the store / backend API.
 			appVersion: document.getElementById('app-template-settings')?.dataset?.version || 'Unknown',
 		}
 	},

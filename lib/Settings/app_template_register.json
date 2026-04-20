@@ -37,6 +37,35 @@
           }
         }
       }
+    },
+    "objects": {
+      "example-gemeente-utrecht": {
+        "@self": {
+          "register": "app-template",
+          "schema": "example",
+          "slug": "example-gemeente-utrecht"
+        },
+        "title": "Gemeente Utrecht pilot",
+        "description": "Seed example — realistic pilot project for a Dutch municipality. Per ADR-001, every app MUST include 3-5 realistic objects per schema so the app is immediately demonstrable after install."
+      },
+      "example-conduction-consultancy": {
+        "@self": {
+          "register": "app-template",
+          "schema": "example",
+          "slug": "example-conduction-consultancy"
+        },
+        "title": "Conduction consultancy engagement",
+        "description": "Seed example — consultancy engagement covering architecture review and ADR authoring. Values are fictional but realistic."
+      },
+      "example-travel-agency": {
+        "@self": {
+          "register": "app-template",
+          "schema": "example",
+          "slug": "example-travel-agency"
+        },
+        "title": "Nieuw Horizon travel agency onboarding",
+        "description": "Seed example — third organisation type to demonstrate variety. Re-importing is idempotent: ImportHandler matches by slug."
+      }
     }
   }
 }
