@@ -5,6 +5,9 @@
  *
  * Defines the AppTemplate section in the Nextcloud admin settings.
  *
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ * SPDX-License-Identifier: EUPL-1.2
+ *
  * @category Sections
  * @package  OCA\AppTemplate\Sections
  *
@@ -17,8 +20,6 @@
  * @link https://conduction.nl
  */
 
-// SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>.
-// SPDX-License-Identifier: EUPL-1.2.
 declare(strict_types=1);
 
 namespace OCA\AppTemplate\Sections;

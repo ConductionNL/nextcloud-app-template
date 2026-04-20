@@ -5,6 +5,9 @@
  *
  * Main application class for the AppTemplate Nextcloud app.
  *
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ * SPDX-License-Identifier: EUPL-1.2
+ *
  * @category AppInfo
  * @package  OCA\AppTemplate\AppInfo
  *
@@ -22,8 +25,6 @@
  *   also carry their own @spec tag.)
  */
 
-// SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>.
-// SPDX-License-Identifier: EUPL-1.2.
 declare(strict_types=1);
 
 namespace OCA\AppTemplate\AppInfo;

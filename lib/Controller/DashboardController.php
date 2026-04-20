@@ -5,6 +5,9 @@
  *
  * Controller for the main AppTemplate dashboard page.
  *
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ * SPDX-License-Identifier: EUPL-1.2
+ *
  * @category Controller
  * @package  OCA\AppTemplate\Controller
  *
@@ -17,8 +20,6 @@
  * @link https://conduction.nl
  */
 
-// SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>.
-// SPDX-License-Identifier: EUPL-1.2.
 declare(strict_types=1);
 
 namespace OCA\AppTemplate\Controller;
