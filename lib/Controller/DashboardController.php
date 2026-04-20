@@ -5,9 +5,6 @@
  *
  * Controller for the main AppTemplate dashboard page.
  *
- * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
- * SPDX-License-Identifier: EUPL-1.2
- *
  * @category Controller
  * @package  OCA\AppTemplate\Controller
  *
@@ -18,6 +15,10 @@
  * @version GIT: <git-id>
  *
  * @link https://conduction.nl
+ *
+ * @spec openspec/changes/example-change/tasks.md#task-1
+ *   (Illustrative file-level @spec tag per ADR-003 — every PHP class must
+ *   link back to the OpenSpec change that created or last modified it.)
  */
 
 declare(strict_types=1);
@@ -40,6 +41,8 @@ class DashboardController extends Controller
      * @param IRequest $request The request object
      *
      * @return void
+     *
+     * @spec openspec/changes/example-change/tasks.md#task-1
      */
     public function __construct(IRequest $request)
     {
@@ -53,6 +56,8 @@ class DashboardController extends Controller
      * @NoCSRFRequired
      *
      * @return TemplateResponse
+     *
+     * @spec openspec/changes/example-change/tasks.md#task-1
      */
     public function page(): TemplateResponse
     {
@@ -66,6 +71,8 @@ class DashboardController extends Controller
      * @NoCSRFRequired
      *
      * @return TemplateResponse
+     *
+     * @spec openspec/changes/example-change/tasks.md#task-1
      */
     public function catchAll(): TemplateResponse
     {

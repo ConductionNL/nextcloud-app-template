@@ -5,9 +5,6 @@
  *
  * Provides the admin settings form for the AppTemplate application.
  *
- * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
- * SPDX-License-Identifier: EUPL-1.2
- *
  * @category Settings
  * @package  OCA\AppTemplate\Settings
  *
@@ -18,6 +15,9 @@
  * @version GIT: <git-id>
  *
  * @link https://conduction.nl
+ *
+ * @spec openspec/changes/example-change/tasks.md#task-6
+ *   (Illustrative file-level @spec tag per ADR-003.)
  */
 
 declare(strict_types=1);

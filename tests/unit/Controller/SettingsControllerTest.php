@@ -3,9 +3,6 @@
 /**
  * Unit tests for SettingsController.
  *
- * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
- * SPDX-License-Identifier: EUPL-1.2
- *
  * @category Test
  * @package  OCA\AppTemplate\Tests\Unit\Controller
  *
@@ -28,6 +25,7 @@ use OCP\AppFramework\Http\JSONResponse;
 use OCP\IRequest;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * Tests for SettingsController.
@@ -57,9 +55,18 @@ class SettingsControllerTest extends TestCase
     private SettingsService&MockObject $settingsService;
 
     /**
+     * Mock LoggerInterface.
+     *
+     * @var LoggerInterface&MockObject
+     */
+    private LoggerInterface&MockObject $logger;
+
+    /**
      * Set up test fixtures.
      *
      * @return void
+     *
+     * @spec openspec/changes/example-change/tasks.md#task-12
      */
     protected function setUp(): void
     {
@@ -67,10 +74,12 @@ class SettingsControllerTest extends TestCase
 
         $this->request         = $this->createMock(IRequest::class);
         $this->settingsService = $this->createMock(SettingsService::class);
+        $this->logger          = $this->createMock(LoggerInterface::class);
 
         $this->controller = new SettingsController(
             request: $this->request,
             settingsService: $this->settingsService,
+            logger: $this->logger,
         );
 
     }//end setUp()
@@ -79,6 +88,8 @@ class SettingsControllerTest extends TestCase
      * Test that index() returns a JSONResponse containing the settings from the service.
      *
      * @return void
+     *
+     * @spec openspec/changes/example-change/tasks.md#task-12
      */
     public function testIndexReturnsJsonResponseWithSettings(): void
     {
@@ -103,6 +114,8 @@ class SettingsControllerTest extends TestCase
      * Test that create() calls updateSettings with request params and returns success.
      *
      * @return void
+     *
+     * @spec openspec/changes/example-change/tasks.md#task-12
      */
     public function testCreateCallsUpdateSettingsAndReturnsSuccess(): void
     {
@@ -130,6 +143,8 @@ class SettingsControllerTest extends TestCase
      * Test that load() returns the result of loadConfiguration.
      *
      * @return void
+     *
+     * @spec openspec/changes/example-change/tasks.md#task-12
      */
     public function testLoadReturnsConfigurationResult(): void
     {
@@ -150,4 +165,29 @@ class SettingsControllerTest extends TestCase
         self::assertTrue($result->getData()['success']);
 
     }//end testLoadReturnsConfigurationResult()
+
+    /**
+     * ADR-005 error path — when the service throws, the controller MUST return a
+     * generic 500 response without leaking the exception message to clients.
+     *
+     * @return void
+     *
+     * @spec openspec/changes/example-change/tasks.md#task-12
+     */
+    public function testIndexReturnsGenericErrorOnServiceException(): void
+    {
+        $this->settingsService->expects($this->once())
+            ->method('getSettings')
+            ->willThrowException(new \RuntimeException('db exploded — secret host info'));
+
+        $this->logger->expects($this->once())
+            ->method('error');
+
+        $result = $this->controller->index();
+
+        self::assertInstanceOf(JSONResponse::class, $result);
+        self::assertSame(500, $result->getStatus());
+        self::assertSame(['message' => 'Operation failed'], $result->getData());
+
+    }//end testIndexReturnsGenericErrorOnServiceException()
 }//end class

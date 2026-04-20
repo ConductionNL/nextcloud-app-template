@@ -5,9 +5,6 @@
  *
  * Registers AppTemplate's deep link URL patterns with OpenRegister's search provider.
  *
- * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
- * SPDX-License-Identifier: EUPL-1.2
- *
  * @category Listener
  * @package  OCA\AppTemplate\Listener
  *
@@ -18,6 +15,9 @@
  * @version GIT: <git-id>
  *
  * @link https://conduction.nl
+ *
+ * @spec openspec/changes/example-change/tasks.md#task-4
+ *   (Illustrative file-level @spec tag per ADR-003.)
  */
 
 declare(strict_types=1);
@@ -44,6 +44,8 @@ class DeepLinkRegistrationListener implements IEventListener
      * @param Event $event The event to handle
      *
      * @return void
+     *
+     * @spec openspec/changes/example-change/tasks.md#task-4
      */
     public function handle(Event $event): void
     {
@@ -51,14 +53,15 @@ class DeepLinkRegistrationListener implements IEventListener
             return;
         }
 
-        // Register example object deep links.
+        // Register Article object deep links (schema.org/Article — see ADR-011).
         // Replace 'app-template' with your app ID and update the register slug,
         // schema slug, and URL template to match your app's actual schemas.
+        // ADR-004: deep link URL MUST use path format (history mode), NOT hash format.
         $event->register(
             appId: 'app-template',
             registerSlug: 'app-template',
-            schemaSlug: 'example',
-            urlTemplate: '/apps/app-template/#/examples/{uuid}'
+            schemaSlug: 'article',
+            urlTemplate: '/apps/app-template/items/{uuid}'
         );
 
     }//end handle()

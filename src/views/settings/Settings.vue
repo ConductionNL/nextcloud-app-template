@@ -28,8 +28,8 @@
 </template>
 
 <script>
-import { NcButton } from '@nextcloud/vue'
-import { CnSettingsSection } from '@conduction/nextcloud-vue'
+// ADR-004: @conduction/nextcloud-vue re-exports NC components alongside Cn ones.
+import { NcButton, CnSettingsSection } from '@conduction/nextcloud-vue'
 import { useSettingsStore } from '../../store/modules/settings.js'
 
 export default {
@@ -56,11 +56,18 @@ export default {
 			this.saving = true
 			this.successMessage = ''
 			const settingsStore = useSettingsStore()
-			const result = await settingsStore.saveSettings(this.form)
-			if (result) {
-				this.successMessage = t('app-template', 'Settings saved successfully')
+			// ADR-004: every `await store.action()` MUST be wrapped in try/catch with user feedback.
+			try {
+				const result = await settingsStore.saveSettings(this.form)
+				if (result) {
+					this.successMessage = this.t('app-template', 'Settings saved successfully')
+				}
+			} catch (error) {
+				console.error('Settings save failed:', error)
+				this.successMessage = this.t('app-template', 'Saving settings failed')
+			} finally {
+				this.saving = false
 			}
-			this.saving = false
 		},
 	},
 }

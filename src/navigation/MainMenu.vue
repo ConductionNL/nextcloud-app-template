@@ -40,7 +40,8 @@
 </template>
 
 <script>
-import { NcAppNavigation, NcAppNavigationItem, NcAppNavigationSettings } from '@nextcloud/vue'
+// ADR-004: import NC components from @conduction/nextcloud-vue, never @nextcloud/vue directly.
+import { NcAppNavigation, NcAppNavigationItem, NcAppNavigationSettings } from '@conduction/nextcloud-vue'
 import BookOpenVariantOutline from 'vue-material-design-icons/BookOpenVariantOutline.vue'
 import CogIcon from 'vue-material-design-icons/Cog.vue'
 import FormatListBulletedIcon from 'vue-material-design-icons/FormatListBulleted.vue'

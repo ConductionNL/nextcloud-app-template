@@ -14,28 +14,83 @@
   "paths": {},
   "components": {
     "schemas": {
-      "example": {
-        "slug": "example",
+      "article": {
+        "slug": "article",
         "icon": "FileDocumentOutline",
         "version": "0.1.0",
-        "title": "Example",
-        "description": "Example schema — replace with your app's actual schemas.",
+        "title": "Article",
+        "description": "schema.org/Article — a written composition published in print or digital form. Aligned with https://schema.org/Article per ADR-011: use schema.org vocabulary instead of ad-hoc domain types whenever a standard type fits.",
         "type": "object",
+        "x-schema-org": "https://schema.org/Article",
         "required": [
-          "title"
+          "name"
         ],
         "properties": {
-          "title": {
+          "name": {
             "type": "string",
-            "description": "The title of the example object",
-            "example": "My example"
+            "description": "The name/headline of the article (schema.org/name).",
+            "example": "Getting started with the app template"
           },
           "description": {
             "type": "string",
-            "description": "An optional description",
-            "example": "This is an example"
+            "description": "A short description of the article (schema.org/description).",
+            "example": "A worked example showing how to replace this schema with your own."
+          },
+          "identifier": {
+            "type": "string",
+            "description": "An external identifier for the article — ISBN, DOI, URI, etc. (schema.org/identifier).",
+            "example": "doi:10.1000/example"
+          },
+          "dateCreated": {
+            "type": "string",
+            "format": "date",
+            "description": "The date the article was created (schema.org/dateCreated).",
+            "example": "2026-04-20"
+          },
+          "author": {
+            "type": "string",
+            "description": "The author of the article (schema.org/author). Kept as a string for template simplicity; nest a Person object in real apps.",
+            "example": "Conduction B.V."
           }
         }
+      }
+    },
+    "objects": {
+      "article-gemeente-utrecht": {
+        "@self": {
+          "register": "app-template",
+          "schema": "article",
+          "slug": "article-gemeente-utrecht"
+        },
+        "name": "Gemeente Utrecht pilot",
+        "description": "Seed article describing a realistic pilot project for a Dutch municipality. Per ADR-001 every app MUST include 3-5 realistic objects per schema so the app is immediately demonstrable after install.",
+        "identifier": "pilot-2026-utrecht",
+        "dateCreated": "2026-03-15",
+        "author": "Conduction B.V."
+      },
+      "article-conduction-consultancy": {
+        "@self": {
+          "register": "app-template",
+          "schema": "article",
+          "slug": "article-conduction-consultancy"
+        },
+        "name": "Conduction consultancy engagement",
+        "description": "Seed article covering architecture review and ADR authoring for a consultancy engagement. Values are fictional but realistic.",
+        "identifier": "engagement-2026-consultancy",
+        "dateCreated": "2026-03-22",
+        "author": "Conduction B.V."
+      },
+      "article-travel-agency": {
+        "@self": {
+          "register": "app-template",
+          "schema": "article",
+          "slug": "article-travel-agency"
+        },
+        "name": "Nieuw Horizon travel agency onboarding",
+        "description": "Third seed article demonstrating variety of content. Re-importing is idempotent: ImportHandler matches by slug.",
+        "identifier": "onboarding-2026-nieuwhorizon",
+        "dateCreated": "2026-04-01",
+        "author": "Conduction B.V."
       }
     }
   }
