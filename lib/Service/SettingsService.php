@@ -5,9 +5,6 @@
  *
  * Service for managing AppTemplate application configuration and settings.
  *
- * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
- * SPDX-License-Identifier: EUPL-1.2
- *
  * @category Service
  * @package  OCA\AppTemplate\Service
  *

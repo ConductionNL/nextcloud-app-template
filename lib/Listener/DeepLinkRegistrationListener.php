@@ -5,9 +5,6 @@
  *
  * Registers AppTemplate's deep link URL patterns with OpenRegister's search provider.
  *
- * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
- * SPDX-License-Identifier: EUPL-1.2
- *
  * @category Listener
  * @package  OCA\AppTemplate\Listener
  *

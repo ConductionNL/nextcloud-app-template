@@ -10,9 +10,6 @@
  * Public endpoints that need CORS (health check) register an explicit OPTIONS
  * route per ADR-002.
  *
- * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
- * SPDX-License-Identifier: EUPL-1.2
- *
  * @spec openspec/changes/example-change/tasks.md#task-10
  */
 
