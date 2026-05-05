@@ -64,6 +64,7 @@ app-template/
 ├── lib/                        # PHP backend
 │   ├── AppInfo/Application.php
 │   ├── Controller/             # DashboardController, SettingsController
+│   ├── Dashboard/              # Nextcloud Dashboard widget classes (ExampleWidget)
 │   ├── Service/SettingsService.php
 │   ├── Listener/DeepLinkRegistrationListener.php
 │   ├── Repair/InitializeSettings.php
@@ -71,11 +72,13 @@ app-template/
 ├── templates/                  # PHP templates (SPA shells)
 ├── src/                        # Vue 2 frontend
 │   ├── main.js                 # App entry point
+│   ├── exampleWidget.js        # Sample Nextcloud Dashboard widget entry-point
 │   ├── App.vue                 # Root component
 │   ├── navigation/MainMenu.vue # App navigation sidebar
 │   ├── router/                 # Vue Router
 │   ├── store/                  # Pinia stores
-│   └── views/                  # Route-level views + UserSettings.vue
+│   ├── views/                  # Route-level views + UserSettings.vue
+│   └── views/widgets/          # Dashboard widget Vue components (ExampleWidget.vue)
 ├── openspec/                   # Specifications, decisions, and roadmap
 │   ├── app-config.json         # Canonical app config (id, goal, dependencies, CI)
 │   ├── config.yaml             # OpenSpec CLI configuration
@@ -134,6 +137,31 @@ npm install
 npm run dev        # Watch mode
 npm run build      # Production build
 ```
+
+### Adding a dashboard widget
+
+The template ships with a working `ExampleWidget` you can copy. Each widget is
+**three files plus two registration points**:
+
+1. `lib/Dashboard/<Foo>Widget.php` — implements `OCP\Dashboard\IWidget`. The
+   `load()` method MUST attach the two shared chunks (`-shared-vendor`,
+   `-shared-nc-vue`) **before** the per-widget bundle. Order matters; see
+   `ExampleWidget.php` for the reference.
+2. `src/<foo>Widget.js` — webpack entry-point that registers the renderer via
+   `OCA.Dashboard.register('<id>', (el, { widget }) => { ... })`. The id MUST
+   equal `Widget::getId()` from PHP.
+3. `src/views/widgets/<Foo>Widget.vue` — the renderer itself. Wrap in
+   `<NcDashboardWidget>` for free loading + empty states.
+4. Register in `lib/AppInfo/Application.php`: add
+   `$context->registerDashboardWidget(<Foo>Widget::class);`.
+5. Add a webpack entry in `webpack.config.js` so `npm run build` produces
+   `<appId>-<foo>Widget.js`.
+
+The `optimization.splitChunks` block in `webpack.config.js` extracts shared
+framework code (Vue, `@nextcloud/vue`, pinia, icons) into two chunks loaded
+once across the page. Without it every widget bundle would inline ~3 MB of
+duplicated framework code per entry-point. See ADR-004 (Build / bundling)
+in the hydra repo for the full rationale.
 
 ### Code quality
 
