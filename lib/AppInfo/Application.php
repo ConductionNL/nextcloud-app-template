@@ -21,6 +21,7 @@ declare(strict_types=1);
 
 namespace OCA\AppTemplate\AppInfo;
 
+use OCA\AppTemplate\Dashboard\ExampleWidget;
 use OCA\AppTemplate\Listener\DeepLinkRegistrationListener;
 use OCA\AppTemplate\Repair\InitializeSettings;
 use OCA\OpenRegister\Event\DeepLinkRegistrationEvent;
@@ -66,6 +67,11 @@ class Application extends App implements IBootstrap
 
         // Initialize register and schemas on install/upgrade.
         $context->registerRepairStep(InitializeSettings::class);
+
+        // Sample dashboard widget — see lib/Dashboard/ExampleWidget.php.
+        // Delete this line and the ExampleWidget files if your app has no
+        // dashboard widgets.
+        $context->registerDashboardWidget(ExampleWidget::class);
 
     }//end register()
 
