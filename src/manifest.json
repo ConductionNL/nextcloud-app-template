@@ -1,0 +1,96 @@
+{
+	"$schema": "https://raw.githubusercontent.com/ConductionNL/nextcloud-vue/main/src/schemas/app-manifest.schema.json",
+	"version": "0.1.0",
+	"dependencies": ["openregister"],
+	"menu": [
+		{ "id": "Dashboard", "label": "Dashboard", "icon": "icon-category-dashboard", "route": "Dashboard", "order": 10 },
+		{ "id": "Items", "label": "Items", "icon": "icon-files", "route": "Items", "order": 20 },
+		{ "id": "Documentation", "label": "Documentation", "icon": "icon-info", "href": "https://github.com/ConductionNL/nextcloud-app-template", "section": "settings", "order": 90 },
+		{ "id": "SettingsMenu", "label": "Settings", "icon": "icon-settings", "route": "Settings", "section": "settings", "order": 99 }
+	],
+	"pages": [
+		{
+			"id": "Dashboard",
+			"route": "/",
+			"type": "dashboard",
+			"title": "Dashboard",
+			"config": {
+				"widgets": [
+					{
+						"id": "open-items",
+						"type": "stats-block",
+						"title": "Open items",
+						"iconClass": "icon-files",
+						"props": {
+							"register": "app-template",
+							"schema": "item",
+							"countLabel": "items",
+							"variant": "primary"
+						}
+					}
+				],
+				"layout": [
+					{ "id": "open-items-layout", "widgetId": "open-items", "gridX": 0, "gridY": 0, "gridWidth": 3, "gridHeight": 1 }
+				]
+			}
+		},
+		{
+			"id": "Items",
+			"route": "/items",
+			"type": "index",
+			"title": "Items",
+			"config": {
+				"register": "app-template",
+				"schema": "item",
+				"columns": ["title", "status", "updatedAt"],
+				"sidebar": {
+					"enabled": true,
+					"showMetadata": true
+				}
+			}
+		},
+		{
+			"id": "ItemDetail",
+			"route": "/items/:id",
+			"type": "detail",
+			"title": "Item",
+			"config": {
+				"register": "app-template",
+				"schema": "item",
+				"sidebar": true,
+				"sidebarProps": {
+					"tabs": [
+						{ "id": "data", "label": "Data", "icon": "Information", "widgets": [{ "type": "data" }] },
+						{ "id": "audit", "label": "Audit", "icon": "History", "widgets": [{ "type": "audit-trail" }] }
+					]
+				}
+			}
+		},
+		{
+			"id": "Settings",
+			"route": "/settings",
+			"type": "settings",
+			"title": "Settings",
+			"config": {
+				"saveEndpoint": "/index.php/apps/app-template/api/settings",
+				"sections": [
+					{
+						"title": "Version",
+						"widgets": [
+							{
+								"type": "version-info",
+								"props": {
+									"appName": "App Template",
+									"showUpdateButton": false,
+									"isUpToDate": true,
+									"title": "Version Information",
+									"description": "Information about the current installation."
+								}
+							}
+						]
+					}
+				]
+			}
+		}
+	]
+}
