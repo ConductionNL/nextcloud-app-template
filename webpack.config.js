@@ -50,6 +50,12 @@ webpackConfig.resolve.alias = {
 	pinia$: path.resolve(__dirname, 'node_modules/pinia'),
 	'@nextcloud/vue$': path.resolve(__dirname, 'node_modules/@nextcloud/vue'),
 	'@nextcloud/dialogs': path.resolve(__dirname, 'node_modules/@nextcloud/dialogs'),
+	// Force the lib's transitive @nextcloud/axios import to resolve to
+	// the app's installed copy. Without the `$` exact-match suffix,
+	// webpack would walk up to the lib's own node_modules and load a
+	// second axios instance, breaking shared interceptors / CSRF tokens.
+	// Decidesk reference: commit ed34703c.
+	'@nextcloud/axios$': path.resolve(__dirname, 'node_modules/@nextcloud/axios'),
 }
 
 // Add SCSS rule to the existing module rules

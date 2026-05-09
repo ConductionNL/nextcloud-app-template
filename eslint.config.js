@@ -42,4 +42,13 @@ module.exports = defineConfig([{
 		'import/no-named-as-default': 'off', // disable named-as-default checking to avoid parser requirement
 		'import/no-named-as-default-member': 'off', // disable named-as-default-member checking to avoid parser requirement
 	},
+}, {
+	// Node-side CLI tools (build / validate scripts) legitimately use
+	// console + process.exit and ship as plain JS (no shebang).
+	files: ['tests/validate-manifest.js'],
+	rules: {
+		'no-console': 'off',
+		'n/no-process-exit': 'off',
+		'n/shebang': 'off',
+	},
 }])
