@@ -18,7 +18,9 @@
 
 A starting point for building Nextcloud apps following ConductionNL conventions.
 
-> **Pre-wired for [OpenRegister](https://github.com/ConductionNL/openregister)** — all data is stored as OpenRegister objects. If your app needs OpenRegister, install it first. If not, remove the dependency from `appinfo/info.xml` and `openspec/app-config.json`.
+> **Manifest-first** — pages, navigation, and dependencies are declared in `src/manifest.json`. The shell (CnAppRoot) reads the manifest at boot and renders index / detail / dashboard / settings pages without per-page Vue files. Reach for a custom Vue component only when the page is `type: "custom"`. See `openspec/architecture/` and hydra ADR-024 for the architectural rationale.
+
+> **Pre-wired for [OpenRegister](https://github.com/ConductionNL/openregister)** — `manifest.dependencies` lists `openregister`, so CnAppRoot's dependency-check phase ensures the OR app is installed and enabled before the UI mounts. If your app does not need OpenRegister, remove the entry from `src/manifest.json`, `appinfo/info.xml`, and `openspec/app-config.json`.
 
 ## Screenshots
 
@@ -71,13 +73,14 @@ app-template/
 │   └── Settings/               # AdminSettings, app_template_register.json
 ├── templates/                  # PHP templates (SPA shells)
 ├── src/                        # Vue 2 frontend
-│   ├── main.js                 # App entry point
+│   ├── manifest.json           # Pages + menu + dependencies (the source of truth)
+│   ├── main.js                 # App entry — bootstraps CnAppRoot from manifest
+│   ├── App.vue                 # Mounts CnAppRoot + #sidebar slot
+│   ├── customComponents.js     # Registry for `type: "custom"` pages (escape hatch)
 │   ├── exampleWidget.js        # Sample Nextcloud Dashboard widget entry-point
-│   ├── App.vue                 # Root component
-│   ├── navigation/MainMenu.vue # App navigation sidebar
-│   ├── router/                 # Vue Router
-│   ├── store/                  # Pinia stores
-│   ├── views/                  # Route-level views + UserSettings.vue
+│   ├── settings.js             # Nextcloud admin settings webpack entry-point
+│   ├── store/                  # Pinia stores (used by AdminSettings)
+│   ├── views/CustomExample.vue # Example custom component (registry demo)
 │   └── views/widgets/          # Dashboard widget Vue components (ExampleWidget.vue)
 ├── openspec/                   # Specifications, decisions, and roadmap
 │   ├── app-config.json         # Canonical app config (id, goal, dependencies, CI)
@@ -87,7 +90,8 @@ app-template/
 │   ├── ROADMAP.md              # Product roadmap
 │   └── changes/                # OpenSpec change directories (created on first change)
 ├── tests/                      # Unit and integration tests
-├── l10n/                       # Translations (en, nl)
+│   └── validate-manifest.js    # Ajv schema validator for src/manifest.json
+├── l10n/                       # Translations (en, en_US, nl)
 ├── .github/workflows/          # CI/CD pipelines
 ├── Makefile                    # Dev helpers (make dev-link)
 └── img/                        # App icons and screenshots
@@ -134,9 +138,48 @@ docker compose -f ../openregister/docker-compose.yml up -d
 
 ```bash
 npm install
-npm run dev        # Watch mode
-npm run build      # Production build
+npm run dev              # Watch mode
+npm run build            # Production build
+npm run check:manifest   # Validate src/manifest.json against the schema
 ```
+
+### Adding a page (manifest-first)
+
+Pages live in [`src/manifest.json`](src/manifest.json) — NOT in
+`src/views/`. To add a page, edit the manifest:
+
+1. **Add a menu entry** in `manifest.menu` (id, label, icon, route).
+2. **Add a page** in `manifest.pages` (id matches the menu's `route`).
+   Pick the `type`:
+
+   | Type        | Use when                                                    |
+   |-------------|-------------------------------------------------------------|
+   | `dashboard` | Home / overview with KPI widgets                            |
+   | `index`     | Schema-backed list view (CnDataTable + sidebar)             |
+   | `detail`    | Single-object view at `/things/:id`                         |
+   | `settings`  | Admin/user settings with `version-info` / `register-mapping`|
+   | `logs`      | Tail-style audit log view                                   |
+   | `chat`      | Conversation thread page                                    |
+   | `files`     | Folder browser                                              |
+   | `custom`    | Bespoke Vue component (last resort)                         |
+
+3. **Run `npm run check:manifest`** to verify the manifest validates.
+
+You only write a Vue file when the page is `type: "custom"`. In that
+case, drop the component into `src/views/`, register it in
+[`src/customComponents.js`](src/customComponents.js), and reference
+its registry name in the manifest entry's `component` field. See
+[`src/views/CustomExample.vue`](src/views/CustomExample.vue) for the
+canonical example.
+
+### Renaming the app
+
+Search-and-replace `app-template` (the `<id>` from `appinfo/info.xml`)
+in: `appinfo/info.xml`, `package.json`, `openspec/app-config.json`,
+`src/main.js` (the `app-id` prop, the `loadTranslations` arg, and the
+`generateUrl` base path), `src/App.vue` (the `app-id` prop and
+`translateForApp` argument), and `webpack.config.js` (the `appId`
+constant). The manifest itself does not carry the app id.
 
 ### Adding a dashboard widget
 
