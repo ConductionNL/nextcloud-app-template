@@ -11,6 +11,10 @@
  renderer pattern (hydra ADR-024). New apps cloning this template
  inherit the pattern unchanged.
 
+ The Settings menu entry uses action: "user-settings" → opens
+ NcAppSettingsDialog via CnAppRoot's cnOpenUserSettings inject.
+ Feed your settings sections into the #user-settings slot below.
+
  @spec openspec/changes/template-manifest-v1/specs/template-manifest-v1/spec.md
 -->
 <template>
@@ -35,12 +39,28 @@
 				:open="objectSidebarState.open"
 				@update:open="objectSidebarState.open = $event" />
 		</template>
+		<!--
+		  user-settings slot: NcAppSettingsSection children rendered inside
+		  CnAppRoot's hosted NcAppSettingsDialog. CnAppNav opens it when the
+		  user clicks the manifest menu entry with action: "user-settings".
+		  Replace the placeholder section with your app's actual settings.
+		-->
+		<template #user-settings>
+			<NcAppSettingsSection
+				id="general"
+				:name="t('app-template', 'General')">
+				<p class="app-root__settings-hint">
+					{{ t('app-template', 'Add your settings fields here. See src/views/AdminRoot.vue for the pre-boot admin panel.') }}
+				</p>
+			</NcAppSettingsSection>
+		</template>
 	</CnAppRoot>
 </template>
 
 <script>
 import Vue from 'vue'
 import { translate as ncT } from '@nextcloud/l10n'
+import { NcAppSettingsSection } from '@nextcloud/vue'
 import { CnAppRoot, CnObjectSidebar } from '@conduction/nextcloud-vue'
 
 export default {
@@ -49,6 +69,7 @@ export default {
 	components: {
 		CnAppRoot,
 		CnObjectSidebar,
+		NcAppSettingsSection,
 	},
 
 	provide() {
