@@ -67,6 +67,7 @@ app-template/
 │   ├── AppInfo/Application.php
 │   ├── Controller/             # DashboardController, SettingsController
 │   ├── Dashboard/              # Nextcloud Dashboard widget classes (ExampleWidget)
+│   ├── Mcp/ExampleToolProvider.php  # AI Chat Companion tools (hydra ADR-034/035)
 │   ├── Service/SettingsService.php
 │   ├── Listener/DeepLinkRegistrationListener.php
 │   ├── Repair/InitializeSettings.php
@@ -212,6 +213,42 @@ framework code (Vue, `@nextcloud/vue`, pinia, icons) into two chunks loaded
 once across the page. Without it every widget bundle would inline ~3 MB of
 duplicated framework code per entry-point. See ADR-004 (Build / bundling)
 in the hydra repo for the full rationale.
+
+### AI Chat Companion / MCP tools
+
+The template ships an example **MCP tool provider** so the in-app AI Chat
+Companion (a floating assistant rendered by `CnAppRoot` from
+`@conduction/nextcloud-vue`) can call your app's capabilities. See:
+
+- `lib/Mcp/ExampleToolProvider.php` — the heavily-commented starting point. It
+  implements `OCA\OpenRegister\Mcp\IMcpToolProvider` and exposes two trivial
+  tools: `app-template.ping` (echoes a message) and `app-template.describeApp`
+  (returns the app id, version, and name).
+- `lib/AppInfo/Application.php` — registers the provider under the service
+  alias `OCA\OpenRegister\Mcp\IMcpToolProvider::{appId}`; OpenRegister's
+  `McpToolsService` discovers per-app providers by exactly that alias.
+- `tests/Stubs/Mcp/IMcpToolProvider.php` — a stand-in for the interface until
+  [openregister PR #1466](https://github.com/ConductionNL/openregister/pull/1466)
+  merges; once the openregister app is installed alongside your app the real
+  interface takes over transparently.
+- `tests/Unit/Mcp/ExampleToolProviderTest.php` — the contract test.
+
+**To wire up your app:**
+
+1. Rename `ExampleToolProvider` → `{YourApp}ToolProvider` (update the alias in
+   `Application.php` and the test).
+2. Replace the two example tools with real ones — each descriptor needs
+   `id` (`{appId}.{toolName}`), `name`, `description`, and an `inputSchema`
+   (JSON Schema object).
+3. In `invokeTool()`, **run per-object authorisation before any business logic
+   or data access** — validate args, then authorise, then delegate, then
+   return. `invokeTool()` MUST NOT throw — every failure path returns a
+   structured `['error' => ['code' => ..., 'message' => ...]]` array.
+
+References: hydra
+[ADR-034 (AI Chat Companion)](https://github.com/ConductionNL/hydra/blob/development/openspec/architecture/adr-034-ai-chat-companion.md)
+and ADR-035; and decidesk's `OCA\Decidesk\Mcp\DecideskToolProvider` as the
+production example (five real tools, deep links, source descriptors).
 
 ### Code quality
 

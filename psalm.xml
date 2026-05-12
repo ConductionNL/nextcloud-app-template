@@ -63,6 +63,7 @@
                 <referencedClass name="OCA\OpenRegister\Event\DeepLinkRegistrationEvent"/>
                 <referencedClass name="OCA\OpenRegister\Service\ObjectService"/>
                 <referencedClass name="OCA\OpenRegister\Service\ConfigurationService"/>
+                <referencedClass name="OCA\OpenRegister\Mcp\IMcpToolProvider"/>
                 <!-- Nextcloud server internals -->
                 <referencedClass name="OC"/>
                 <!-- GuzzleHttp (loaded via composer at runtime) -->
