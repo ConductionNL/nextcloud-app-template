@@ -23,6 +23,7 @@ namespace OCA\AppTemplate\AppInfo;
 
 use OCA\AppTemplate\Dashboard\ExampleWidget;
 use OCA\AppTemplate\Listener\DeepLinkRegistrationListener;
+use OCA\AppTemplate\Mcp\ExampleToolProvider;
 use OCA\AppTemplate\Repair\InitializeSettings;
 use OCA\OpenRegister\Event\DeepLinkRegistrationEvent;
 use OCP\AppFramework\App;
@@ -72,6 +73,14 @@ class Application extends App implements IBootstrap
         // Delete this line and the ExampleWidget files if your app has no
         // dashboard widgets.
         $context->registerDashboardWidget(ExampleWidget::class);
+
+        // AI Chat Companion (hydra ADR-034/035): expose this app's capabilities to the in-app AI
+        // by registering an IMcpToolProvider under the alias OCA\OpenRegister\Mcp\IMcpToolProvider::{appId}.
+        // OpenRegister's McpToolsService discovers providers by this alias. See lib/Mcp/ExampleToolProvider.php.
+        $context->registerServiceAlias(
+            'OCA\\OpenRegister\\Mcp\\IMcpToolProvider::'.self::APP_ID,
+            ExampleToolProvider::class
+        );
 
     }//end register()
 
