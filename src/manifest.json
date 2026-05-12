@@ -6,7 +6,7 @@
 		{ "id": "Dashboard", "label": "Dashboard", "icon": "icon-category-dashboard", "route": "Dashboard", "order": 10 },
 		{ "id": "Items", "label": "Items", "icon": "icon-files", "route": "Items", "order": 20 },
 		{ "id": "Documentation", "label": "Documentation", "icon": "icon-info", "href": "https://github.com/ConductionNL/nextcloud-app-template", "section": "settings", "order": 90 },
-		{ "id": "SettingsMenu", "label": "Settings", "icon": "icon-settings", "route": "Settings", "section": "settings", "order": 99 },
+		{ "id": "SettingsMenu", "label": "Settings", "icon": "Cog", "action": "user-settings", "order": 99 },
 		{ "id": "FeaturesRoadmapMenu", "label": "Features & roadmap", "icon": "icon-toggle", "route": "FeaturesRoadmap", "section": "settings", "order": 100 }
 	],
 	"pages": [
