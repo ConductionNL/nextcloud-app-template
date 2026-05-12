@@ -23,6 +23,13 @@
 // See: https://github.com/ConductionNL/nextcloud-vue → docs/migrating-to-manifest.md
 
 import CustomExample from './views/CustomExample.vue'
+// Features & Roadmap page — thin wrapper around the lib's
+// CnFeaturesAndRoadmapView (in-product roadmap surface powered by
+// OpenRegister's github-issue-proxy). Shipped wired-up so apps scaffolded
+// from this template inherit the Settings-section "Features & roadmap"
+// entry; change the repo fallback in views/FeaturesRoadmap.vue. See
+// ConductionNL/hydra#251.
+import FeaturesRoadmapView from './views/FeaturesRoadmap.vue'
 
 export default {
 	// Example custom component. Keep or delete when scaffolding a new
@@ -31,4 +38,8 @@ export default {
 	// cloners. Wire it up by adding a `type: "custom"` page entry to
 	// `src/manifest.json` with `"component": "CustomExample"`.
 	CustomExample,
+	// Features & Roadmap page (lib's CnFeaturesAndRoadmapView) — wired up
+	// in src/manifest.json (the `FeaturesRoadmap` custom page + the
+	// `FeaturesRoadmapMenu` settings entry).
+	FeaturesRoadmap: FeaturesRoadmapView,
 }
