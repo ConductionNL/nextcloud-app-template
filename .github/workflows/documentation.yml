@@ -2,12 +2,12 @@ name: Documentation
 
 on:
   push:
-    branches: [documentation]
+    branches: [development]
   pull_request:
-    branches: [documentation]
+    branches: [development]
 
 jobs:
   deploy:
     uses: ConductionNL/.github/.github/workflows/documentation.yml@main
     with:
-      cname: app-template.app
+      cname: app-template.conduction.nl
