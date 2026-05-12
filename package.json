@@ -14,7 +14,10 @@
     "lint-fix": "npm run lint -- --fix",
     "stylelint": "stylelint src/**/*.vue src/**/*.scss src/**/*.css",
     "stylelint-fix": "stylelint src/**/*.vue src/**/*.scss src/**/*.css --fix",
-    "check:manifest": "node tests/validate-manifest.js"
+    "check:manifest": "node tests/validate-manifest.js",
+    "check:register": "node tests/validate-register.js",
+    "check:json-strict": "node tests/validate-json-strict.js",
+    "check:specs": "npm run check:json-strict && npm run check:manifest && npm run check:register"
   },
   "browserslist": [
     "extends @nextcloud/browserslist-config"

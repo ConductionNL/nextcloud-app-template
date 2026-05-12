@@ -90,7 +90,9 @@ app-template/
 │   ├── ROADMAP.md              # Product roadmap
 │   └── changes/                # OpenSpec change directories (created on first change)
 ├── tests/                      # Unit and integration tests
-│   └── validate-manifest.js    # Ajv schema validator for src/manifest.json
+│   ├── validate-manifest.js    # Ajv schema validator for src/manifest.json (nc-vue manifest schema)
+│   ├── validate-register.js    # Structural validator for lib/Settings/*_register.json (slugs, lifecycle requires→PHP, clobber heuristic)
+│   └── validate-json-strict.js # Strict JSON parse — rejects duplicate keys + appendOnly nested in x-openregister
 ├── l10n/                       # Translations (en, en_US, nl)
 ├── .github/workflows/          # CI/CD pipelines
 ├── Makefile                    # Dev helpers (make dev-link)
@@ -140,8 +142,13 @@ docker compose -f ../openregister/docker-compose.yml up -d
 npm install
 npm run dev              # Watch mode
 npm run build            # Production build
-npm run check:manifest   # Validate src/manifest.json against the schema
+npm run check:manifest   # Validate src/manifest.json against the nc-vue manifest schema
+npm run check:register   # Validate lib/Settings/*_register.json (schema shape, slugs, lifecycle requires → PHP class exists)
+npm run check:json-strict # Strict JSON parse of the config files — fails on duplicate keys (the silent-data-loss class of bug a bad git merge produces)
+npm run check:specs      # All three of the above — run this before committing any register/manifest change
 ```
+
+> **Why `check:specs`?** `git` merges JSON files line-by-line — two branches that both add an object at the same key but at different file positions produce **no textual conflict**, just a document with a duplicate key, and `json_decode()` keeps the *last* one (so the earlier, fuller definition is silently dropped). `check:json-strict` fails CI on that. `check:register` also catches a lifecycle `requires:` pointing at a PHP class that doesn't exist, and `appendOnly` nested in `x-openregister` (which OpenRegister silently ignores). The `Spec Validation` GitHub workflow runs `check:specs` on every push/PR; add it to your branch-protection ruleset's required checks to make it block merges.
 
 ### Adding a page (manifest-first)
 
