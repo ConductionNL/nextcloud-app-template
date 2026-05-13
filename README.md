@@ -24,7 +24,13 @@ A starting point for building Nextcloud apps following ConductionNL conventions.
 
 ## Screenshots
 
-_Add screenshots here once the app has a UI._
+Screenshots are captured automatically from the tutorial flows, not pasted in by hand. The journeydoc scaffold (hydra ADR-030) ships two tutorial stories under [`docs/tutorials/`](docs/tutorials/) — a user "first launch" walkthrough (the Dashboard) and an admin "manage settings" walkthrough (Admin Settings) — and a Playwright `docs-capture` project that turns each documented step into a PNG under `docs/static/screenshots/tutorials/`.
+
+- Add a tutorial story: `/journeydoc-add-story`
+- Add stable `data-testid` hooks to a Vue component: `/journeydoc-instrument`
+- (Re)capture screenshots against a running Nextcloud: `NEXTCLOUD_URL=http://localhost:8080 npx playwright test --project docs-capture`
+
+See the [Documentation](#documentation) section below for how the docs site itself is built and deployed.
 
 ## Features
 
@@ -90,12 +96,20 @@ app-template/
 │   ├── architecture/           # App-specific Architectural Decision Records
 │   ├── ROADMAP.md              # Product roadmap
 │   └── changes/                # OpenSpec change directories (created on first change)
+├── docs/                       # Docusaurus documentation site (@conduction/docusaurus-preset)
+│   ├── docusaurus.config.js    # Site config — title, url, navbar, brand theme
+│   ├── intro.md                # Docs landing page
+│   ├── src/pages/index.js      # Marketing landing page (brand <DetailHero> / <WidgetShelf>)
+│   ├── tutorials/              # journeydoc tutorial stories — user/ + admin/ tracks (ADR-030)
+│   └── static/screenshots/     # Captured tutorial screenshots (populated by docs-capture)
 ├── tests/                      # Unit and integration tests
+│   ├── e2e/docs-screenshots.spec.ts # journeydoc screenshot capture suite (Playwright docs-capture project)
 │   ├── validate-manifest.js    # Ajv schema validator for src/manifest.json (nc-vue manifest schema)
 │   ├── validate-register.js    # Structural validator for lib/Settings/*_register.json (slugs, lifecycle requires→PHP, clobber heuristic)
 │   └── validate-json-strict.js # Strict JSON parse — rejects duplicate keys + appendOnly nested in x-openregister
+├── playwright.config.ts        # Playwright config — `chromium` (regression) + `docs-capture` (screenshots) projects
 ├── l10n/                       # Translations (en, en_US, nl)
-├── .github/workflows/          # CI/CD pipelines
+├── .github/workflows/          # CI/CD pipelines (incl. documentation.yml — deploys docs/ from `development`)
 ├── Makefile                    # Dev helpers (make dev-link)
 └── img/                        # App icons and screenshots
 ```
@@ -301,6 +315,19 @@ docker exec nextcloud php occ app:enable app-template
 | `development` | Active development — merge target for feature branches |
 
 ## Documentation
+
+The user-facing documentation site lives in [`docs/`](docs/) — a Docusaurus site built on [`@conduction/docusaurus-preset`](https://www.npmjs.com/package/@conduction/docusaurus-preset) with the brand `<DetailHero>` / `<WidgetShelf>` landing page, the journeydoc tutorial scaffold ([`docs/tutorials/`](docs/tutorials/) — user "first launch" + admin "manage settings"), and the Playwright `docs-capture` project for screenshots (hydra ADR-030).
+
+`.github/workflows/documentation.yml` deploys the site on every push to `development`: it runs `cd docs && npm ci && npm run build` and publishes to `<slug>.conduction.nl` (the template's placeholder slug is `app-template`, so `app-template.conduction.nl` — `docs/static/CNAME` carries this and is rewritten by the renaming pass). Build the site locally with:
+
+```bash
+cd docs
+npm ci --legacy-peer-deps
+npm run build      # → build/  ([SUCCESS] Generated static files)
+npm run start      # local dev server with hot reload
+```
+
+Project / spec documentation:
 
 | Resource | Description |
 |----------|-------------|
