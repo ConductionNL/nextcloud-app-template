@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkapp_template_docs=globalThis.webpackChunkapp_template_docs||[]).push([[3872],{3872(a,e,p){p.d(e,{createRadarServices:()=>s.f});var s=p(5160);p(9302)}}]);

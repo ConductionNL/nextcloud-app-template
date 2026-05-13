@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkapp_template_docs=globalThis.webpackChunkapp_template_docs||[]).push([[6735],{6735(e,a,p){p.d(a,{createEventModelingServices:()=>s.g});var s=p(2968);p(9302)}}]);
