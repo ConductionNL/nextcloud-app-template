@@ -1,5 +1,6 @@
 ---
 sidebar_position: 1
+description: Scaffold for new Conduction-style Nextcloud apps. Manifest-first Vue 2, OpenRegister-backed data, Dashboard widget, AI tools, full quality gate.
 ---
 
 # Nextcloud App Template
