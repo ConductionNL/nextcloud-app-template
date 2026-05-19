@@ -16,12 +16,14 @@
  Feed your settings sections into the #user-settings slot below.
 
  @spec openspec/changes/template-manifest-v1/specs/template-manifest-v1/spec.md
+ @spec openspec/changes/scaffold-v2/specs/scaffold-v2/spec.md
 -->
 <template>
 	<CnAppRoot
 		:manifest="manifest"
 		:custom-components="customComponents"
 		:page-types="pageTypes"
+		:registry="registry"
 		app-id="app-template"
 		:translate="translateForApp"
 		:permissions="permissions">
@@ -109,6 +111,18 @@ export default {
 		pageTypes: {
 			type: Object,
 			default: null,
+		},
+		/**
+		 * v2 five-kind component registry — `{ "<key>": { kind, component, ...metadata } }`.
+		 * Introduced by hydra ADR-036; passed through to CnAppRoot which provides
+		 * it via `cnRegistry` for v2 manifest widget resolution.
+		 * Both `customComponents` (v1) and `registry` (v2) can coexist during
+		 * the transition period. Once fully migrated to v2, `customComponents`
+		 * can be removed.
+		 */
+		registry: {
+			type: Object,
+			default: () => ({}),
 		},
 	},
 
