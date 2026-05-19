@@ -187,7 +187,7 @@ const WIDGETS = [
 export default function Home() {
   return (
     <Layout
-      title="Nextcloud App Template"
+      title="Nextcloud App Template, the Conduction scaffold for new apps"
       description="A template for creating new Nextcloud apps the Conduction way — manifest-first Vue 2 frontend, OpenRegister data layer, Dashboard widget, admin settings, AI Chat Companion tool provider, and the full quality pipeline."
     >
       <main className="marketing-page">
