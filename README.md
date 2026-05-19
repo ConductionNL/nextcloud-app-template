@@ -80,10 +80,15 @@ app-template/
 │   └── Settings/               # AdminSettings, app_template_register.json
 ├── templates/                  # PHP templates (SPA shells)
 ├── src/                        # Vue 2 frontend
-│   ├── manifest.json           # Pages + menu + dependencies (the source of truth)
+│   ├── manifest.json           # Pages + menu + dependencies (v2 — the source of truth)
 │   ├── main.js                 # App entry — bootstraps CnAppRoot from manifest
 │   ├── App.vue                 # Mounts CnAppRoot + #sidebar slot
-│   ├── customComponents.js     # Registry for `type: "custom"` pages (escape hatch)
+│   ├── registry.js             # v2 five-kind component registry (widget/modal/page/form-field/cell-renderer)
+│   ├── customComponents.js     # v1 registry (kept for backward-compat; remove once v2 migration complete)
+│   ├── widgets/                # kind: "widget" components (ExampleWidget.vue)
+│   ├── modals/                 # kind: "modal" components (ExampleModal.vue)
+│   ├── formFields/             # kind: "form-field" components (EmailField.vue)
+│   ├── cellRenderers/          # kind: "cell-renderer" components (StatusBadge.vue)
 │   ├── exampleWidget.js        # Sample Nextcloud Dashboard widget entry-point
 │   ├── settings.js             # Nextcloud admin settings webpack entry-point
 │   ├── store/                  # Pinia stores (used by AdminSettings)
@@ -206,6 +211,46 @@ in: `appinfo/info.xml`, `package.json`, `openspec/app-config.json`,
 `generateUrl` base path), `src/App.vue` (the `app-id` prop and
 `translateForApp` argument), and `webpack.config.js` (the `appId`
 constant). The manifest itself does not carry the app id.
+
+### Manifest v2 ready
+
+The scaffold ships a **v2 manifest** by default (`src/manifest.json` declares
+`$schema` pointing to the v2 schema URL). V2 collapses the four v1 widget
+shapes into a single uniform `widgets[]` array with grid coordinates on every
+page type, and introduces a five-kind component registry.
+
+**Design reference:** hydra
+[ADR-036 (Universal Widget Manifest v2)](https://github.com/ConductionNL/hydra/blob/development/openspec/architecture/adr-036-universal-widget-manifest.md)
+
+**Migration guide** (for apps migrating from v1): `@conduction/nextcloud-vue`
+docs `migrating-to-v2.md` covers the codemod CLI and manual migration steps.
+
+#### Extending the app via the registry (`src/registry.js`)
+
+The v2 way to add custom UI is `src/registry.js`. It has five kinds:
+
+| kind | Use when |
+|------|----------|
+| `widget` | Custom placeable widget — add to any page's `widgets[]` via `widgetKey` |
+| `modal` | Dialog opened by manifest actions with `type: "open-modal"` |
+| `page` | Bespoke full-page component (`type: "custom"` in the manifest — use sparingly) |
+| `form-field` | Custom form input auto-bound by JSON Schema `format` |
+| `cell-renderer` | Custom table-cell rendering auto-bound by schema + property |
+
+Steps to add a custom widget:
+
+1. Create `src/widgets/<YourWidget>.vue`.
+2. Add an entry to `src/registry.js` with `kind: "widget"` + `defaultSize`, `minSize`, `maxSize`, `allowedSlots`, `propsSchema`.
+3. Add a `widgets[]` entry to the target page in `src/manifest.json` with `widgetKey: "<your-key>"`, `slot`, and grid coordinates.
+4. Run `npm run check:manifest-v2` to validate.
+
+The scaffold ships one example per kind as a starting point. Delete or
+replace the examples when you clone the template.
+
+> **Backward compat:** `src/customComponents.js` is kept for the v1 → v2
+> transition period. Both the `customComponents` and `registry` props coexist
+> on `CnAppRoot`. Once fully migrated, `customComponents.js` and its import in
+> `main.js` can be removed.
 
 ### Adding a dashboard widget
 

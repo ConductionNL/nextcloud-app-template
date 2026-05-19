@@ -16,6 +16,10 @@ import pinia from './pinia.js'
 import App from './App.vue'
 import bundledManifest from './manifest.json'
 import customComponents from './customComponents.js'
+// v2 five-kind registry — the replacement for customComponents.
+// Both props coexist during the v1 → v2 transition.
+// Once fully migrated to v2, remove the customComponents import and prop.
+import registry from './registry.js'
 
 // Library CSS — must be explicit import (webpack tree-shakes side-effect imports from aliased packages)
 import '@conduction/nextcloud-vue/css/index.css'
@@ -103,6 +107,10 @@ tryLoadTranslations()
 // changing the values the lib resolves at render time.
 const pageTypesProp = { ...defaultPageTypes }
 const customComponentsProp = { ...customComponents }
+// Shallow-clone the v2 registry for the same reason as above.
+// Once the app fully migrates to v2, the customComponentsProp and
+// customComponents prop can be removed.
+const registryProp = { ...registry }
 
 // eslint-disable-next-line no-new
 new Vue({
@@ -113,6 +121,7 @@ new Vue({
 			manifest: bundledManifest,
 			customComponents: customComponentsProp,
 			pageTypes: pageTypesProp,
+			registry: registryProp,
 		},
 	}),
 }).$mount('#content')
