@@ -42,7 +42,6 @@ import ExampleModal from './modals/ExampleModal.vue'
 import EmailField from './formFields/EmailField.vue'
 import StatusBadge from './cellRenderers/StatusBadge.vue'
 import CustomExample from './views/CustomExample.vue'
-import FeaturesRoadmapView from './views/FeaturesRoadmap.vue'
 
 export default {
 	// -------------------------------------------------------------------------
@@ -105,16 +104,6 @@ export default {
 	CustomExample: {
 		kind: 'page',
 		component: CustomExample,
-	},
-
-	/**
-	 * Features & Roadmap page (lib's CnFeaturesAndRoadmapView) — wired up
-	 * in src/manifest.json (the `FeaturesRoadmap` custom page + the
-	 * `FeaturesRoadmapMenu` settings entry). See views/FeaturesRoadmap.vue.
-	 */
-	FeaturesRoadmap: {
-		kind: 'page',
-		component: FeaturesRoadmapView,
 	},
 
 	// -------------------------------------------------------------------------
