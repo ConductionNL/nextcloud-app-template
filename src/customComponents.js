@@ -31,7 +31,6 @@ import CustomExample from './views/CustomExample.vue'
 // from this template inherit the Settings-section "Features & roadmap"
 // entry; change the repo fallback in views/FeaturesRoadmap.vue. See
 // ConductionNL/hydra#251.
-import FeaturesRoadmapView from './views/FeaturesRoadmap.vue'
 
 export default {
 	// Example custom component. Keep or delete when scaffolding a new
@@ -43,5 +42,4 @@ export default {
 	// Features & Roadmap page (lib's CnFeaturesAndRoadmapView) — wired up
 	// in src/manifest.json (the `FeaturesRoadmap` custom page + the
 	// `FeaturesRoadmapMenu` settings entry).
-	FeaturesRoadmap: FeaturesRoadmapView,
 }
