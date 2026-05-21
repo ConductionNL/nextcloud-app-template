@@ -1,3 +1,9 @@
+includes:
+    # Per-app tracked lint debt lives here (auto-generated via `phpstan --generate-baseline`).
+    # Apps without debt ship an empty baseline file; canonical includes are otherwise byte-identical
+    # across the fleet.
+    - phpstan-baseline.neon
+
 parameters:
     level: 5
     paths:
@@ -42,7 +48,8 @@ parameters:
         - '#Doctrine\\DBAL\\[a-zA-Z\\]+.*not found#'
         - '#on an unknown class Doctrine\\DBAL\\#'
         # Dynamic HTTP status codes from business rule validation results
-        - '#Parameter \$statusCode of class OCP\\AppFramework\\Http\\JSONResponse constructor expects#'
+        # (matches both `Parameter $statusCode` and `Parameter #N $statusCode` forms emitted by phpstan)
+        - '#Parameter (#\d+ )?\$statusCode of class OCP\\AppFramework\\Http\\JSONResponse constructor expects#'
         # registerRepairStep exists on server; not yet in nextcloud/ocp stub used for analysis
         - '#Call to an undefined method OCP\\AppFramework\\Bootstrap\\IRegistrationContext::registerRepairStep#'
         # OCP stub gaps for methods that exist at runtime
