@@ -30,6 +30,9 @@ parameters:
         # OCA\DAV is server-internal and not in nextcloud/ocp stubs
         - '#unknown class OCA\\DAV\\#'
         - '#Class OCA\\DAV\\#'
+        # OC\Security\CSRF is server-internal (no OCP equivalent yet for CsrfTokenManager etc.)
+        - '#unknown class OC\\Security\\CSRF\\#'
+        - '#OC\\Security\\CSRF\\#'
         # OCA classes from other apps (OpenRegister) not available during static analysis
         - '#unknown class OCA\\OpenRegister\\#'
         - '#OCA\\OpenRegister\\[a-zA-Z\\]+.*not found#'
