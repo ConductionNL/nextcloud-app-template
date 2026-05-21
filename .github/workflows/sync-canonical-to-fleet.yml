@@ -1,0 +1,88 @@
+name: Sync canonical root configs to fleet
+
+# When the canonical root configs in this template change, open PRs across
+# every Conduction PHP Nextcloud app in `apps-extra/` to sync the changes.
+#
+# Authoritative documentation: hydra/openspec/architecture/adr-033-root-config-consolidation.md
+#
+# Files in scope (synced byte-for-byte to every fleet app):
+#   - phpcs.xml
+#   - phpmd.xml
+#   - psalm.xml
+#   - phpstan.neon
+#   - phpstan-bootstrap.php
+#   - phpcs-custom-sniffs/CustomSniffs/Sniffs/**
+#
+# Files NOT synced (per-app, owned by each app):
+#   - phpstan-baseline.neon  (tracked debt, regenerated per app)
+#   - psalm-baseline.xml     (tracked debt, regenerated per app)
+#   - composer.json          (vendor/name is app-specific)
+#
+# Cosmetic deviations preserved per app and re-applied manually post-sync:
+#   - phpcs.xml `<description>` ("Coding standard for <App>, …")
+#   - phpmd.xml `<ruleset name="…">` and inner `<description>`
+#
+# Required secret: `FLEET_SYNC_TOKEN` — a PAT with `repo` scope on every target.
+
+on:
+  push:
+    branches: [development]
+    paths:
+      - 'phpcs.xml'
+      - 'phpmd.xml'
+      - 'psalm.xml'
+      - 'phpstan.neon'
+      - 'phpstan-bootstrap.php'
+      - 'phpcs-custom-sniffs/CustomSniffs/Sniffs/**'
+  workflow_dispatch:
+    inputs:
+      target_apps:
+        description: 'Comma-separated app slugs to sync (default: all fleet)'
+        required: false
+        default: 'all'
+
+jobs:
+  sync:
+    name: Open sync PRs across the fleet
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout template
+        uses: actions/checkout@v4
+
+      - name: Sync canonical files to fleet
+        uses: BetaHuhn/repo-file-sync-action@v1
+        with:
+          GH_INSTALLATION_TOKEN: ${{ secrets.FLEET_SYNC_TOKEN }}
+          CONFIG_PATH: .github/sync-canonical-fleet.yml
+          PR_BODY: |
+            ## Summary
+
+            Automated sync of canonical root configs from
+            [`nextcloud-app-template`](https://github.com/ConductionNL/nextcloud-app-template).
+            See [hydra ADR-033](https://github.com/ConductionNL/hydra/blob/development/openspec/architecture/adr-033-root-config-consolidation.md)
+            for the consolidation policy.
+
+            ## Post-merge action required
+
+            If `phpcs.xml` or `phpmd.xml` was changed, restore the per-app
+            description / ruleset-name string (this is the only allowed
+            cosmetic deviation from canonical — see ADR-033).
+
+            ## Test plan
+            - [ ] CI green (phpcs/psalm/phpstan/phpmd against this app's `lib/`)
+            - [ ] If new violations surface, baseline them in
+                  `phpstan-baseline.neon` / `psalm-baseline.xml` and link
+                  the open lint-debt tracking issue per ADR-033's
+                  tracked-debt pattern.
+          PR_LABELS: |
+            chore
+            canonical-sync
+          COMMIT_BODY: |
+            Automated canonical-config sync from nextcloud-app-template.
+            See hydra ADR-033 for policy.
+          COMMIT_PREFIX: 'chore(canonical):'
+          ORIGINAL_MESSAGE: true
+          PR_TITLE: 'chore(canonical): sync canonical root configs from nextcloud-app-template'
