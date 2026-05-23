@@ -13,8 +13,8 @@ this doc is the developer-facing summary. When the two disagree, ADR-033 wins.
 ## Tier A — Strictly canonical (byte-for-byte synced)
 
 Identical across every fleet app. When the template's copy changes, the
-`sync-canonical-to-fleet.yml` workflow opens a PR on every app in the
-fleet (see `.github/sync-canonical-fleet.yml` for the target list).
+[`hydra/scripts/fleet-sync/`](https://github.com/ConductionNL/hydra/tree/development/scripts/fleet-sync)
+tool — run locally by a developer — opens a PR on every app in the fleet.
 
 | File | What it does |
 |---|---|
@@ -124,10 +124,17 @@ land it in the template first.
 1. Open a PR against `nextcloud-app-template` (this repo) editing the canonical
    file. Test locally that the new rule is meaningful.
 2. Merge to `development`.
-3. The `sync-canonical-to-fleet.yml` workflow fires automatically (or run it
-   manually via `workflow_dispatch`).
-4. The workflow opens a PR on every fleet app listed in
-   `.github/sync-canonical-fleet.yml` with the canonical diff applied.
+3. **Locally**, from inside the hydra dev container, run the fleet-sync tool:
+
+   ```bash
+   cd /home/rubenlinde/nextcloud-docker-dev/workspace/server/apps-extra/hydra
+   ./scripts/fleet-sync/sync.sh             # all fleet apps
+   ./scripts/fleet-sync/sync.sh openconnector procest pipelinq   # subset
+   ```
+
+4. The script opens a PR on every targeted fleet app using **your local
+   `gh auth` credentials**. The PRs carry the same diff and PR body for
+   every target so review is consistent.
 5. Each app's quality gates run on the PR. If they fail, the app needs
    pre-cleanup before the canonical change can land — file a per-app cleanup
    issue, fix, merge that, then re-run the sync.
@@ -135,6 +142,20 @@ land it in the template first.
 The `phpstan-baseline.neon` and `psalm-baseline.xml` files capture pre-existing
 debt **per app** so a canonical rule tightening doesn't cascade into a fleet
 of broken PRs.
+
+### Why local instead of a GitHub Action
+
+The earlier design ran the sync as a GHA workflow with a `FLEET_SYNC_TOKEN`
+secret. We retired that pattern in 2026-05: a single PAT with write access
+to every fleet repo, stored as a GHA secret, was a credential blast-radius
+we did not want to defend. Local-dev sync uses your own `gh auth` session
+— no shared token, no GHA secret to rotate, no third-party action with
+broad fleet access. Trade-off: someone has to run the sync manually after
+a canonical change. That's a small cost paid for a real security
+improvement.
+
+Full design rationale + the sync script are in
+[`hydra/scripts/fleet-sync/`](https://github.com/ConductionNL/hydra/tree/development/scripts/fleet-sync).
 
 ## What's NOT in scope
 
@@ -148,7 +169,7 @@ of broken PRs.
   config policies.
 - **Apps in `apps-extra/` not listed in the sync config** — typically
   in-development apps that haven't joined the fleet yet. Add them to
-  `.github/sync-canonical-fleet.yml` `repos:` block when they're ready.
+  the hydra sync tool's repos list when they're ready.
 
 ## Quick reference
 
@@ -157,5 +178,5 @@ of broken PRs.
 | Where does the canonical rule live? | This repo's root. |
 | Who owns the canonical? | Whoever's editing the template. Land the change in the template first. |
 | What if my app needs a per-app deviation? | Don't. Edit the template instead so everyone gets the change. The cosmetic deviations in `phpcs.xml` description / `phpmd.xml` ruleset name are the only allowed exceptions. |
-| How do I trigger a manual fleet sync? | Actions → "Sync canonical root configs to fleet" → Run workflow. Optionally pass `target_apps` to limit scope. |
+| How do I trigger a fleet sync? | Locally: `cd hydra && ./scripts/fleet-sync/sync.sh [target-app …]`. Uses your `gh auth` session — no GHA secrets needed. |
 | What if the sync PR breaks an app's tests? | Don't merge it. File a per-app cleanup issue, fix the app's source until it passes against the new canonical, then merge the sync PR. |
