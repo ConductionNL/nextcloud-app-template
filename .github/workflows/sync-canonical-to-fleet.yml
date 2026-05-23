@@ -85,14 +85,20 @@ jobs:
 
             Automated sync of canonical root configs from
             [`nextcloud-app-template`](https://github.com/ConductionNL/nextcloud-app-template).
-            See [hydra ADR-033](https://github.com/ConductionNL/hydra/blob/development/openspec/architecture/adr-033-root-config-consolidation.md)
-            for the consolidation policy.
+            See the
+            [canonical-files policy](https://github.com/ConductionNL/nextcloud-app-template/blob/development/docs/canonical-files.md)
+            and [hydra ADR-033](https://github.com/ConductionNL/hydra/blob/development/openspec/architecture/adr-033-root-config-consolidation.md)
+            for the rules.
 
-            ## Post-merge action required
+            ## No manual post-merge step
 
-            If `phpcs.xml` or `phpmd.xml` was changed, restore the per-app
-            description / ruleset-name string (this is the only allowed
-            cosmetic deviation from canonical — see ADR-033).
+            The canonical files sync byte-for-byte — including their
+            `<description>` and `<ruleset name>` strings. The template
+            uses app-generic descriptions ("Conduction Nextcloud app
+            coding standard…") on purpose so no per-app re-stamping is
+            needed. If you find yourself wanting to edit anything in
+            this PR before merging, that's a sign the change should go
+            back to the template first.
 
             ## Test plan
             - [ ] CI green (phpcs/psalm/phpstan/phpmd against this app's `lib/`)
