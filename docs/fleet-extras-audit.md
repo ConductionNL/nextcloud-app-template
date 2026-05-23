@@ -66,26 +66,48 @@ Apps in scope for this audit: `app-versions`, `decidesk`, `deskdesk`,
 ## Per-app outliers (1–2 apps)
 
 The long tail is dominated by **`softwarecatalog`** with ~30 scratch files
-in repo root (debug PHP scripts, test shell scripts, AMEF/ArchiMate
-work-notes, etc.). These should be moved to `scripts/dev/` and `docs/`
-respectively, or deleted if obsolete. The same pattern in smaller scale
-shows up in `opencatalogi` (setup/refactoring notes) and `openregister`
-(debug `.phar` binaries and `docker-compose.*.yml` variants).
+in repo root. The general placement rule:
+
+- **Shell + PHP test scripts** (`test_*.sh`, `debug_*.php`, etc.) → `tests/`.
+  These ARE the app's test suite; they belong with the rest of the tests
+  (alongside unit/Newman/Playwright), not in `scripts/` or in the root.
+- **Unique app setup / dev tooling that isn't a test** → `scripts/dev/`.
+- **Work-in-progress / issue notes / planning markdown** → `docs/notes/`
+  (or `docs/specs-todo/` if it's intended to be turned into an OpenSpec
+  spec later). Don't delete this kind of content — even when it's rough,
+  the conversation history captured in those notes is the raw material
+  the next round of specs gets written from.
+- **Build artefacts** → delete + add to `.gitignore` (see Tier D).
 
 ### `softwarecatalog` cleanup candidates
 
-- 25+ `test_*.sh` / `test-*.sh` shell scripts → move to `tests/scripts/`
+`softwarecatalog` is a **special case**: many of the root-level notes are
+the long-form record of issues, testing experiments, and the
+"is-this-feature-done-yet" conversations the team has had about the app.
+We want to **preserve all of it as future spec source material**, not
+delete. The move is into `docs/specs-todo/` so the content survives and
+can be picked up later when each topic gets turned into an OpenSpec
+change.
+
+- 25+ `test_*.sh` / `test-*.sh` shell scripts → move to `tests/` (these
+  are the app's actual test suite — Newman/integration/shell-driven
+  scenarios).
 - `debug_*.php`, `check_*.php`, `compare_archimate.{php,py}`,
-  `enhance_archimate_service.php`, `find_objects_*.php` → move to
-  `scripts/dev/` or delete if one-shot
-- `AMEF_TESTING.md`, `ARCHIMATE_*.md`, `BUG_FIX_*.md`, `CIRCLE_TEST_DOCUMENTATION.md`,
-  `FIX_VERIFICATION_SUMMARY.md`, `FRONTEND_DEVELOPMENT_GUIDE.md`,
-  `INTEGRATION_TEST_RESULTS.md`, `KOPPELINGEN_GEBRUIK_REFACTOR.md`,
-  `Openregister.md`, `README_DEBUG.md`, `aanvullende-informatie.md`,
-  `issues.md`, `qwen-phpcs-test.md`, `setup-menus-and-pages.md`,
-  `WORKFLOW-UNSTABLE-RELEASE.md` → move to `docs/notes/` or delete
-- `reactphp_architecture.{html,mmd}` → move to `docs/architecture/`
-- `test_small_archimate.xml` → move to `tests/fixtures/`
+  `enhance_archimate_service.php`, `find_objects_*.php`,
+  `cleanup_id_properties.php`, `cleanup_schema.php` → move to
+  `scripts/dev/` (these are diagnostic / one-shot dev utilities, not
+  the test suite).
+- `AMEF_TESTING.md`, `ARCHIMATE_*.md`, `BUG_FIX_*.md`,
+  `CIRCLE_TEST_DOCUMENTATION.md`, `FIX_VERIFICATION_SUMMARY.md`,
+  `FRONTEND_DEVELOPMENT_GUIDE.md`, `INTEGRATION_TEST_RESULTS.md`,
+  `KOPPELINGEN_GEBRUIK_REFACTOR.md`, `Openregister.md`,
+  `README_DEBUG.md`, `aanvullende-informatie.md`, `issues.md`,
+  `qwen-phpcs-test.md`, `setup-menus-and-pages.md`,
+  `WORKFLOW-UNSTABLE-RELEASE.md` → move to `docs/specs-todo/`
+  (preserves the issue-and-testing conversation history as future
+  spec source material).
+- `reactphp_architecture.{html,mmd}` → move to `docs/architecture/`.
+- `test_small_archimate.xml` → move to `tests/fixtures/`.
 
 ### `opencatalogi` cleanup candidates
 
@@ -142,6 +164,38 @@ shows up in `opencatalogi` (setup/refactoring notes) and `openregister`
 - `larpingapp/.cursorrules`, `openconnector/.cursorrules`,
   `softwarecatalog/.cursorrules` → see "promote to template" decision above
 - `openconnector/.cursors/` → typo of `.cursor/`, reconcile
+
+## Repo-root directories that should NOT be committed
+
+Separate from the per-file extras, several **directories** appear in fleet
+repo roots that are build / test artefacts and should be removed from git +
+added to `.gitignore`:
+
+| Directory | What it is | Action |
+|---|---|---|
+| `test-results/` | Playwright / Jest run output | Delete + `.gitignore` (template's `.gitignore` already covers it; sync the .gitignore via a per-app sweep) |
+| `playwright-report/` | Playwright HTML reports | Same |
+| `.phpunit.cache/` | PHPUnit run cache | Same |
+| `coverage/`, `coverage-frontend/` | Coverage reports | Same |
+| `phpqa/`, `phpmetrics/`, `phpmetrics-deps/` | Quality-tool output | Same |
+| `quality-reports/`, `quality-results/` | CI artefact uploads | Same |
+| `dist/`, `build/` (when not the JS bundle) | Webpack / docusaurus output (varies) | App-by-app — keep `js/` since NC needs the built bundle in repo, but other `dist/` / `build/` are artefacts |
+| `node_modules/`, `vendor/`, `vendor-bin/` | Dependency installs | Already in canonical `.gitignore` — confirm fleet apps inherit it |
+
+The template's canonical `.gitignore` already lists all of these. The
+follow-up work is verifying each fleet app's `.gitignore` carries the
+same entries AND that no committed instances of these directories
+remain on `development` branches. Audit script (refresh whenever you
+want a fresh count):
+
+```bash
+# Apps with test-results/ committed:
+for app in apps-extra/*/; do
+  [ -d "$app/test-results" ] && \
+    [ -z "$(cd "$app" && git check-ignore test-results 2>/dev/null)" ] && \
+    echo "$app"
+done
+```
 
 ## Cleanup PR strategy
 
