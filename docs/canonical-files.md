@@ -31,14 +31,20 @@ fleet (see `.github/sync-canonical-fleet.yml` for the target list).
 | `.npmrc` | npm registry policy (cooldown + `legacy-peer-deps=true`). |
 | `.nvmrc` | Node version floor (currently `20`). |
 
-**Cosmetic deviations allowed** in `phpcs.xml` and `phpmd.xml`:
+**No per-app deviations.** The canonical files sync byte-for-byte including
+their description / ruleset-name strings. The template's `phpcs.xml` and
+`phpmd.xml` use app-generic descriptions
+(`"Conduction Nextcloud app coding standard…"`) precisely so no per-app
+re-stamping is needed after sync. If an app needs different rules, the
+change goes into the template first and propagates to the fleet via the
+next sync.
 
-- `phpcs.xml` `<description>` text: `"Coding standard for <App>, based on the Conduction/OpenRegister standard."`
-- `phpmd.xml` `<ruleset name="…">` and inner `<description>`
-
-These are re-applied manually after the fleet sync. No other deviations are
-allowed. If an app needs different rules, the change goes into the template
-first and propagates to the fleet via the next sync.
+The earlier convention of allowing per-app `<description>` and
+`<ruleset name>` strings was retired in 2026-05 — it created a manual
+re-stamping step after every sync and made drift hard to spot at a glance
+(an app's accidental rule edit looked identical to a legitimate
+description-only deviation in the diff). Generic strings make any diff
+visible at sync time.
 
 ## Tier B — Template-based (per-app values, same shape)
 
