@@ -6,6 +6,8 @@ name: Sync canonical root configs to fleet
 # Authoritative documentation: hydra/openspec/architecture/adr-033-root-config-consolidation.md
 #
 # Files in scope (synced byte-for-byte to every fleet app):
+#
+#   PHP quality tooling
 #   - phpcs.xml
 #   - phpmd.xml
 #   - psalm.xml
@@ -13,14 +15,29 @@ name: Sync canonical root configs to fleet
 #   - phpstan-bootstrap.php
 #   - phpcs-custom-sniffs/CustomSniffs/Sniffs/**
 #
+#   Frontend / JS quality tooling
+#   - stylelint.config.js
+#   - eslint.config.js
+#   - .prettierrc
+#
+#   Git / npm / Node toolchain
+#   - .gitattributes
+#   - .npmrc
+#   - .nvmrc
+#
 # Files NOT synced (per-app, owned by each app):
 #   - phpstan-baseline.neon  (tracked debt, regenerated per app)
 #   - psalm-baseline.xml     (tracked debt, regenerated per app)
 #   - composer.json          (vendor/name is app-specific)
+#   - package.json           (deps + scripts have legitimate per-app drift)
+#   - webpack.config.js      (entry points + asset paths per app)
+#   - playwright.config.ts   (per-app E2E surface)
 #
 # Cosmetic deviations preserved per app and re-applied manually post-sync:
 #   - phpcs.xml `<description>` ("Coding standard for <App>, …")
 #   - phpmd.xml `<ruleset name="…">` and inner `<description>`
+#
+# Full user-facing policy: docs/canonical-files.md (in this repo).
 #
 # Required secret: `FLEET_SYNC_TOKEN` — a PAT with `repo` scope on every target.
 
@@ -34,6 +51,12 @@ on:
       - 'phpstan.neon'
       - 'phpstan-bootstrap.php'
       - 'phpcs-custom-sniffs/CustomSniffs/Sniffs/**'
+      - 'stylelint.config.js'
+      - 'eslint.config.js'
+      - '.prettierrc'
+      - '.gitattributes'
+      - '.npmrc'
+      - '.nvmrc'
   workflow_dispatch:
     inputs:
       target_apps:

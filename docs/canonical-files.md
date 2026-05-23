@@ -1,0 +1,155 @@
+# Canonical files policy
+
+This template is the **source of truth** for shared configuration across every
+Conduction Nextcloud app in `apps-extra/`. The categorization below tells you
+which files are byte-for-byte synced, which follow the template's *shape* but
+carry per-app values, which are app-private, and which should never exist in
+a repo root.
+
+The authoritative architecture decision is
+[ADR-033 in hydra](https://github.com/ConductionNL/hydra/blob/development/openspec/architecture/adr-033-root-config-consolidation.md);
+this doc is the developer-facing summary. When the two disagree, ADR-033 wins.
+
+## Tier A — Strictly canonical (byte-for-byte synced)
+
+Identical across every fleet app. When the template's copy changes, the
+`sync-canonical-to-fleet.yml` workflow opens a PR on every app in the
+fleet (see `.github/sync-canonical-fleet.yml` for the target list).
+
+| File | What it does |
+|---|---|
+| `phpcs.xml` | PHPCS ruleset. Wires the Conduction custom sniffs + standard NC + PHPCompatibility. |
+| `phpmd.xml` | PHPMD ruleset for `lib/` source. |
+| `psalm.xml` | Psalm config (level + ignored files). |
+| `phpstan.neon` | PHPStan config (level + paths). |
+| `phpstan-bootstrap.php` | Bootstrap stubs so PHPStan can resolve `\OC` accessors. |
+| `phpcs-custom-sniffs/CustomSniffs/Sniffs/**` | The custom-sniff ruleset (SpecTagSniff, NoLegacyServerAccessorsSniff, etc.). |
+| `stylelint.config.js` | CSS/SCSS lint config for `src/**`. |
+| `eslint.config.js` | ESLint flat config (replaces `.eslintrc.*`) for `src/`. |
+| `.prettierrc` | Prettier config. |
+| `.gitattributes` | Line-ending normalization + binary-file marks. |
+| `.npmrc` | npm registry policy (cooldown + `legacy-peer-deps=true`). |
+| `.nvmrc` | Node version floor (currently `20`). |
+
+**Cosmetic deviations allowed** in `phpcs.xml` and `phpmd.xml`:
+
+- `phpcs.xml` `<description>` text: `"Coding standard for <App>, based on the Conduction/OpenRegister standard."`
+- `phpmd.xml` `<ruleset name="…">` and inner `<description>`
+
+These are re-applied manually after the fleet sync. No other deviations are
+allowed. If an app needs different rules, the change goes into the template
+first and propagates to the fleet via the next sync.
+
+## Tier B — Template-based (per-app values, same shape)
+
+The file structure and key-set comes from the template, but content is
+legitimately per-app. **Not synced.** Use the template's copy as a starting
+point when scaffolding a new app; do not auto-update existing apps.
+
+| File | Per-app variation |
+|---|---|
+| `composer.json` | `name`, `description`, autoload PSR-4 prefix, app-specific deps. |
+| `composer.lock` | Generated from per-app `composer.json`. |
+| `package.json` | `name`, app-specific deps + scripts, version. |
+| `package-lock.json` | Generated from per-app `package.json`. |
+| `webpack.config.js` | Entry-point list, asset paths, externals matrix. |
+| `playwright.config.ts` | Per-app E2E base URL + project list. |
+| `.gitignore` | Mostly common, but per-app build artefacts + ignored dirs. |
+| `.license-overrides.json` | Per-app allow-list of compound-SPDX vendor packages. |
+| `jest.config.js` | Test path globs differ slightly per app structure. |
+| `README.md` | App name + features + screenshots, structural sections common. |
+
+The shape conformance is checked at scaffold time (template clone) and
+opportunistically when an app gets a "scaffold drift" sweep. There is no
+automated fleet workflow for Tier B.
+
+## Tier C — App-specific (never synced)
+
+Each app owns these in full. The template ships them as scaffolding, but
+they diverge immediately and stay app-private.
+
+| File | Why per-app |
+|---|---|
+| `phpstan-baseline.neon` | Pre-existing-debt allow-list, regenerated per app. |
+| `psalm-baseline.xml` | Same — per-app debt baseline. |
+| `phpmd.baseline.xml` | Same — when an app baselines PHPMD violations. |
+| `appinfo/info.xml` | App id, version, dependencies, certificate. |
+| `LICENSE` | Per-app license (EUPL-1.2 for ConductionNL apps but app sets its own). |
+| `Makefile` | Per-app build/install/release shortcuts. |
+| `lib/Settings/<app>_register.json` | The OR register definition for this app. |
+
+## Tier D — Gitignored / should never be in the repo
+
+Build artefacts, IDE state, test output. These should never be committed.
+If you see one in a repo root, delete it and add a `.gitignore` rule.
+
+| File | Why ignore |
+|---|---|
+| `.phpunit.cache/` | PHPUnit's cache dir; regenerated. |
+| `.phpunit.result.cache` | Same — PHPUnit run cache. |
+| `phpcs-output.json`, `phpcs-output-after.json` | PHPCS report scratch. |
+| `coverage.txt`, `coverage/`, `coverage/html/` | Coverage report output. |
+| `*.phar` (e.g. `phpstan.phar`, `composer.phar`) | Tool binaries — install via composer/PATH. |
+| `psalm copy.xml`, `psalm-baseline copy.xml` | Stray editor-side filename collisions. |
+| `bom-npm-test.cdx.json`, `sbom.cdx.json` (uncommitted) | SBOM artefacts if generated locally. |
+| `.last-update`, `.opsx-ignore` | Tool scratch files. |
+
+The template's `.gitignore` already lists most of these. If you find a fleet
+app committing one, file a small cleanup PR.
+
+## Tier E — Per-app extras (audit + decide)
+
+Files that exist in some apps but not the template, not Tier B/C/D. Audit
+each one and pick a path:
+
+1. **Promote to Tier A** — useful for everyone, move into the canonical set.
+2. **Promote to Tier B/C** — useful but per-app, add to the scaffold.
+3. **Move out of repo root** — into `scripts/`, `docs/`, or `tests/` if it
+   really should live in-repo, otherwise delete.
+4. **Delete** — work-in-progress notes, debug scratchpads, abandoned spikes.
+
+The current per-app extras are inventoried in
+[`docs/fleet-extras-audit.md`](fleet-extras-audit.md). When you add a new
+class of file to an app, ask "should this be in scope for the fleet?" If yes,
+land it in the template first.
+
+## How a canonical change flows
+
+1. Open a PR against `nextcloud-app-template` (this repo) editing the canonical
+   file. Test locally that the new rule is meaningful.
+2. Merge to `development`.
+3. The `sync-canonical-to-fleet.yml` workflow fires automatically (or run it
+   manually via `workflow_dispatch`).
+4. The workflow opens a PR on every fleet app listed in
+   `.github/sync-canonical-fleet.yml` with the canonical diff applied.
+5. Each app's quality gates run on the PR. If they fail, the app needs
+   pre-cleanup before the canonical change can land — file a per-app cleanup
+   issue, fix, merge that, then re-run the sync.
+
+The `phpstan-baseline.neon` and `psalm-baseline.xml` files capture pre-existing
+debt **per app** so a canonical rule tightening doesn't cascade into a fleet
+of broken PRs.
+
+## What's NOT in scope
+
+- **ExApp sidecar wrappers** (`valtimo`, `openzaak`, `opentalk`, `openklant`)
+  — these are Python ExApps wrapped in a thin PHP shim; they have different
+  CI shape and don't carry the PHP/JS toolchain. They're deliberately
+  excluded from the fleet sync. Their root files are mostly `Dockerfile`,
+  `entrypoint.sh`, `requirements.txt`, `controller.toml`.
+- **External repos** (`Softwarecatalogus`, `nextcloud-vue` library,
+  `hydra`) — these are not Conduction Nextcloud apps. They have their own
+  config policies.
+- **Apps in `apps-extra/` not listed in the sync config** — typically
+  in-development apps that haven't joined the fleet yet. Add them to
+  `.github/sync-canonical-fleet.yml` `repos:` block when they're ready.
+
+## Quick reference
+
+| Question | Answer |
+|---|---|
+| Where does the canonical rule live? | This repo's root. |
+| Who owns the canonical? | Whoever's editing the template. Land the change in the template first. |
+| What if my app needs a per-app deviation? | Don't. Edit the template instead so everyone gets the change. The cosmetic deviations in `phpcs.xml` description / `phpmd.xml` ruleset name are the only allowed exceptions. |
+| How do I trigger a manual fleet sync? | Actions → "Sync canonical root configs to fleet" → Run workflow. Optionally pass `target_apps` to limit scope. |
+| What if the sync PR breaks an app's tests? | Don't merge it. File a per-app cleanup issue, fix the app's source until it passes against the new canonical, then merge the sync PR. |
