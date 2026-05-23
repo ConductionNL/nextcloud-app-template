@@ -119,6 +119,14 @@ The current per-app extras are inventoried in
 class of file to an app, ask "should this be in scope for the fleet?" If yes,
 land it in the template first.
 
+For drift in things **other than root files** — `composer.json` scripts,
+`package.json` scripts, CI workflows, `appinfo/info.xml`, README
+structure — see [`docs/fleet-drift-deeper.md`](fleet-drift-deeper.md).
+The drift there is significant (e.g. PHP min-version in `info.xml`
+ranges from 8.0 to 8.3 across the fleet despite the composer
+constraint being unified at `^8.3`); that doc has the recommendations
+for each class.
+
 ## How a canonical change flows
 
 1. Open a PR against `nextcloud-app-template` (this repo) editing the canonical
