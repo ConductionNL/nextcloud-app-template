@@ -53,6 +53,8 @@ class DashboardController extends Controller
      * @NoCSRFRequired
      *
      * @return TemplateResponse
+     *
+     * @spec openspec/specs/dashboard-page/spec.md#REQ-DASH-001
      */
     public function page(): TemplateResponse
     {
@@ -66,6 +68,8 @@ class DashboardController extends Controller
      * @NoCSRFRequired
      *
      * @return TemplateResponse
+     *
+     * @spec openspec/specs/dashboard-page/spec.md#REQ-DASH-002
      */
     public function catchAll(): TemplateResponse
     {

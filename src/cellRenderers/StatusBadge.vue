@@ -39,7 +39,12 @@ export default {
 	},
 
 	computed: {
-		/** Normalise the status to a CSS-safe class segment. */
+		/**
+		 * Normalise the status to a CSS-safe class segment.
+		 *
+		 * @spec openspec/specs/scaffold-components/spec.md#REQ-COMP-001
+		 * @return {string} Lowercased, hyphen-collapsed value (or "unknown").
+		 */
 		normalised() {
 			return (this.value || 'unknown')
 				.toLowerCase()

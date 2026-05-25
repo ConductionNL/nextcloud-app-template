@@ -14,11 +14,29 @@ export const useObjectStore = defineStore('object', {
 	}),
 
 	actions: {
+		/**
+		 * Record the OpenRegister object/schema API base URLs.
+		 *
+		 * @spec openspec/specs/frontend-data-stores/spec.md#REQ-STORE-001
+		 * @param {object} opts Configuration.
+		 * @param {string} opts.baseUrl OpenRegister object-API base URL.
+		 * @param {string} opts.schemaBaseUrl OpenRegister schema-API base URL.
+		 * @return {void}
+		 */
 		configure({ baseUrl, schemaBaseUrl }) {
 			this.baseUrl = baseUrl
 			this.schemaBaseUrl = schemaBaseUrl
 		},
 
+		/**
+		 * Map a logical type name to its OpenRegister schema + register.
+		 *
+		 * @spec openspec/specs/frontend-data-stores/spec.md#REQ-STORE-002
+		 * @param {string} type Logical object-type name.
+		 * @param {string} schema OpenRegister schema id.
+		 * @param {string} register OpenRegister register id.
+		 * @return {void}
+		 */
 		registerObjectType(type, schema, register) {
 			this.objectTypes[type] = { schema, register }
 			if (!this.objects[type]) {
@@ -26,6 +44,14 @@ export const useObjectStore = defineStore('object', {
 			}
 		},
 
+		/**
+		 * Fetch a collection of objects of the given type from OpenRegister.
+		 *
+		 * @spec openspec/specs/frontend-data-stores/spec.md#REQ-STORE-003
+		 * @param {string} type Registered object-type name.
+		 * @param {object} [params] Extra query parameters.
+		 * @return {Promise<Array>} The fetched objects (empty on miss/failure).
+		 */
 		async fetchObjects(type, params = {}) {
 			if (!this.objectTypes[type]) {
 				console.warn(`Object type "${type}" is not registered`)
