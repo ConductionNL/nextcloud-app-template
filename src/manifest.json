@@ -168,7 +168,10 @@
 			"id": "FeaturesRoadmap",
 			"route": "/features-roadmap",
 			"type": "roadmap",
-			"title": "Features & roadmap"
+			"title": "Features & roadmap",
+			"config": {
+				"documentationUrl": "https://nextcloud-app-template.conduction.nl"
+			}
 		}
 	]
 }
