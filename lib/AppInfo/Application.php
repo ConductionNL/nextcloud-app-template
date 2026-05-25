@@ -8,13 +8,21 @@
  * @category AppInfo
  * @package  OCA\AppTemplate\AppInfo
  *
- * @author    Conduction Development Team <dev@conductio.nl>
- * @copyright 2024 Conduction B.V.
+ * @author    Conduction Development Team <info@conduction.nl>
+ * @copyright 2026 Conduction B.V.
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ * SPDX-License-Identifier: EUPL-1.2
  *
  * @version GIT: <git-id>
  *
  * @link https://conduction.nl
+ *
+ * @spec openspec/changes/example-change/tasks.md#task-N
+ *   (file-level @spec tag — link back to the OpenSpec change that created or
+ *   last modified this file. Multiple @spec tags allowed. Public methods SHOULD
+ *   also carry their own @spec tag. ADR-003.)
  */
 
 declare(strict_types=1);
