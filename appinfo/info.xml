@@ -39,6 +39,16 @@
         </navigation>
     </navigations>
 
+    <!-- @spec openspec/architecture/adr-023-action-authorization.md -->
+    <repair-steps>
+        <install>
+            <step>OCA\AppTemplate\Repair\InitializeActions</step>
+        </install>
+        <post-migration>
+            <step>OCA\AppTemplate\Repair\InitializeActions</step>
+        </post-migration>
+    </repair-steps>
+
     <settings>
         <admin>OCA\AppTemplate\Settings\AdminSettings</admin>
         <admin-section>OCA\AppTemplate\Sections\SettingsSection</admin-section>
