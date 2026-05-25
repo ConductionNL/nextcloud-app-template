@@ -24,22 +24,15 @@
 			"label": "Documentation",
 			"icon": "icon-info",
 			"href": "https://github.com/ConductionNL/nextcloud-app-template",
-			"section": "settings",
+			"section": "footer",
 			"order": 90
-		},
-		{
-			"id": "SettingsMenu",
-			"label": "Settings",
-			"icon": "Cog",
-			"action": "user-settings",
-			"order": 99
 		},
 		{
 			"id": "FeaturesRoadmapMenu",
 			"label": "Features & roadmap",
 			"icon": "icon-toggle",
 			"route": "FeaturesRoadmap",
-			"section": "settings",
+			"section": "footer",
 			"order": 100
 		}
 	],
