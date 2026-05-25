@@ -64,6 +64,8 @@ class InitializeSettings implements IRepairStep
      * @param IOutput $output The output interface for progress reporting
      *
      * @return void
+     *
+     * @spec openspec/specs/configuration-initialization/spec.md#REQ-INIT-002
      */
     public function run(IOutput $output): void
     {

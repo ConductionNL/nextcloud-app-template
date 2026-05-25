@@ -56,6 +56,8 @@ class SettingsController extends Controller
      * @NoAdminRequired
      *
      * @return JSONResponse
+     *
+     * @spec openspec/specs/settings-management/spec.md#REQ-CFG-001
      */
     public function index(): JSONResponse
     {
@@ -68,6 +70,8 @@ class SettingsController extends Controller
      * Update settings with provided data.
      *
      * @return JSONResponse
+     *
+     * @spec openspec/specs/settings-management/spec.md#REQ-CFG-002
      */
     public function create(): JSONResponse
     {
@@ -89,6 +93,8 @@ class SettingsController extends Controller
      * all schema and register IDs from the import result.
      *
      * @return JSONResponse
+     *
+     * @spec openspec/specs/settings-management/spec.md#REQ-CFG-003
      */
     public function load(): JSONResponse
     {

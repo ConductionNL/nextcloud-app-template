@@ -74,6 +74,13 @@ export default {
 		NcAppSettingsSection,
 	},
 
+	/**
+	 * @spec exclude provide/inject wiring — exposes the reactive
+	 *   objectSidebarState channel to descendants (CnDetailPage). Pure
+	 *   framework plumbing with no domain behaviour of its own; the behaviour
+	 *   that uses this channel lives in the consumers. This is the canonical
+	 *   example of a legitimately-excluded provide() for template-derived apps.
+	 */
 	provide() {
 		return {
 			// Channel for CnDetailPage → host-rendered CnObjectSidebar.
@@ -144,6 +151,12 @@ export default {
 	},
 
 	computed: {
+		/**
+		 * @spec exclude framework passthrough — surfaces the current user's
+		 *   Nextcloud permission list (window.OC.currentUser.permissions) to
+		 *   CnAppRoot unchanged. No domain logic; the permission semantics are
+		 *   owned by the Nextcloud session and by CnAppRoot's consumers.
+		 */
 		permissions() {
 			return window.OC?.currentUser?.permissions ?? []
 		},
@@ -155,6 +168,10 @@ export default {
 		 * CnPageRenderer. Closes over the Nextcloud `translate` import so
 		 * the lib never has to know our app id.
 		 *
+		 * @spec exclude i18n wrapper — binds the Nextcloud `translate` import
+		 *   to this app's id so the shared lib stays app-agnostic. Pure
+		 *   localisation plumbing, no domain behaviour; the canonical example
+		 *   of an excludable i18n wrapper for template-derived apps.
 		 * @param {string} key Translation key.
 		 * @return {string} Translated string (or the key on miss).
 		 */

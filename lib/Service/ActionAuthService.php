@@ -79,6 +79,8 @@ class ActionAuthService
      * @return void
      *
      * @throws OCSForbiddenException When the user's groups don't match the action's allowed groups.
+     *
+     * @spec openspec/architecture/adr-023-action-authorization.md
      */
     public function requireAction(IUser $user, string $action): void
     {
@@ -119,6 +121,8 @@ class ActionAuthService
      * @param string $action Dot-separated action name.
      *
      * @return bool True if the user may perform the action.
+     *
+     * @spec openspec/architecture/adr-023-action-authorization.md
      */
     public function can(IUser $user, string $action): bool
     {
@@ -140,6 +144,8 @@ class ActionAuthService
      * @param string $action Dot-separated action name.
      *
      * @return array<int, string>
+     *
+     * @spec openspec/architecture/adr-023-action-authorization.md
      */
     public function getAllowedGroups(string $action): array
     {
@@ -156,6 +162,8 @@ class ActionAuthService
      * action since getAllowedGroups falls back to ["admin"]).
      *
      * @return array<string, array<int, string>>
+     *
+     * @spec openspec/architecture/adr-023-action-authorization.md
      */
     public function getMatrix(): array
     {
@@ -203,6 +211,8 @@ class ActionAuthService
      * @return void
      *
      * @throws \JsonException When the matrix cannot be encoded.
+     *
+     * @spec openspec/architecture/adr-023-action-authorization.md
      */
     public function setMatrix(array $matrix): void
     {

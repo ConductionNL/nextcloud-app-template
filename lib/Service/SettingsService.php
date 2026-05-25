@@ -86,6 +86,8 @@ class SettingsService
      * fields (openregisters, isAdmin) consumed by the frontend.
      *
      * @return array<string,mixed>
+     *
+     * @spec openspec/specs/settings-management/spec.md#REQ-CFG-001
      */
     public function getSettings(): array
     {
@@ -112,6 +114,8 @@ class SettingsService
      * @param array<string,mixed> $data The data to update
      *
      * @return array<string,mixed> The updated settings
+     *
+     * @spec openspec/specs/settings-management/spec.md#REQ-CFG-002
      */
     public function updateSettings(array $data): array
     {
@@ -130,6 +134,8 @@ class SettingsService
      * @param bool $force Force re-import even if already configured.
      *
      * @return array<string,mixed> Result with success flag, message, and version.
+     *
+     * @spec openspec/specs/settings-management/spec.md#REQ-CFG-003
      */
     public function loadConfiguration(bool $force=false): array
     {

@@ -66,10 +66,22 @@ export default {
 	emits: ['update:open', 'confirm', 'cancel'],
 
 	methods: {
+		/**
+		 * Relay a confirmation, then request the parent close the modal.
+		 *
+		 * @spec openspec/specs/scaffold-components/spec.md#REQ-COMP-002
+		 * @return {void}
+		 */
 		onConfirm() {
 			this.$emit('confirm')
 			this.$emit('update:open', false)
 		},
+		/**
+		 * Relay a cancellation, then request the parent close the modal.
+		 *
+		 * @spec openspec/specs/scaffold-components/spec.md#REQ-COMP-002
+		 * @return {void}
+		 */
 		onCancel() {
 			this.$emit('cancel')
 			this.$emit('update:open', false)

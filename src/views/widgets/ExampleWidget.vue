@@ -42,6 +42,12 @@ export default {
 		loading: true,
 		emptyMessage: '',
 	}),
+	/**
+	 * Load widget rows on mount; degrade to an empty state on failure.
+	 *
+	 * @spec openspec/specs/scaffold-components/spec.md#REQ-COMP-003
+	 * @return {Promise<void>}
+	 */
 	async mounted() {
 		this.emptyMessage = t('app-template', 'No data yet')
 		try {
