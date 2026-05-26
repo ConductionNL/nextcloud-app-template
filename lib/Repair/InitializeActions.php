@@ -35,7 +35,7 @@ use Psr\Log\LoggerInterface;
  */
 class InitializeActions implements IRepairStep
 {
-    private const SEED_PATH = __DIR__ . '/../actions.seed.json';
+    private const SEED_PATH = __DIR__.'/../actions.seed.json';
 
     /**
      * Constructor.
@@ -53,6 +53,8 @@ class InitializeActions implements IRepairStep
      * Repair-step name.
      *
      * @return string
+     *
+     * @spec openspec/architecture/adr-023-action-authorization.md
      */
     public function getName(): string
     {
@@ -73,11 +75,18 @@ class InitializeActions implements IRepairStep
     {
         $existing = $this->actionAuth->getMatrix();
         if (count($existing) > 0) {
+            $count = count($existing);
+            if ($count === 1) {
+                $plural = 'y';
+            } else {
+                $plural = 'ies';
+            }
+
             $output->info(
                 sprintf(
                     'Action matrix already has %d entr%s — preserving.',
-                    count($existing),
-                    (count($existing) === 1 ? 'y' : 'ies')
+                    $count,
+                    $plural
                 )
             );
             return;
@@ -85,7 +94,7 @@ class InitializeActions implements IRepairStep
 
         if (file_exists(self::SEED_PATH) === false) {
             $output->warning('actions.seed.json not found — matrix left empty (default-deny).');
-            $this->logger->warning('[app-template] ADR-023 seed file missing at ' . self::SEED_PATH);
+            $this->logger->warning('[app-template] ADR-023 seed file missing at '.self::SEED_PATH);
             return;
         }
 
@@ -98,8 +107,8 @@ class InitializeActions implements IRepairStep
         try {
             $parsed = json_decode($raw, associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
-            $output->warning('actions.seed.json invalid JSON: ' . $e->getMessage());
-            $this->logger->error('[app-template] ADR-023 seed malformed: ' . $e->getMessage());
+            $output->warning('actions.seed.json invalid JSON: '.$e->getMessage());
+            $this->logger->error('[app-template] ADR-023 seed malformed: '.$e->getMessage());
             return;
         }
 
@@ -112,18 +121,23 @@ class InitializeActions implements IRepairStep
         try {
             $this->actionAuth->setMatrix($actions);
         } catch (\JsonException $e) {
-            $output->warning('Failed to write matrix: ' . $e->getMessage());
+            $output->warning('Failed to write matrix: '.$e->getMessage());
             return;
+        }
+
+        $count = count($actions);
+        if ($count === 1) {
+            $plural = '';
+        } else {
+            $plural = 's';
         }
 
         $output->info(
             sprintf(
                 'Seeded action matrix with %d action%s (default: admin-only).',
-                count($actions),
-                (count($actions) === 1 ? '' : 's')
+                $count,
+                $plural
             )
         );
-
     }//end run()
-
 }//end class

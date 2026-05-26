@@ -89,7 +89,7 @@ class ActionAuthService
             return;
         }
 
-        $allowedGroups = $this->getAllowedGroups($action);
+        $allowedGroups = $this->getAllowedGroups(action: $action);
 
         // An "admin"-only entry means non-admins never pass (admin already
         // returned above). Empty entry means nobody is allowed.
@@ -127,7 +127,7 @@ class ActionAuthService
     public function can(IUser $user, string $action): bool
     {
         try {
-            $this->requireAction($user, $action);
+            $this->requireAction(user: $user, action: $action);
             return true;
         } catch (OCSForbiddenException $e) {
             return false;
@@ -219,13 +219,9 @@ class ActionAuthService
         // Normalize on write — same shape as getMatrix returns.
         $normalized = [];
         foreach ($matrix as $action => $groups) {
-            if (is_string($action) === false || is_array($groups) === false) {
-                continue;
-            }
-
             $clean = [];
             foreach ($groups as $g) {
-                if (is_string($g) === true && $g !== '') {
+                if ($g !== '') {
                     $clean[] = $g;
                 }
             }
@@ -246,7 +242,5 @@ class ActionAuthService
     public function getActions(): array
     {
         return array_keys($this->getMatrix());
-
     }//end getActions()
-
 }//end class
