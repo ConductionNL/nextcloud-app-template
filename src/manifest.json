@@ -13,10 +13,10 @@
 			"order": 10
 		},
 		{
-			"id": "Items",
-			"label": "Items",
+			"id": "Examples",
+			"label": "Examples",
 			"icon": "icon-files",
-			"route": "Items",
+			"route": "Examples",
 			"order": 20
 		},
 		{
@@ -51,24 +51,24 @@
 					"gridWidth": 3,
 					"gridHeight": 1,
 					"props": {
-						"title": "Open items",
+						"title": "Open examples",
 						"iconClass": "icon-files",
 						"register": "app-template",
-						"schema": "item",
-						"countLabel": "items",
+						"schema": "example",
+						"countLabel": "examples",
 						"variant": "primary"
 					}
 				}
 			]
 		},
 		{
-			"id": "Items",
-			"route": "/items",
+			"id": "Examples",
+			"route": "/examples",
 			"type": "index",
-			"title": "Items",
+			"title": "Examples",
 			"config": {
 				"register": "app-template",
-				"schema": "item",
+				"schema": "example",
 				"columns": [
 					"title",
 					"status",
@@ -91,13 +91,13 @@
 			]
 		},
 		{
-			"id": "ItemDetail",
-			"route": "/items/:id",
+			"id": "ExampleDetail",
+			"route": "/examples/:id",
 			"type": "detail",
-			"title": "Item",
+			"title": "Example",
 			"config": {
 				"register": "app-template",
-				"schema": "item",
+				"schema": "example",
 				"sidebar": true
 			},
 			"widgets": [
