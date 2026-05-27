@@ -53,6 +53,9 @@ class SettingsController extends Controller
     /**
      * Retrieve all current settings.
      *
+     * Admin-sensitive fields (register binding) are stripped for non-admin users
+     * so the register UUID is not exposed to regular authenticated users.
+     *
      * @NoAdminRequired
      *
      * @return JSONResponse
@@ -61,9 +64,14 @@ class SettingsController extends Controller
      */
     public function index(): JSONResponse
     {
-        return new JSONResponse(
-            $this->settingsService->getSettings()
-        );
+        $settings = $this->settingsService->getSettings();
+        $isAdmin  = ($settings['isAdmin'] ?? false);
+
+        if ($isAdmin === false) {
+            unset($settings['register']);
+        }
+
+        return new JSONResponse($settings);
     }//end index()
 
     /**
