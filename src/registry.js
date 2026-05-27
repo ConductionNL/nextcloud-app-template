@@ -128,13 +128,13 @@ export default {
 
 	/**
 	 * Status badge renderer. Auto-bound by the object table to the "status"
-	 * property column on "item" schema rows. Adjust appliesTo for your schema.
+	 * property column on "example" schema rows. Adjust appliesTo for your schema.
 	 */
 	'status-badge': {
 		kind: 'cell-renderer',
 		component: StatusBadge,
 		appliesTo: {
-			schema: 'item',
+			schema: 'example',
 			property: 'status',
 		},
 	},
