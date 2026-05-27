@@ -29,12 +29,17 @@ declare(strict_types=1);
 namespace OCA\AppTemplate\Mcp;
 
 use OCA\AppTemplate\AppInfo\Application;
+use OCA\OpenRegister\Mcp\AbstractToolHandler;
 use OCA\OpenRegister\Mcp\IMcpToolProvider;
 use OCP\App\IAppManager;
+use OCP\IGroupManager;
 use OCP\IUserSession;
 
 /**
  * Example MCP tool provider — the AI Chat Companion entry point for this app.
+ *
+ * Extends AbstractToolHandler to inherit standardised requireWriteRole() and
+ * requireAdminUser() helpers (fleet-standard pattern per openbuilt PR #173).
  *
  * This is teaching scaffolding. To wire your app into the in-app AI assistant:
  *
@@ -58,7 +63,7 @@ use OCP\IUserSession;
  * the full design, and decidesk's `OCA\Decidesk\Mcp\DecideskToolProvider` for a
  * production example with five real tools, deep links, and source descriptors.
  */
-class ExampleToolProvider implements IMcpToolProvider
+class ExampleToolProvider extends AbstractToolHandler implements IMcpToolProvider
 {
 
     /**
@@ -115,13 +120,17 @@ class ExampleToolProvider implements IMcpToolProvider
      * and a way to read the app manifest ({@see IAppManager}). Real providers
      * usually also inject their service layer (see DecideskToolProvider).
      *
-     * @param IUserSession $userSession The current user session (for auth checks)
+     * @param IUserSession $userSession  The current user session (for auth checks)
+     * @param IGroupManager $groupManager The group manager (for admin checks)
      * @param IAppManager  $appManager  The app manager (for reading info.xml)
      */
     public function __construct(
-        private readonly IUserSession $userSession,
+        IUserSession $userSession,
+        IGroupManager $groupManager,
         private readonly IAppManager $appManager,
     ) {
+        $this->userSession  = $userSession;
+        $this->groupManager = $groupManager;
     }//end __construct()
 
     /**
@@ -154,7 +163,8 @@ class ExampleToolProvider implements IMcpToolProvider
      *
      * Dispatch skeleton — for each tool:
      *   1. validate args
-     *   2. authorise (per-object, BEFORE business logic)
+     *   2. authorise (per-object, BEFORE business logic) — use requireWriteRole()
+     *      or requireAdminUser() from AbstractToolHandler for standard checks
      *   3. delegate to your service layer
      *   4. return the payload  /  return ['error' => ['code' => ..., 'message' => ...]]
      *
@@ -180,14 +190,10 @@ class ExampleToolProvider implements IMcpToolProvider
 
             case Application::APP_ID.'.describeApp':
                 // 1. validate args  — none.
-                // 2. authorise       — minimal: there must be an authenticated user.
-                if ($this->userSession->getUser() === null) {
-                    return [
-                        'error' => [
-                            'code'    => 'not_authenticated',
-                            'message' => 'You must be signed in to call '.$toolId.'.',
-                        ],
-                    ];
+                // 2. authorise — require an authenticated user via AbstractToolHandler.
+                $authError = $this->requireWriteRole();
+                if ($authError !== null) {
+                    return $authError;
                 }
 
                 // 3. delegate — read the app manifest via IAppManager.
