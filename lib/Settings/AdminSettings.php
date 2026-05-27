@@ -31,6 +31,13 @@ use OCP\Settings\ISettings;
 
 /**
  * Provides the admin settings form for the AppTemplate application.
+ *
+ * Implements ISettings (full-admin-only access). If your app needs delegated
+ * admin support — allowing group-restricted sub-admins to manage settings —
+ * migrate to IDelegatedSettings and implement getAuthorizedGroupId(). See
+ * OCP\Settings\IDelegatedSettings for the interface contract and
+ * https://docs.nextcloud.com/server/latest/developer_manual/app_development/settings.html
+ * for usage guidance. For most apps, ISettings is the correct choice.
  */
 class AdminSettings implements ISettings
 {

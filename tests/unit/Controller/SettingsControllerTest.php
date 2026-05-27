@@ -76,11 +76,11 @@ class SettingsControllerTest extends TestCase
     }//end setUp()
 
     /**
-     * Test that index() returns a JSONResponse containing the settings from the service.
+     * index() for a non-admin user does NOT include the register binding.
      *
      * @return void
      */
-    public function testIndexReturnsJsonResponseWithSettings(): void
+    public function testIndexStripsRegisterForNonAdmin(): void
     {
         $settings = [
             'register'      => 'some-uuid',
@@ -95,9 +95,38 @@ class SettingsControllerTest extends TestCase
         $result = $this->controller->index();
 
         self::assertInstanceOf(JSONResponse::class, $result);
-        self::assertSame($settings, $result->getData());
+        $data = $result->getData();
+        self::assertArrayNotHasKey('register', $data, 'register must be stripped for non-admin users');
+        self::assertSame(true, $data['openregisters']);
+        self::assertSame(false, $data['isAdmin']);
 
-    }//end testIndexReturnsJsonResponseWithSettings()
+    }//end testIndexStripsRegisterForNonAdmin()
+
+    /**
+     * index() for an admin user includes the register binding.
+     *
+     * @return void
+     */
+    public function testIndexIncludesRegisterForAdmin(): void
+    {
+        $settings = [
+            'register'      => 'some-uuid',
+            'openregisters' => true,
+            'isAdmin'       => true,
+        ];
+
+        $this->settingsService->expects($this->once())
+            ->method('getSettings')
+            ->willReturn($settings);
+
+        $result = $this->controller->index();
+
+        self::assertInstanceOf(JSONResponse::class, $result);
+        $data = $result->getData();
+        self::assertArrayHasKey('register', $data, 'register must be present for admin users');
+        self::assertSame('some-uuid', $data['register']);
+
+    }//end testIndexIncludesRegisterForAdmin()
 
     /**
      * Test that create() calls updateSettings with request params and returns success.
