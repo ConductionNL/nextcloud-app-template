@@ -77,6 +77,13 @@ class MetricsController extends Controller
     /**
      * Prometheus text exposition. Admin auth per ADR-006.
      *
+     * @NoCSRFRequired
+     *   Exception to the project-wide @NoCSRFRequired-ban: this endpoint is
+     *   scraped by Prometheus (no browser session / no CSRF token available).
+     *   It is protected by Nextcloud admin auth (@AuthorizedAdminSetting) so
+     *   CSRF protection is replaced by admin-level credential validation.
+     *   ADR-006 explicitly allows this for the /api/metrics admin endpoint.
+     *
      * @return DataDisplayResponse
      *
      * @spec openspec/changes/example-change/tasks.md#task-8
