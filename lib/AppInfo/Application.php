@@ -32,7 +32,6 @@ namespace OCA\AppTemplate\AppInfo;
 use OCA\AppTemplate\Dashboard\ExampleWidget;
 use OCA\AppTemplate\Listener\DeepLinkRegistrationListener;
 use OCA\AppTemplate\Mcp\ExampleToolProvider;
-use OCA\AppTemplate\Repair\InitializeSettings;
 use OCA\OpenRegister\Event\DeepLinkRegistrationEvent;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
@@ -74,8 +73,9 @@ class Application extends App implements IBootstrap
             listener: DeepLinkRegistrationListener::class
         );
 
-        // Initialize register and schemas on install/upgrade.
-        $context->registerRepairStep(InitializeSettings::class);
+        // Note: InitializeSettings is registered as a repair step in appinfo/info.xml.
+        // Do NOT also register it here via registerRepairStep — that would cause
+        // double-execution on every install and upgrade.
 
         // Sample dashboard widget — see lib/Dashboard/ExampleWidget.php.
         // Delete this line and the ExampleWidget files if your app has no

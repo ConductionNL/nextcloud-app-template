@@ -60,7 +60,7 @@ class DeepLinkRegistrationListener implements IEventListener
             appId: 'app-template',
             registerSlug: 'app-template',
             schemaSlug: 'example',
-            urlTemplate: '/apps/app-template/#/examples/{uuid}'
+            urlTemplate: '/apps/app-template/examples/{uuid}'
         );
 
     }//end handle()
