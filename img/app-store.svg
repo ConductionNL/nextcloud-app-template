@@ -1,5 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
-  <rect width="200" height="200" rx="40" fill="#0082C9"/>
-  <path d="M100 40L40 75v50l60 35 60-35V75L100 40z" fill="white" opacity="0.9"/>
-  <path d="M100 40v90M40 75l60 25 60-25" stroke="#0082C9" stroke-width="4"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <polygon points="256,26 455.19,141 455.19,371 256,486 56.81,371 56.81,141" fill="#21468B"/>
+  <g transform="translate(144, 144) scale(9.33)" fill="#ffffff">
+    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+  </g>
 </svg>
