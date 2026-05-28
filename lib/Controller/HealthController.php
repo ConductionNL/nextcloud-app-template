@@ -31,6 +31,7 @@ namespace OCA\AppTemplate\Controller;
 
 use OCA\AppTemplate\AppInfo\Application;
 use OCA\AppTemplate\Service\SettingsService;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\JSONResponse;
@@ -52,6 +53,7 @@ class HealthController extends Controller
      * @param IRequest        $request         The request object
      * @param SettingsService $settingsService For OpenRegister availability check
      * @param LoggerInterface $logger          The logger
+     * @param IAppManager     $appManager      For reading the app version dynamically
      *
      * @return void
      *
@@ -61,6 +63,7 @@ class HealthController extends Controller
         IRequest $request,
         private SettingsService $settingsService,
         private LoggerInterface $logger,
+        private IAppManager $appManager,
     ) {
         parent::__construct(appName: Application::APP_ID, request: $request);
     }//end __construct()
@@ -90,7 +93,7 @@ class HealthController extends Controller
                 [
                     'status'       => $status,
                     'app'          => Application::APP_ID,
-                    'version'      => '0.1.0',
+                    'version'      => $this->appManager->getAppVersion(Application::APP_ID),
                     'dependencies' => [
                         'openregister' => $openRegister,
                     ],
