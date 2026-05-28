@@ -80,8 +80,9 @@ class MetricsController extends Controller
      * @NoCSRFRequired
      *   Exception to the project-wide @NoCSRFRequired-ban: this endpoint is
      *   scraped by Prometheus (no browser session / no CSRF token available).
-     *   It is protected by Nextcloud admin auth (@AuthorizedAdminSetting) so
-     *   CSRF protection is replaced by admin-level credential validation.
+     *   Admin-only by Nextcloud default: no @NoAdminRequired means
+     *   SecurityMiddleware enforces isAdminUser() — CSRF is not required because
+     *   Prometheus scrapers never carry a browser session.
      *   ADR-006 explicitly allows this for the /api/metrics admin endpoint.
      *
      * @return DataDisplayResponse
