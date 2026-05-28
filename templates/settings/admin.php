@@ -5,11 +5,9 @@ use OCP\Util;
 
 $appId = Application::APP_ID;
 
-// Inject the app version via Nextcloud's IInitialState API so the Vue settings
-// app can read it with loadState('app-template', 'version') — the NC-standard
-// CSP-compliant approach (replaces the prior data-version DOM attribute).
-\OC::$server->get(\OCP\IInitialStateService::class)
-    ->provideInitialState($appId, 'version', $_['version'] ?? '');
+// The app version is injected as initial state by AdminSettings::getForm()
+// via IInitialStateService — no service-locator call needed here.
+// Read in Vue with: loadState(appId, 'version').
 
 // webpack splitChunks emits shared chunks that every entry-point depends on
 // (see comment in templates/index.php). The admin-settings entry's bundle

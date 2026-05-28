@@ -18,11 +18,6 @@
  * @version GIT: <git-id>
  *
  * @link https://conduction.nl
- *
- * @spec openspec/changes/example-change/tasks.md#task-N
- *   (file-level @spec tag — link back to the OpenSpec change that created or
- *   last modified this file. Multiple @spec tags allowed. Public methods SHOULD
- *   also carry their own @spec tag. ADR-003.)
  */
 
 declare(strict_types=1);

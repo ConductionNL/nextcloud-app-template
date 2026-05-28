@@ -27,6 +27,7 @@ namespace OCA\AppTemplate\Settings;
 use OCA\AppTemplate\AppInfo\Application;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\IInitialStateService;
 use OCP\Settings\ISettings;
 
 /**
@@ -44,10 +45,12 @@ class AdminSettings implements ISettings
     /**
      * Constructor.
      *
-     * @param IAppManager $appManager The app manager.
+     * @param IAppManager         $appManager         The app manager.
+     * @param IInitialStateService $initialStateService NC initial state service for CSP-safe state injection.
      */
     public function __construct(
         private IAppManager $appManager,
+        private IInitialStateService $initialStateService,
     ) {
     }//end __construct()
 
@@ -60,10 +63,15 @@ class AdminSettings implements ISettings
     {
         $version = $this->appManager->getAppVersion(appId: Application::APP_ID);
 
+        // Provide version via IInitialStateService (CSP-compliant) so the Vue
+        // settings app can read it via loadState(appId, 'version').
+        // This replaces the service-locator call in the template.
+        $this->initialStateService->provideInitialState(Application::APP_ID, 'version', $version);
+
         return new TemplateResponse(
             Application::APP_ID,
             'settings/admin',
-            ['version' => $version]
+            []
         );
     }//end getForm()
 
