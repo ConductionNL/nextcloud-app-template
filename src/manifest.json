@@ -136,8 +136,6 @@
 								"type": "version-info",
 								"props": {
 									"appName": "App Template",
-									"showUpdateButton": false,
-									"isUpToDate": true,
 									"title": "Version Information",
 									"description": "Information about the current installation."
 								}
@@ -156,8 +154,6 @@
 					"gridHeight": 1,
 					"props": {
 						"appName": "App Template",
-						"showUpdateButton": false,
-						"isUpToDate": true,
 						"title": "Version Information",
 						"description": "Information about the current installation."
 					}
