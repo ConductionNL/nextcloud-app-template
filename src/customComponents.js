@@ -1,26 +1,28 @@
 // SPDX-License-Identifier: EUPL-1.2
 // Copyright (C) 2026 Conduction B.V.
 //
-// Custom-component registry for the manifest-driven app shell.
+// V1 custom-component registry — kept for backward-compatibility reference.
 //
-// Every entry here is the "escape hatch" — pages or sidebar tabs that
-// don't fit one of the manifest's built-in types/widgets. Keep this
-// file SHORT. The vast majority of pages should be expressible as
-// `type: "index" | "detail" | "dashboard" | "settings"` with config;
-// reach for `type: "custom"` only when none of those fit.
+// *** V2 WAY: use src/registry.js instead. ***
 //
-// Resolution order at runtime:
+// This file is the v1 "page-only" registry consumed by CnAppRoot's
+// `customComponents` prop. It works for v1 manifests and during the
+// v1 → v2 transition period. Once the app fully migrates to a v2 manifest
+// and no longer needs the `customComponents` prop, this file can be removed
+// and the import in main.js deleted.
+//
+// CnAppRoot will emit a console.warn once per mount when a v2 manifest is
+// loaded alongside a non-empty `customComponents` prop. That is expected
+// behaviour during the transition; it does not break anything.
+//
+// Every entry here has an equivalent `kind: "page"` entry in src/registry.js.
+//
+// Resolution order at runtime (v1 path):
 //   1. Built-in page types          (CnIndexPage, CnDetailPage, …)
 //   2. Built-in widget types        (version-info, register-mapping, …)
 //   3. customComponents (this file) ← consumer-injected components
 //
-// To add a custom page:
-//   1. Add an entry to `pages[]` in `src/manifest.json` with
-//      `"type": "custom"` and `"component": "MyComponentName"`.
-//   2. Add a Vue file under `src/views/` (or wherever you prefer).
-//   3. Register it in this object: `MyComponentName: MyComponent`.
-//
-// See: https://github.com/ConductionNL/nextcloud-vue → docs/migrating-to-manifest.md
+// See hydra ADR-036 for the v2 registry design.
 
 import CustomExample from './views/CustomExample.vue'
 // Features & Roadmap page — thin wrapper around the lib's
@@ -29,7 +31,6 @@ import CustomExample from './views/CustomExample.vue'
 // from this template inherit the Settings-section "Features & roadmap"
 // entry; change the repo fallback in views/FeaturesRoadmap.vue. See
 // ConductionNL/hydra#251.
-import FeaturesRoadmapView from './views/FeaturesRoadmap.vue'
 
 export default {
 	// Example custom component. Keep or delete when scaffolding a new
@@ -41,5 +42,4 @@ export default {
 	// Features & Roadmap page (lib's CnFeaturesAndRoadmapView) — wired up
 	// in src/manifest.json (the `FeaturesRoadmap` custom page + the
 	// `FeaturesRoadmapMenu` settings entry).
-	FeaturesRoadmap: FeaturesRoadmapView,
 }

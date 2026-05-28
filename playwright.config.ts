@@ -1,6 +1,6 @@
 /*
- * SPDX-FileCopyrightText: 2026 Nextcloud App Template Contributors
- * SPDX-License-Identifier: AGPL-3.0-or-later
+ * SPDX-FileCopyrightText: 2026 Conduction B.V.
+ * SPDX-License-Identifier: EUPL-1.2
  *
  * Playwright config for the Nextcloud App Template.
  *

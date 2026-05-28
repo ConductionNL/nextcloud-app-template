@@ -8,7 +8,7 @@
     <summary lang="nl">{APP_SUMMARY}</summary>
     <description lang="en"><![CDATA[{APP_DESCRIPTION}]]></description>
     <description lang="nl"><![CDATA[{APP_DESCRIPTION}]]></description>
-    <version>0.1.0</version>
+    <version>0.1.2</version>
     <licence>eupl</licence>
     <author mail="info@conduction.nl" homepage="https://www.conduction.nl/">Conduction</author>
     <namespace>AppTemplate</namespace>
@@ -27,7 +27,7 @@
 
     <dependencies>
         <nextcloud min-version="28" max-version="34"/>
-        <php min-version="8.1"/>
+        <php min-version="8.3"/>
     </dependencies>
 
     <navigations>
@@ -38,6 +38,18 @@
             <icon>app.svg</icon>
         </navigation>
     </navigations>
+
+    <!-- @spec openspec/architecture/adr-023-action-authorization.md -->
+    <repair-steps>
+        <install>
+            <step>OCA\AppTemplate\Repair\InitializeSettings</step>
+            <step>OCA\AppTemplate\Repair\InitializeActions</step>
+        </install>
+        <post-migration>
+            <step>OCA\AppTemplate\Repair\InitializeSettings</step>
+            <step>OCA\AppTemplate\Repair\InitializeActions</step>
+        </post-migration>
+    </repair-steps>
 
     <settings>
         <admin>OCA\AppTemplate\Settings\AdminSettings</admin>

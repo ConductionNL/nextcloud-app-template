@@ -8,9 +8,12 @@
  * @category Controller
  * @package  OCA\AppTemplate\Controller
  *
- * @author    Conduction Development Team <dev@conductio.nl>
- * @copyright 2024 Conduction B.V.
+ * @author    Conduction Development Team <info@conduction.nl>
+ * @copyright 2026 Conduction B.V.
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ * SPDX-License-Identifier: EUPL-1.2
  *
  * @version GIT: <git-id>
  *
@@ -50,21 +53,33 @@ class SettingsController extends Controller
     /**
      * Retrieve all current settings.
      *
+     * Admin-sensitive fields (register binding) are stripped for non-admin users
+     * so the register UUID is not exposed to regular authenticated users.
+     *
      * @NoAdminRequired
      *
      * @return JSONResponse
+     *
+     * @spec openspec/specs/settings-management/spec.md#REQ-CFG-001
      */
     public function index(): JSONResponse
     {
-        return new JSONResponse(
-            $this->settingsService->getSettings()
-        );
+        $settings = $this->settingsService->getSettings();
+        $isAdmin  = ($settings['isAdmin'] ?? false);
+
+        if ($isAdmin === false) {
+            unset($settings['register']);
+        }
+
+        return new JSONResponse($settings);
     }//end index()
 
     /**
      * Update settings with provided data.
      *
      * @return JSONResponse
+     *
+     * @spec openspec/specs/settings-management/spec.md#REQ-CFG-002
      */
     public function create(): JSONResponse
     {
@@ -86,6 +101,8 @@ class SettingsController extends Controller
      * all schema and register IDs from the import result.
      *
      * @return JSONResponse
+     *
+     * @spec openspec/specs/settings-management/spec.md#REQ-CFG-003
      */
     public function load(): JSONResponse
     {
