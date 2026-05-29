@@ -23,7 +23,7 @@
 			"id": "Documentation",
 			"label": "Documentation",
 			"icon": "icon-info",
-			"href": "https://github.com/ConductionNL/nextcloud-app-template",
+			"href": "https://codeberg.org/Conduction/nextcloud-app-template",
 			"section": "footer",
 			"order": 90
 		},

@@ -293,7 +293,7 @@ Companion (a floating assistant rendered by `CnAppRoot` from
   alias `OCA\OpenRegister\Mcp\IMcpToolProvider::{appId}`; OpenRegister's
   `McpToolsService` discovers per-app providers by exactly that alias.
 - `tests/Stubs/Mcp/IMcpToolProvider.php` — a stand-in for the interface until
-  [openregister PR #1466](https://codeberg.org/Conduction/openregister/pull/1466)
+  [openregister PR #1466](https://codeberg.org/Conduction/openregister/pulls/1466)
   merges; once the openregister app is installed alongside your app the real
   interface takes over transparently.
 - `tests/Unit/Mcp/ExampleToolProviderTest.php` — the contract test.

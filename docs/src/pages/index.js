@@ -200,7 +200,7 @@ export default function Home() {
           tagline={TAGLINE}
           primaryCta={{
             label: 'View on GitHub',
-            href: 'https://github.com/ConductionNL/nextcloud-app-template',
+            href: 'https://codeberg.org/Conduction/nextcloud-app-template',
             tone: 'orange',
           }}
           secondaryCta={{ label: 'Read the docs', href: '/docs/intro' }}
