@@ -143,7 +143,7 @@ This is the **most fragmented** category and the most user-facing
 | Value | Apps |
 |---|---|
 | `8.0` | larpingapp, opencatalogi, openconnector, openregister, softwarecatalog, zaakafhandelapp |
-| `8.1` | decidesk, deskdesk, mydash, nldesign, openbuilt, pipelinq, planix, procest, shillinq |
+| `8.1` | decidesk, deskdesk, mydash, nldesign, openbuild, pipelinq, planix, procest, shillinq |
 | `8.2` | docudesk |
 | `8.3` | **scholiq only** ✓ |
 | (unset) | app-versions, openklant, opentalk, openzaak, valtimo |
@@ -161,7 +161,7 @@ Wildly varying:
 | min | max | Apps |
 |---|---|---|
 | 28 | 33 | decidesk, nldesign, opencatalogi, pipelinq, procest, softwarecatalog, zaakafhandelapp |
-| 28 | 34 | deskdesk, openbuilt, openregister, planix, shillinq |
+| 28 | 34 | deskdesk, openbuild, openregister, planix, shillinq |
 | 28 | 32 | larpingapp, openconnector |
 | 29 | 34 | mydash |
 | 30 | 33 | docudesk (max 34 actually), openklant, opentalk, openzaak, valtimo |

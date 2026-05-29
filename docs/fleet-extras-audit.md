@@ -21,7 +21,7 @@ records:
   - **Out of scope** (ExApp sidecar, special-case, intentional).
 
 Apps in scope for this audit: `app-versions`, `decidesk`, `deskdesk`,
-`docudesk`, `larpingapp`, `mydash`, `nldesign`, `openbuilt`, `opencatalogi`,
+`docudesk`, `larpingapp`, `mydash`, `nldesign`, `openbuild`, `opencatalogi`,
 `openconnector`, `openklant`, `openregister`, `opentalk`, `openzaak`,
 `pipelinq`, `planix`, `procest`, `scholiq`, `shillinq`, `softwarecatalog`,
 `valtimo`, `zaakafhandelapp`.
