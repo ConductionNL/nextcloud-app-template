@@ -3,7 +3,7 @@
 /**
  * Test stub for OCA\OpenRegister\Mcp\AbstractToolHandler.
  *
- * Mirrors the base class signature from openregister (openbuilt PR #173).
+ * Mirrors the base class signature from openregister (openbuild PR #173).
  * Used only in environments where the openregister runtime is not installed
  * (e.g. bare CI containers). It is replaced by the real class as soon as
  * the openregister app is installed alongside this app.

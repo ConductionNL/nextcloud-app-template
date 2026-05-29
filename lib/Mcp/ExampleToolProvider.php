@@ -39,7 +39,7 @@ use OCP\IUserSession;
  * Example MCP tool provider — the AI Chat Companion entry point for this app.
  *
  * Extends AbstractToolHandler to inherit standardised requireWriteRole() and
- * requireAdminUser() helpers (fleet-standard pattern per openbuilt PR #173).
+ * requireAdminUser() helpers (fleet-standard pattern per openbuild PR #173).
  *
  * This is teaching scaffolding. To wire your app into the in-app AI assistant:
  *
