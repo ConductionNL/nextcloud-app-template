@@ -21,7 +21,7 @@ records:
   - **Out of scope** (ExApp sidecar, special-case, intentional).
 
 Apps in scope for this audit: `app-versions`, `decidesk`, `deskdesk`,
-`docudesk`, `larpingapp`, `mydash`, `nldesign`, `openbuild`, `opencatalogi`,
+`docudesk`, `larpingapp`, `launchpad`, `nldesign`, `openbuild`, `opencatalogi`,
 `openconnector`, `openklant`, `openregister`, `opentalk`, `openzaak`,
 `pipelinq`, `planix`, `procest`, `scholiq`, `shillinq`, `softwarecatalog`,
 `valtimo`, `zaakafhandelapp`.
@@ -144,7 +144,7 @@ change.
 - `rector.php` → keep if Rector is actively used; otherwise delete
 - `CODE_OF_CONDUCT.md` → consider promoting to all apps (or moving to org-level)
 
-### `mydash` cleanup candidates
+### `launchpad` cleanup candidates
 
 - `HANDOVER.md` → move to `docs/notes/` or delete
 

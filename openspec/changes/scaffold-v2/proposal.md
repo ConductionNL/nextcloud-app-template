@@ -27,7 +27,7 @@ This is Phase 1c of the v2 manifest rollout chain defined in ADR-036:
      progress (nc-vue PRs #254 #255 #256).
   3. **`scaffold-v2` (this change, nextcloud-app-template)** — updated scaffold
      ships v2 manifest with example registrations for each kind.
-  4. Reference migrations (parallel): procest + mydash.
+  4. Reference migrations (parallel): procest + launchpad.
   5. Fleet rollout via `opsx-pipeline`.
 
 ## What Changes
@@ -77,7 +77,7 @@ This is Phase 1c of the v2 manifest rollout chain defined in ADR-036:
   consumers).
 - Removing `customComponents.js` — apps migrating to v2 can switch
   progressively; the v1 prop continues to work for v1 manifests.
-- `useRuntimeManifest` adoption — that is the mydash migration (Phase 1d of the
+- `useRuntimeManifest` adoption — that is the launchpad migration (Phase 1d of the
   ADR-036 rollout chain).
 
 ## References

@@ -143,7 +143,7 @@ This is the **most fragmented** category and the most user-facing
 | Value | Apps |
 |---|---|
 | `8.0` | larpingapp, opencatalogi, openconnector, openregister, softwarecatalog, zaakafhandelapp |
-| `8.1` | decidesk, deskdesk, mydash, nldesign, openbuild, pipelinq, planix, procest, shillinq |
+| `8.1` | decidesk, deskdesk, launchpad, nldesign, openbuild, pipelinq, planix, procest, shillinq |
 | `8.2` | docudesk |
 | `8.3` | **scholiq only** ✓ |
 | (unset) | app-versions, openklant, opentalk, openzaak, valtimo |
@@ -163,7 +163,7 @@ Wildly varying:
 | 28 | 33 | decidesk, nldesign, opencatalogi, pipelinq, procest, softwarecatalog, zaakafhandelapp |
 | 28 | 34 | deskdesk, openbuild, openregister, planix, shillinq |
 | 28 | 32 | larpingapp, openconnector |
-| 29 | 34 | mydash |
+| 29 | 34 | launchpad |
 | 30 | 33 | docudesk (max 34 actually), openklant, opentalk, openzaak, valtimo |
 | 31 | 33 | app-versions |
 | 33 | 34 | scholiq |
@@ -179,7 +179,7 @@ not have artificially-low maximums (32, 33).
 |---|---|
 | `agpl` (lowercase) | 13 |
 | `eupl` (lowercase) | planix, scholiq, shillinq |
-| `EUPL-1.2` (uppercase + dash) | mydash |
+| `EUPL-1.2` (uppercase + dash) | launchpad |
 | `AGPL-3.0-or-later` | app-versions |
 
 Per memory (`feedback_apps-eupl-license`), all Conduction apps are

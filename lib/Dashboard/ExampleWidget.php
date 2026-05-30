@@ -114,7 +114,7 @@ class ExampleWidget implements IWidget
      *   2. shared-nc-vue  (@nextcloud/vue + @conduction/nextcloud-vue)
      *   3. exampleWidget  (the widget's own renderer)
      *
-     * `Util::addScript` dedupes by (app, file), so even when MyDash loads
+     * `Util::addScript` dedupes by (app, file), so even when LaunchPad loads
      * every registered widget at once the shared chunks are emitted to the
      * HTML exactly once. See ADR-004 (Build / bundling).
      *
