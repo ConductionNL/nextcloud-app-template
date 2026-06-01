@@ -61,16 +61,6 @@ The scaffolded settings page's widget content SHALL be expressed via top-level
 - **THEN** each widget entry's `slot` SHALL match the pattern `section:<id>`
 - **THEN** the version-info widget SHALL use `widgetKey: "version-info"` with `slot: "section:version"`
 
-### Requirement: Custom pages include _note
-
-All pages with `type: "custom"` SHALL include a `_note` field documenting why
-decomposition into a typed page was not feasible.
-
-#### Scenario: FeaturesRoadmap has _note
-
-- **WHEN** the FeaturesRoadmap page entry is read from the manifest
-- **THEN** the page SHALL have a non-empty `_note` string field
-
 ### Requirement: Five-kind registry shipped
 
 `src/registry.js` SHALL export a default object containing at least one entry

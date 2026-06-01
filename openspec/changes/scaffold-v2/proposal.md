@@ -1,5 +1,12 @@
 # scaffold-v2: update the app template scaffold to ship v2 manifest by default
 
+> REVERTED 2026-06-01: archived prematurely; implementation not present on development — re-opened for real apply.
+> Specifically, the FeaturesRoadmap page in `src/manifest.json` is `type: "roadmap"` with a `config` block, NOT a
+> `type: "custom"` page carrying a required `_note` field, and `src/views/FeaturesRoadmap.vue` was never added.
+> The "FeaturesRoadmap: add `_note` field" task is un-checked and the over-claimed "Custom pages include _note"
+> requirement was removed from the synced main spec (`openspec/specs/scaffold-v2/spec.md`). All other v2 manifest,
+> registry, main.js/App.vue wiring, README, and test-script work is genuinely present and stays done.
+
 ## Why
 
 `nextcloud-app-template` is the cookie-cutter every new Conduction Nextcloud

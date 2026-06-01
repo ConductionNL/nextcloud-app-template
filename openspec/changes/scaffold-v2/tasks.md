@@ -16,7 +16,7 @@
 - [x] Items index page: add explicit `widgets[]` with `object-table` built-in
 - [x] ItemDetail page: lift `config.sidebarProps.tabs[].widgets[]` to top-level `widgets[]` with `slot: "sidebar"` + `tabGroup`
 - [x] Settings page: flatten `config.sections[].widgets[]` to top-level `widgets[]` with `slot: "section:version"`
-- [x] FeaturesRoadmap: add `_note` field
+- [ ] FeaturesRoadmap: add `_note` field
 
 ## Phase 3: Add src/registry.js and example components
 
