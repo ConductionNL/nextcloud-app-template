@@ -1,4 +1,5 @@
 <?php
+// SPDX-License-Identifier: EUPL-1.2
 
 use OCA\AppTemplate\AppInfo\Application;
 use OCP\Util;
