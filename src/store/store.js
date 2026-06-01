@@ -1,20 +1,33 @@
-// SPDX-License-Identifier: EUPL-1.2
-import { generateUrl } from '@nextcloud/router'
-import { useObjectStore } from './modules/object.js'
+import { createObjectStore } from '@conduction/nextcloud-vue'
 import { useSettingsStore } from './modules/settings.js'
 
+/**
+ * Create the canonical OpenRegister object store for the 'example' schema.
+ *
+ * `createObjectStore` from @conduction/nextcloud-vue handles CSRF headers,
+ * pagination, single-flight de-duplication, and consistent error surfacing.
+ * Replace 'app-template' / 'example' with your app's register and schema slug.
+ *
+ * @spec openspec/specs/frontend-data-stores/spec.md#REQ-STORE-001
+ */
+export const useObjectStore = createObjectStore('example', {
+	register: 'app-template',
+	schema: 'example',
+})
+
+/**
+ * Boot helper: prime settings store on app startup.
+ *
+ * @spec openspec/specs/frontend-data-stores/spec.md#REQ-STORE-005
+ * @return {Promise<{settingsStore: object, objectStore: object}>} Store handles.
+ */
 export async function initializeStores() {
 	const settingsStore = useSettingsStore()
 	const objectStore = useObjectStore()
-
-	objectStore.configure({
-		baseUrl: generateUrl('/apps/openregister/api/objects'),
-		schemaBaseUrl: generateUrl('/apps/openregister/api/schemas'),
-	})
 
 	await settingsStore.fetchSettings()
 
 	return { settingsStore, objectStore }
 }
 
-export { useObjectStore, useSettingsStore }
+export { useSettingsStore }

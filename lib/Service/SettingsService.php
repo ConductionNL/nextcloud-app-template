@@ -8,9 +8,12 @@
  * @category Service
  * @package  OCA\AppTemplate\Service
  *
- * @author    Conduction Development Team <dev@conductio.nl>
- * @copyright 2024 Conduction B.V.
+ * @author    Conduction Development Team <info@conduction.nl>
+ * @copyright 2026 Conduction B.V.
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ * SPDX-License-Identifier: EUPL-1.2
  *
  * @version GIT: <git-id>
  *
@@ -83,6 +86,8 @@ class SettingsService
      * fields (openregisters, isAdmin) consumed by the frontend.
      *
      * @return array<string,mixed>
+     *
+     * @spec openspec/specs/settings-management/spec.md#REQ-CFG-001
      */
     public function getSettings(): array
     {
@@ -109,6 +114,8 @@ class SettingsService
      * @param array<string,mixed> $data The data to update
      *
      * @return array<string,mixed> The updated settings
+     *
+     * @spec openspec/specs/settings-management/spec.md#REQ-CFG-002
      */
     public function updateSettings(array $data): array
     {
@@ -127,6 +134,8 @@ class SettingsService
      * @param bool $force Force re-import even if already configured.
      *
      * @return array<string,mixed> Result with success flag, message, and version.
+     *
+     * @spec openspec/specs/settings-management/spec.md#REQ-CFG-003
      */
     public function loadConfiguration(bool $force=false): array
     {
@@ -140,14 +149,34 @@ class SettingsService
 
         try {
             $configurationService = $this->container->get('OCA\OpenRegister\Service\ConfigurationService');
-            $result = $configurationService->importFromApp(appId: Application::APP_ID, force: $force);
+            // OR's importFromApp signature is (appId, data, version, force). It needs the parsed JSON
+            // up-front. importFromFilePath(appId, filePath, version, force) takes a path and parses
+            // internally — that's the one to call from a template that ships its register JSON inside
+            // lib/Settings/<appId>_register.json. OR's ImportHandler resolves filePath relative to
+            // \OC::$SERVERROOT (it prepends /var/www/html/), so we strip SERVERROOT from the absolute
+            // path we compute via OC_App.
+            $absPath = \OC_App::getAppPath(Application::APP_ID) . '/lib/Settings/' . Application::APP_ID . '_register.json';
+            $version = '0.1.0';
+            if (is_file($absPath)) {
+                $raw = json_decode(file_get_contents($absPath), true);
+                $version = $raw['info']['version'] ?? $version;
+            }
+            $serverRoot = rtrim(\OC::$SERVERROOT, '/');
+            $relPath = str_starts_with($absPath, $serverRoot) ? ltrim(substr($absPath, strlen($serverRoot)), '/') : $absPath;
+
+            $result = $configurationService->importFromFilePath(
+                appId: Application::APP_ID,
+                filePath: $relPath,
+                version: $version,
+                force: $force
+            );
 
             if (empty($result) === false) {
                 $this->logger->info('AppTemplate: register configuration imported successfully');
                 return [
                     'success' => true,
                     'message' => 'Configuration imported successfully.',
-                    'version' => ($result['version'] ?? 'unknown'),
+                    'version' => ($result['version'] ?? $version),
                 ];
             }
 

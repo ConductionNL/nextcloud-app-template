@@ -17,6 +17,12 @@ export const useSettingsStore = defineStore('settings', {
 	},
 
 	actions: {
+		/**
+		 * Read the app's settings from the backend `GET /api/settings`.
+		 *
+		 * @spec openspec/specs/frontend-data-stores/spec.md#REQ-STORE-004
+		 * @return {Promise<object|null>} The settings object, or null on failure.
+		 */
 		async fetchSettings() {
 			this.loading = true
 			try {
@@ -38,6 +44,13 @@ export const useSettingsStore = defineStore('settings', {
 			return null
 		},
 
+		/**
+		 * Persist a partial settings payload via `POST /api/settings`.
+		 *
+		 * @spec openspec/specs/frontend-data-stores/spec.md#REQ-STORE-004
+		 * @param {object} settings Partial settings payload.
+		 * @return {Promise<object|null>} The freshly-read config, or null on failure.
+		 */
 		async saveSettings(settings) {
 			this.loading = true
 			try {
