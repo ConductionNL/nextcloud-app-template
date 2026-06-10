@@ -42,24 +42,61 @@
 			"route": "/",
 			"type": "dashboard",
 			"title": "Dashboard",
-			"widgets": [
-				{
-					"widgetKey": "stats-block",
-					"slot": "body",
-					"gridX": 0,
-					"gridY": 0,
-					"gridWidth": 3,
-					"gridHeight": 1,
-					"props": {
+			"config": {
+				"widgets": [
+					{
+						"id": "open-examples",
 						"title": "Open examples",
+						"type": "stats-block",
 						"iconClass": "icon-files",
-						"register": "app-template",
-						"schema": "example",
-						"countLabel": "examples",
-						"variant": "primary"
+						"dataSource": {
+							"register": "app-template",
+							"schema": "example",
+							"aggregate": "count"
+						},
+						"props": {
+							"countLabel": "examples",
+							"variant": "primary"
+						}
+					},
+					{
+						"id": "in-progress",
+						"title": "In progress",
+						"type": "stats-block",
+						"iconClass": "icon-loading",
+						"dataSource": {
+							"register": "app-template",
+							"schema": "example",
+							"aggregate": "count"
+						},
+						"props": {
+							"countLabel": "examples",
+							"variant": "warning"
+						}
+					},
+					{
+						"id": "closed",
+						"title": "Closed",
+						"type": "stats-block",
+						"iconClass": "icon-checkmark",
+						"dataSource": {
+							"register": "app-template",
+							"schema": "example",
+							"aggregate": "count"
+						},
+						"props": {
+							"countLabel": "examples",
+							"variant": "success"
+						}
 					}
-				}
-			]
+				],
+				"layout": [
+					{ "id": 1, "widgetId": "open-examples", "gridX": 0, "gridY": 0, "gridWidth": 3, "gridHeight": 1 },
+					{ "id": 2, "widgetId": "in-progress", "gridX": 3, "gridY": 0, "gridWidth": 3, "gridHeight": 1 },
+					{ "id": 3, "widgetId": "closed", "gridX": 6, "gridY": 0, "gridWidth": 3, "gridHeight": 1 }
+				]
+			},
+			"widgets": []
 		},
 		{
 			"id": "Examples",

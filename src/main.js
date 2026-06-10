@@ -4,7 +4,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import { PiniaVuePlugin } from 'pinia'
-import { translate as t, translatePlural as n, loadTranslations } from '@nextcloud/l10n'
+import { translate as t, translatePlural as n, loadTranslations, register } from '@nextcloud/l10n'
+import enTranslations from '../l10n/en.json'
 import { generateUrl } from '@nextcloud/router'
 import {
 	CnPageRenderer,
@@ -40,6 +41,12 @@ try {
 	// eslint-disable-next-line no-console
 	console.warn('[app-template] registerTranslations failed; falling back to English', e)
 }
+
+// Register English translations from the bundled en.json. loadTranslations()
+// short-circuits for the 'en' locale (it assumes the key IS the English text),
+// but this template uses slugged keys like 'app-availability.title', so we must
+// register en.json explicitly to get readable strings instead of raw slugs.
+register('app-template', enTranslations.translations)
 
 // Fire-and-forget translation load. Some Nextcloud installs (including
 // standard dev containers) only allow the JS/CSS allowlist through
