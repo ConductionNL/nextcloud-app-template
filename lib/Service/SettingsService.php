@@ -149,24 +149,18 @@ class SettingsService
 
         try {
             $configurationService = $this->container->get('OCA\OpenRegister\Service\ConfigurationService');
-            // OR's importFromApp signature is (appId, data, version, force). It needs the parsed JSON
-            // up-front. importFromFilePath(appId, filePath, version, force) takes a path and parses
-            // internally — that's the one to call from a template that ships its register JSON inside
-            // lib/Settings/<appId>_register.json. OR's ImportHandler resolves filePath relative to
-            // \OC::$SERVERROOT (it prepends /var/www/html/), so we strip SERVERROOT from the absolute
-            // path we compute via OC_App.
+
             $absPath = $this->appManager->getAppPath(Application::APP_ID) . '/lib/Settings/' . Application::APP_ID . '_register.json';
             $version = '0.1.0';
-            if (is_file($absPath)) {
-                $raw = json_decode(file_get_contents($absPath), true);
-                $version = $raw['info']['version'] ?? $version;
+            $data    = [];
+            if (is_file($absPath) === true) {
+                $data    = json_decode(file_get_contents($absPath), true) ?? [];
+                $version = $data['info']['version'] ?? $version;
             }
-            $serverRoot = rtrim(\OC::$SERVERROOT, '/');
-            $relPath = str_starts_with($absPath, $serverRoot) ? ltrim(substr($absPath, strlen($serverRoot)), '/') : $absPath;
 
-            $result = $configurationService->importFromFilePath(
+            $result = $configurationService->importFromApp(
                 appId: Application::APP_ID,
-                filePath: $relPath,
+                data: $data,
                 version: $version,
                 force: $force
             );
