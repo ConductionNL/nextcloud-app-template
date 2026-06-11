@@ -155,7 +155,7 @@ class SettingsService
             // lib/Settings/<appId>_register.json. OR's ImportHandler resolves filePath relative to
             // \OC::$SERVERROOT (it prepends /var/www/html/), so we strip SERVERROOT from the absolute
             // path we compute via OC_App.
-            $absPath = \OC_App::getAppPath(Application::APP_ID) . '/lib/Settings/' . Application::APP_ID . '_register.json';
+            $absPath = $this->appManager->getAppPath(Application::APP_ID) . '/lib/Settings/' . Application::APP_ID . '_register.json';
             $version = '0.1.0';
             if (is_file($absPath)) {
                 $raw = json_decode(file_get_contents($absPath), true);

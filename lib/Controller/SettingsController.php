@@ -100,6 +100,8 @@ class SettingsController extends Controller
      * Forces a fresh import regardless of version, auto-configuring
      * all schema and register IDs from the import result.
      *
+     * @NoCSRFRequired
+     *
      * @return JSONResponse
      *
      * @spec openspec/specs/settings-management/spec.md#REQ-CFG-003
