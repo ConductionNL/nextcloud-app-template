@@ -1,0 +1,17 @@
+{
+    "translations": {
+        "Custom example component": "Anpassad exempelkomponent",
+        "Dashboard": "Instrumentpanel",
+        "Documentation": "Dokumentation",
+        "Items": "Objekt",
+        "Item": "Objekt",
+        "Open items": "Öppna objekt",
+        "Replace the body of this component with whatever bespoke behaviour your page needs — realtime UI, vendor integrations, anything that does not fit the built-in page types.": "Ersätt innehållet i denna komponent med det skräddarsydda beteende som din sida behöver — realtidsgränssnitt, tredjepartsintegrationer, allt som inte passar in i de inbyggda sidtyperna.",
+        "Settings": "Inställningar",
+        "This is the canonical example of a custom-type page in the manifest renderer pattern. It is rendered when a manifest page declares `type: \"custom\"` and `component: \"CustomExample\"`.": "Detta är det kanoniska exemplet på en sida av anpassad typ i manifest-renderarmönstret. Den renderas när en manifestsida deklarerar `type: \"custom\"` och `component: \"CustomExample\"`.",
+        "Version Information": "Versionsinformation",
+        "Information about the current installation.": "Information om den aktuella installationen.",
+        "items": "objekt"
+    },
+    "plurals": ""
+}

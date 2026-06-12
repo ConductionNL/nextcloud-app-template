@@ -1,0 +1,17 @@
+{
+    "translations": {
+        "Custom example component": "Στοιχείο προσαρμοσμένου παραδείγματος",
+        "Dashboard": "Πίνακας ελέγχου",
+        "Documentation": "Τεκμηρίωση",
+        "Items": "Στοιχεία",
+        "Item": "Στοιχείο",
+        "Open items": "Ανοιχτά στοιχεία",
+        "Replace the body of this component with whatever bespoke behaviour your page needs — realtime UI, vendor integrations, anything that does not fit the built-in page types.": "Αντικαταστήστε το σώμα αυτού του στοιχείου με όποια εξατομικευμένη συμπεριφορά χρειάζεται η σελίδα σας — διεπαφή σε πραγματικό χρόνο, ενσωματώσεις προμηθευτών, οτιδήποτε δεν ταιριάζει στους ενσωματωμένους τύπους σελίδων.",
+        "Settings": "Ρυθμίσεις",
+        "This is the canonical example of a custom-type page in the manifest renderer pattern. It is rendered when a manifest page declares `type: \"custom\"` and `component: \"CustomExample\"`.": "Αυτό είναι το κανονικό παράδειγμα μιας σελίδας προσαρμοσμένου τύπου στο μοτίβο απόδοσης μέσω manifest. Αποδίδεται όταν μια σελίδα του manifest δηλώνει `type: \"custom\"` και `component: \"CustomExample\"`.",
+        "Version Information": "Πληροφορίες έκδοσης",
+        "Information about the current installation.": "Πληροφορίες σχετικά με την τρέχουσα εγκατάσταση.",
+        "items": "στοιχεία"
+    },
+    "plurals": ""
+}

@@ -1,0 +1,17 @@
+{
+    "translations": {
+        "Custom example component": "Personaliséiert Beispillkomponent",
+        "Dashboard": "Dashboard",
+        "Documentation": "Dokumentatioun",
+        "Items": "Elementer",
+        "Item": "Element",
+        "Open items": "Op Elementer",
+        "Replace the body of this component with whatever bespoke behaviour your page needs — realtime UI, vendor integrations, anything that does not fit the built-in page types.": "Ersetzt den Inhalt vun dëser Komponent duerch d'maassgeschneidert Verhalen, dat Är Säit brauch — Echtzäit-Interface, Drëttubidder-Integratiounen, alles wat net an déi agebaute Säitentypen passt.",
+        "Settings": "Astellungen",
+        "This is the canonical example of a custom-type page in the manifest renderer pattern. It is rendered when a manifest page declares `type: \"custom\"` and `component: \"CustomExample\"`.": "Dëst ass dat kanonescht Beispill vun enger Säit vum personaliséierten Typ am Manifest-Renderer-Muster. Si gëtt ugewise wann eng Manifest-Säit `type: \"custom\"` an `component: \"CustomExample\"` deklaréiert.",
+        "Version Information": "Versiounsinformatioun",
+        "Information about the current installation.": "Informatioun iwwer déi aktuell Installatioun.",
+        "items": "Elementer"
+    },
+    "plurals": ""
+}
