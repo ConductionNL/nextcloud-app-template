@@ -87,7 +87,7 @@ app-template/
 │   ├── App.vue                 # Mounts CnAppRoot + #sidebar slot
 │   ├── registry.js             # v2 five-kind component registry (widget/modal/page/form-field/cell-renderer)
 │   ├── customComponents.js     # v1 registry (kept for backward-compat; remove once v2 migration complete)
-│   ├── widgets/                # kind: "widget" components (ExampleWidget.vue)
+│   ├── widgets/                # kind: "widget" components — none shipped (ADR-049: built-in manifest widgets first)
 │   ├── modals/                 # kind: "modal" components (ExampleModal.vue)
 │   ├── formFields/             # kind: "form-field" components (EmailField.vue)
 │   ├── cellRenderers/          # kind: "cell-renderer" components (StatusBadge.vue)
@@ -233,28 +233,45 @@ The v2 way to add custom UI is `src/registry.js`. It has five kinds:
 
 | kind | Use when |
 |------|----------|
-| `widget` | Custom placeable widget — add to any page's `widgets[]` via `widgetKey` |
+| `widget` | Custom placeable widget — ONLY for a genuine one-off no built-in widget can express (requires a `_note`; hydra ADR-049) |
 | `modal` | Dialog opened by manifest actions with `type: "open-modal"` |
 | `page` | Bespoke full-page component (`type: "custom"` in the manifest — use sparingly) |
 | `form-field` | Custom form input auto-bound by JSON Schema `format` |
 | `cell-renderer` | Custom table-cell rendering auto-bound by schema + property |
 
-Steps to add a custom widget:
+**Widgets are built-in-first (hydra ADR-049).** The scaffold ships ZERO
+custom `kind: "widget"` components: dashboard lists and KPI cards are
+declared entirely in `src/manifest.json` with the built-in `object-table`
+and `stats-block` widgets. See the `recent-examples` widget on the Dashboard
+page in `src/manifest.json` — it demonstrates the whole declarative list
+contract: a token-resolved `source` (`register` / `schema` / `filter` with
+`@today`-style tokens / `order` / `limit`), `columns` with `cnFormatters`
+(e.g. `daysSince`) and `cn-cell--` classes, compact-list mode (`hideHeader`
++ `borderless`), `rowRoute` row-click navigation, `viewAllRoute`,
+`emptyText`, and declarative row `actions[]` including `object-op`
+mutations (`op: "patch" | "delete" | "create"`, dispatched via the shared
+object store; OpenRegister RBAC is the only authority).
+
+Steps to add a custom widget (only when no built-in fits):
 
 1. Create `src/widgets/<YourWidget>.vue`.
-2. Add an entry to `src/registry.js` with `kind: "widget"` + `defaultSize`, `minSize`, `maxSize`, `allowedSlots`, `propsSchema`.
+2. Add an entry to `src/registry.js` with `kind: "widget"` + `defaultSize`, `minSize`, `maxSize`, `allowedSlots`, `propsSchema`, and a `_note` justifying why no built-in widget fits (hydra gate 29 fails the PR without it).
 3. Add a `widgets[]` entry to the target page in `src/manifest.json` with `widgetKey: "<your-key>"`, `slot`, and grid coordinates.
-4. Run `npm run check:manifest-v2` to validate.
+4. Run `npm run check:manifest-v2 && npm run check:registry` to validate.
 
-The scaffold ships one example per kind as a starting point. Delete or
-replace the examples when you clone the template.
+The scaffold ships one example per kind (except `widget` — see above) as a
+starting point. Delete or replace the examples when you clone the template.
 
 > **Backward compat:** `src/customComponents.js` is kept for the v1 → v2
 > transition period. Both the `customComponents` and `registry` props coexist
 > on `CnAppRoot`. Once fully migrated, `customComponents.js` and its import in
 > `main.js` can be removed.
 
-### Adding a dashboard widget
+### Adding a NATIVE Nextcloud Dashboard widget
+
+> This section is about the server-wide dashboard at `/apps/dashboard`
+> (`OCA.Dashboard`) — NOT about widgets inside the app. In-app widgets are
+> manifest config (built-in `object-table` / `stats-block`), see above.
 
 The template ships with a working `ExampleWidget` you can copy. Each widget is
 **three files plus two registration points**:
@@ -266,8 +283,10 @@ The template ships with a working `ExampleWidget` you can copy. Each widget is
 2. `src/<foo>Widget.js` — webpack entry-point that registers the renderer via
    `OCA.Dashboard.register('<id>', (el, { widget }) => { ... })`. The id MUST
    equal `Widget::getId()` from PHP.
-3. `src/views/widgets/<Foo>Widget.vue` — the renderer itself. Wrap in
-   `<NcDashboardWidget>` for free loading + empty states.
+3. `src/views/widgets/<Foo>Widget.vue` — the renderer itself. Use the
+   universal `CnDataTable` compact-list pattern (`:rows` + `cn-cell--`
+   column classes, `hide-header`, `borderless`, `:empty-text`,
+   `@row-click` same-tab navigation) — see `ExampleWidget.vue`.
 4. Register in `lib/AppInfo/Application.php`: add
    `$context->registerDashboardWidget(<Foo>Widget::class);`.
 5. Add a webpack entry in `webpack.config.js` so `npm run build` produces
