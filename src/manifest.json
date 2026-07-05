@@ -96,7 +96,46 @@
 					{ "id": 3, "widgetId": "closed", "gridX": 6, "gridY": 0, "gridWidth": 3, "gridHeight": 1 }
 				]
 			},
-			"widgets": []
+			"widgets": [
+				{
+					"id": "recent-examples",
+					"widgetKey": "object-table",
+					"slot": "body",
+					"gridX": 0,
+					"gridY": 1,
+					"gridWidth": 6,
+					"gridHeight": 4,
+					"props": {
+						"title": "Recent examples",
+						"source": {
+							"register": "app-template",
+							"schema": "example",
+							"filter": { "created": { "lt": "@today" } },
+							"order": { "created": "desc" },
+							"limit": 5
+						},
+						"columns": [
+							{ "key": "title", "cellClass": "cn-cell--strong" },
+							{ "key": "created", "formatter": "daysSince", "cellClass": "cn-cell--muted cn-cell--end" }
+						],
+						"hideHeader": true,
+						"borderless": true,
+						"rowRoute": "ExampleDetail",
+						"viewAllRoute": { "name": "Examples" },
+						"emptyText": "No examples yet",
+						"actions": [
+							{
+								"id": "close-example",
+								"label": "Close example",
+								"type": "object-op",
+								"op": "patch",
+								"values": { "status": "closed" },
+								"confirm": true
+							}
+						]
+					}
+				}
+			]
 		},
 		{
 			"id": "Examples",
