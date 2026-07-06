@@ -30,6 +30,8 @@ tool — run locally by a developer — opens a PR on every app in the fleet.
 | `.gitattributes` | Line-ending normalization + binary-file marks. |
 | `.npmrc` | npm registry policy (cooldown + `legacy-peer-deps=true`). |
 | `.nvmrc` | Node version floor (currently `20`). |
+| `.forgejo/workflows/tests.yml` | Reusable CI test workflow (`workflow_call`): phpunit-unit, l10n, vitest, coverage ratchets, e2e/newman scaffolds. App-agnostic — only per-app knob is the `app-id` input. Installs node in the php:8.3-cli jobs (actions/checkout needs it); honors each app's own `--coverage.include`; wires `continue-on-error` to the `unit-gating` input. |
+| `.forgejo/workflows/pre-merge-check-strict.yaml` | Strict pre-merge gate: `composer lint` + `composer phpcs` + all Hydra gates (diff-scoped). php:8.3-cli + node install before checkout. |
 
 **No per-app deviations.** The canonical files sync byte-for-byte including
 their description / ruleset-name strings. The template's `phpcs.xml` and
@@ -64,6 +66,7 @@ point when scaffolding a new app; do not auto-update existing apps.
 | `.license-overrides.json` | Per-app allow-list of compound-SPDX vendor packages. |
 | `jest.config.js` | Test path globs differ slightly per app structure. |
 | `README.md` | App name + features + screenshots, structural sections common. |
+| `.forgejo/workflows/app-tests.yml` | Thin caller for the reusable `tests.yml`. Only the `app-id` input differs per app. |
 
 The shape conformance is checked at scaffold time (template clone) and
 opportunistically when an app gets a "scaffold drift" sweep. There is no
