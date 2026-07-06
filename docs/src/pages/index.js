@@ -168,8 +168,8 @@ function SettingsPanel() {
 
 const WIDGETS = [
   {
-    title: 'Dashboard widget, ready to copy',
-    desc: 'The template ships a working ExampleWidget — PHP IWidget class, webpack entry, and a NcDashboardWidget renderer. Three files plus two registration points; rename and replace the data.',
+    title: 'Widgets without widget code',
+    desc: 'In-app dashboard widgets are manifest config: the built-in object-table and stats-block widgets cover lists and KPIs, so the scaffold ships zero custom widget components (hydra ADR-049). For the native Nextcloud Dashboard it still ships a working ExampleWidget — PHP IWidget class, webpack entry, and a CnDataTable compact-list renderer.',
     panel: <DashboardPanel />,
   },
   {
