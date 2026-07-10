@@ -1,0 +1,36 @@
+# app-tests.yml — per-app caller for the reusable feature-test workflow.
+# TEMPLATE/CANONICAL REFERENCE. Copy this + tests.yml + pre-merge-check-strict.yaml
+# into a sibling app; the ONLY per-app change is `app-id` below.
+#
+# Runs the PHASE-5 testing layers on every PR to the protected branches.
+# phpunit-unit + l10n-check HARD-GATE; e2e/newman are scaffolded and opt-in
+# (run-e2e / run-newman) until the NC service container is wired (see tests.yml
+# TODOs). Additive — sits alongside the existing release/quality workflows.
+
+name: app-tests
+
+on:
+  pull_request:
+    branches:
+      - development
+      - main
+      - beta
+  workflow_dispatch:
+    inputs:
+      run-e2e:
+        type: boolean
+        default: false
+      run-newman:
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    uses: ./.forgejo/workflows/tests.yml
+    with:
+      app-id: app-template
+      run-e2e: ${{ github.event.inputs.run-e2e == 'true' }}
+      run-newman: ${{ github.event.inputs.run-newman == 'true' }}
