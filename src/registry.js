@@ -16,12 +16,28 @@
 // Each entry: { kind, component, ...kindMetadata }
 //
 // Resolution at runtime:
-//   1. Built-in widgets    (object-table, form-renderer, wiki-renderer, …)
+//   1. Built-in widgets    (object-table, stats-block, form-renderer, …)
 //   2. This registry       ← consumer-injected components
 //
-// How to add a new widget:
+// How to add a new widget (built-in-first — hydra ADR-049):
+//   The scaffold ships ZERO custom kind: "widget" components on purpose.
+//   When a built-in widget can express your surface, you MUST use it —
+//   declare it directly in src/manifest.json (no registry entry, no Vue
+//   file). The enriched `object-table` built-in covers the whole
+//   dashboard-list surface (declarative token-resolved `source`, columns
+//   with formatters, compact hideHeader/borderless mode, rowRoute /
+//   viewAllRoute / emptyText, and declarative row `actions[]` including
+//   `object-op` mutations); `stats-block` covers single and grouped KPI
+//   cards via `entries[]`. See the "recent-examples" widget entry on the
+//   Dashboard page in src/manifest.json for a worked example.
+//
+//   Only for a genuine one-off no built-in can express (a real-time chat
+//   panel, a bespoke analytics canvas):
 //   1. Create src/widgets/<YourWidget>.vue.
-//   2. Add an entry here with kind: "widget" + required metadata.
+//   2. Add an entry here with kind: "widget" + required metadata AND a
+//      `_note` field justifying why no built-in widget fits (required —
+//      hydra gate 29, hydra-gate-custom-widget-ratchet, fails the PR
+//      without it).
 //   3. Reference it in src/manifest.json via widgetKey: "<your-key>".
 //
 // How to add a new modal:
@@ -37,7 +53,6 @@
 //
 // See: https://codeberg.org/Conduction/hydra → openspec/architecture/adr-036-universal-widget-manifest.md
 
-import ExampleWidget from './widgets/ExampleWidget.vue'
 import ExampleModal from './modals/ExampleModal.vue'
 import EmailField from './formFields/EmailField.vue'
 import StatusBadge from './cellRenderers/StatusBadge.vue'
@@ -45,29 +60,13 @@ import CustomExample from './views/CustomExample.vue'
 
 export default {
 	// -------------------------------------------------------------------------
-	// kind: "widget" — placeable in any allowed slot via grid coordinates
-	// -------------------------------------------------------------------------
-
-	/**
-	 * Example custom widget. Keep or delete when scaffolding a new app.
-	 * Not referenced by src/manifest.json by default — wire it up by
-	 * adding a widgets[] entry with widgetKey: "example-widget".
-	 */
-	'example-widget': {
-		kind: 'widget',
-		component: ExampleWidget,
-		defaultSize: { w: 3, h: 1 },
-		minSize: { w: 2, h: 1 },
-		maxSize: { w: 12, h: 4 },
-		allowedSlots: ['body', 'sidebar'],
-		propsSchema: {
-			type: 'object',
-			properties: {
-				message: { type: 'string' },
-			},
-		},
-	},
-
+	// kind: "widget" — INTENTIONALLY EMPTY (hydra ADR-049, Decision 5)
+	//
+	// The scaffold ships zero custom widgets. Dashboard lists and KPI cards
+	// are declared in src/manifest.json with the built-in `object-table` and
+	// `stats-block` widgets — see the "recent-examples" entry on the
+	// Dashboard page. If you add a genuine one-off here, it MUST carry a
+	// `_note` justifying why no built-in fits (enforced by hydra gate 29).
 	// -------------------------------------------------------------------------
 	// kind: "modal" — opened via actions[].type: "open-modal"
 	// -------------------------------------------------------------------------

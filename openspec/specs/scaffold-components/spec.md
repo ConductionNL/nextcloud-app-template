@@ -10,8 +10,10 @@ built_by: openspec/changes/scaffold-v2
 > ⚠️ **EXAMPLE SPEC** — This spec lives in the `nextcloud-app-template` repository
 > as a demonstration of the OpenSpec format for the demo components the scaffold
 > ships under `src/cellRenderers/`, `src/modals/`, and `src/views/widgets/`.
-> Each is the canonical starting point for one of the five registry kinds
-> (hydra ADR-036): a cell-renderer, a modal, and a dashboard widget. Apps built
+> Two are canonical starting points for registry kinds (hydra ADR-036): a
+> cell-renderer and a modal; the third is the NATIVE Nextcloud Dashboard
+> widget (OCA.Dashboard — not a registry kind; the scaffold ships zero custom
+> `kind: "widget"` components per hydra ADR-049). Apps built
 > from this template replace or delete these once they have their own; this spec
 > documents the small but real runtime behaviour each demonstrates so the
 > `@spec` references in the demo code resolve. The *registry-shape* requirements
@@ -21,8 +23,9 @@ built_by: openspec/changes/scaffold-v2
 ## Purpose
 
 The five-kind registry (ADR-036) lets a manifest wire consumer-supplied
-components into typed pages. The scaffold ships one minimal, working example
-per slot-bearing kind so a freshly-cloned template renders something real:
+components into typed pages. The scaffold ships minimal, working examples so
+a freshly-cloned template renders something real (deliberately WITHOUT a
+custom `kind: "widget"` example — hydra ADR-049 Decision 5):
 
 - `StatusBadge.vue` (`kind: cell-renderer`) — substitutes for a table column,
   rendering the cell value as a coloured badge whose CSS class is derived from
@@ -30,8 +33,13 @@ per slot-bearing kind so a freshly-cloned template renders something real:
 - `ExampleModal.vue` (`kind: modal`) — a confirm/cancel dialog opened via a
   manifest `open-modal` action; it relays the user's choice to the parent via
   events and closes itself.
-- `ExampleWidget.vue` (`kind: widget`) — a dashboard widget that loads its rows
-  from an API on mount and degrades to an empty state on failure.
+- `ExampleWidget.vue` (native Nextcloud Dashboard renderer, `src/views/widgets/`,
+  NOT a registry `kind: widget` — the scaffold ships zero custom registry
+  widgets per hydra ADR-049) — an OCA.Dashboard widget that loads its rows
+  from an API on mount, renders them as a `CnDataTable` compact list, and
+  degrades to an empty state on failure. In-app widgets are declared in
+  `src/manifest.json` with the built-in `object-table` / `stats-block`
+  widgets instead.
 
 ## Requirements
 
@@ -82,17 +90,19 @@ isolation, ADR-004).
 ### REQ-COMP-003: Dashboard widget loads on mount and degrades gracefully
 
 The `ExampleWidget` MUST fetch its row data from an API endpoint when it mounts,
-map each returned record to the `{ id, mainText }` shape NcDashboardWidget
-expects, and clear its loading flag when done. A failed fetch MUST be logged
-client-side and resolve to an empty item list with an empty-state message — a
-widget that throws on mount would break the whole dashboard, which MUST NOT
-happen (ADR-005 client-side analogue).
+map each returned record to the compact-list row shape
+`{ id, mainText, subText, targetUrl }` rendered by `CnDataTable`
+(hide-header + borderless + `cn-cell--` column classes, row click navigating
+same-tab via `targetUrl`), and clear its loading flag when done. A failed
+fetch MUST be logged client-side and resolve to an empty item list with an
+empty-state message — a widget that throws on mount would break the whole
+dashboard, which MUST NOT happen (ADR-005 client-side analogue).
 
 #### Scenario: Widget loads data
 
 - GIVEN the widget's API returns a `results` collection
 - WHEN the widget's `mounted` hook runs
-- THEN it MUST map each record to `{ id, mainText }` (preferring `title`, then `name`, then `#<id>`)
+- THEN it MUST map each record to `{ id, mainText, subText, targetUrl }` (mainText preferring `title`, then `name`, then `#<id>`)
 - AND it MUST set `loading` to `false`
 
 #### Scenario: Widget fetch fails

@@ -19,10 +19,13 @@ ships:
 - **A manifest-driven UI** — pages, navigation, and dependencies are
   declared in `src/manifest.json`; the shell (CnAppRoot) reads the
   manifest at boot and renders index / detail / dashboard / settings
-  pages without per-page Vue files.
-- **A Dashboard widget** — a working `ExampleWidget` (PHP `IWidget`
-  class + webpack entry + `NcDashboardWidget` renderer) you copy and
-  rename.
+  pages without per-page Vue files. In-app dashboard widgets are manifest
+  config too: the built-in `object-table` and `stats-block` widgets cover
+  lists and KPIs, so the scaffold ships zero custom widget components
+  (hydra ADR-049) — see the `recent-examples` entry in `src/manifest.json`.
+- **A native Nextcloud Dashboard widget** — a working `ExampleWidget`
+  (PHP `IWidget` class + webpack entry + a `CnDataTable` compact-list
+  renderer) for the server-wide dashboard, which you copy and rename.
 - **Admin settings** — a settings panel wired through
   `NcAppSettingsDialog`, backed by an OpenRegister settings register.
 - **An MCP tool provider** — `ExampleToolProvider` exposes the app's
