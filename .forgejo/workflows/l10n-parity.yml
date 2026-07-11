@@ -11,9 +11,9 @@ on:
 jobs:
   l10n-parity:
     name: l10n translation parity (European languages)
-    runs-on: codeberg-small
+    runs-on: codeberg-medium
     container:
-      image: code.forgejo.org/oci/ci-node:22
+      image: node:24-bookworm
     steps:
       - name: Checkout
         uses: https://code.forgejo.org/actions/checkout@v4
