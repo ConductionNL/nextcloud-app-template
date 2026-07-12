@@ -36,8 +36,11 @@ webpackConfig.entry = {
 }
 
 // Use local source when available (monorepo dev), otherwise fall back to npm package
+// `USE_LOCAL_LIB=false` forces the published package even when a sibling checkout
+// is present — without it a local build can never reproduce what CI and production
+// build (they have no sibling, so they always resolve the npm dist).
 const localLib = path.resolve(__dirname, '../nextcloud-vue/src')
-const useLocalLib = fs.existsSync(localLib)
+const useLocalLib = process.env.USE_LOCAL_LIB !== 'false' && fs.existsSync(localLib)
 
 // Extend the base resolve config (preserves defaults from @nextcloud/webpack-vue-config)
 webpackConfig.resolve = webpackConfig.resolve || {}
