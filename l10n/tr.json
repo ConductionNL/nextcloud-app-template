@@ -1,0 +1,20 @@
+{
+    "translations": {
+        "Custom example component": "Özel örnek bileşen",
+        "Dashboard": "Pano",
+        "Documentation": "Belgelendirme",
+        "Items": "Ögeler",
+        "Item": "Öge",
+        "Open items": "Açık ögeler",
+        "Replace the body of this component with whatever bespoke behaviour your page needs — realtime UI, vendor integrations, anything that does not fit the built-in page types.": "Bu bileşenin gövdesini, sayfanızın ihtiyaç duyduğu özel davranışla değiştirin — gerçek zamanlı kullanıcı arayüzü, sağlayıcı tümleştirmeleri veya yerleşik sayfa türlerine uymayan herhangi bir şey.",
+        "Settings": "Ayarlar",
+        "This is the canonical example of a custom-type page in the manifest renderer pattern. It is rendered when a manifest page declares `type: \"custom\"` and `component: \"CustomExample\"`.": "Bu, manifest oluşturucu modelindeki özel türde bir sayfanın kanonik örneğidir. Bir manifest sayfası `type: \"custom\"` ve `component: \"CustomExample\"` bildirdiğinde oluşturulur.",
+        "Version Information": "Sürüm bilgileri",
+        "Information about the current installation.": "Geçerli kurulum hakkında bilgiler.",
+        "items": "öge",
+        "app-availability.title": "Required application unavailable",
+        "app-availability.description": "This application requires OpenRegister to be installed and enabled.",
+        "app-availability.action": "Install OpenRegister"
+    },
+    "plurals": ""
+}
