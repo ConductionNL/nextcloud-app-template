@@ -178,7 +178,7 @@
 			},
 			"widgets": [
 				{
-					"widgetKey": "object-data",
+					"widgetKey": "data",
 					"slot": "sidebar",
 					"tabGroup": "data",
 					"gridX": 0,
@@ -221,24 +221,7 @@
 						]
 					}
 				]
-			},
-			"widgets": [
-				{
-					"widgetKey": "version-info",
-					"slot": "section:version",
-					"gridX": 0,
-					"gridY": 0,
-					"gridWidth": 12,
-					"gridHeight": 1,
-					"props": {
-						"appName": "App Template",
-						"showUpdateButton": false,
-						"isUpToDate": true,
-						"title": "Version Information",
-						"description": "Information about the current installation."
-					}
-				}
-			]
+			}
 		},
 		{
 			"id": "FeaturesRoadmap",

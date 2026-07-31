@@ -29,22 +29,25 @@ import '@conduction/nextcloud-vue/css/index.css'
 // Global (unscoped) app styles
 import './assets/app.css'
 
-// Make the library's built-in widget catalogue available to the manifest
-// renderer.
+// Populate the dashboard widget CATALOGUE (the "Add widget" palette).
 //
-// Every built-in widget (`version-info`, `object-table`, `stats-block`, `map`,
-// …) self-registers as a SIDE EFFECT of its module being evaluated. webpack
-// tree-shakes a bare side-effect import of that module, so without this
-// explicit no-op call the whole catalogue is dropped from the bundle and every
-// built-in `widgetKey` in src/manifest.json renders as the "Widget
-// unavailable" placeholder — with ZERO console errors. Consumer-supplied
-// widgets from src/registry.js keep working, which makes the app look
-// half-finished rather than mis-wired.
+// Note the two distinct registries — they are easy to confuse:
+//   * `BUILT_IN_WIDGETS` in CnWidgetGrid is a plain static import map. It is
+//     what resolves a manifest `widgetKey` at RENDER time, and it needs no
+//     registration call.
+//   * the dashboard widget catalogue is populated by SIDE EFFECT of each
+//     widget's `dashboardRegistration.js` being evaluated. That is what the
+//     dashboard editor's widget picker reads.
 //
-// Observed on this template's own Settings page: the `version-info` widget
-// rendered as `.cn-unknown-widget` ("Widget unavailable / version-info").
-// tests/e2e/app-shell.spec.ts asserts `.cn-unknown-widget` count is 0 to keep
-// it fixed.
+// A bundler that tree-shakes bare side-effect imports drops the second one, so
+// the library exports this explicit no-op to anchor it. Calling it costs
+// nothing and keeps the picker populated.
+//
+// It does NOT rescue a manifest `widgetKey` that simply does not exist — that
+// renders `.cn-unknown-widget` ("Widget unavailable") regardless. See the
+// manifest key fixes in this same change (`object-data` → `data`, and the
+// duplicate v2 `version-info` entry removed). tests/e2e/app-shell.spec.ts
+// asserts `.cn-unknown-widget` count is 0.
 registerBuiltinDashboardWidgets()
 
 // Register library-side icon set + lib translations once at bootstrap.

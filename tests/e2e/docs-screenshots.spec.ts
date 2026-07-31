@@ -12,8 +12,11 @@
  * Run manually whenever the UI changes and tutorial screenshots need
  * to be refreshed:
  *
- *     NEXTCLOUD_URL=http://localhost:8080 \
+ *     PLAYWRIGHT_BASE_URL=http://localhost:8096 \
  *       npx playwright test --project docs-capture
+ *
+ * Point it at a DISPOSABLE instance. :8080 is the shared dev container and
+ * playwright.config.ts refuses it outright.
  *
  * Excluded from the default regression run via the `docs-capture`
  * project flag in `playwright.config.ts` so PR pipelines don't
