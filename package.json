@@ -53,6 +53,7 @@
     "libxmljs2": "^0.37.0",
     "@nextcloud/axios": "~2.5.2",
     "@nextcloud/vue": "^9.9.0",
+    "vue3-apexcharts": "<1.9.0",
     "eslint-import-resolver-typescript": "~3.8.7",
     "eslint-plugin-import-x": {
       "@typescript-eslint/utils": "^7.18.0"
