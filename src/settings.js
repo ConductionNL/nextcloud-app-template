@@ -14,19 +14,50 @@
 // because the Nextcloud admin section is the canonical place for
 // "before the app boots" config (e.g. an app's OR register binding).
 
-import Vue from 'vue'
-import { PiniaVuePlugin } from 'pinia'
+import { createApp } from 'vue'
 import { translate as t, translatePlural as n, loadTranslations } from '@nextcloud/l10n'
 import pinia from './pinia.js'
 import AdminRoot from './views/AdminRoot.vue'
 
-Vue.mixin({ methods: { t, n } })
-Vue.use(PiniaVuePlugin)
+/**
+ * Mount the admin panel. Vue 3 has no global `Vue.mixin`, so the `t` / `n`
+ * helpers are registered on the app instance instead of globally.
+ *
+ * @return {void}
+ */
+function mountAdminSettings() {
+	const app = createApp(AdminRoot)
+	app.mixin({ methods: { t, n } })
+	app.use(pinia)
+	app.mount('#app-template-settings')
+}
 
-loadTranslations('app-template', () => {
-	// eslint-disable-next-line no-new
-	new Vue({
-		pinia,
-		render: (h) => h(AdminRoot),
-	}).$mount('#app-template-settings')
-})
+// `loadTranslations` REJECTS on a 404, and many Nextcloud installs have no
+// route for /custom_apps/<app>/l10n/<locale>.json (the Apache allowlist
+// rewrites everything outside JS/CSS to index.php). Mounting only from the
+// success callback would leave the admin panel permanently blank on those
+// installs, so mount on BOTH outcomes — strings fall back to their English
+// source on a miss. Mirrors the same guard in src/main.js: the return value
+// is only a promise on some @nextcloud/l10n versions.
+let mounted = false
+/**
+ * Mount once, whichever of the translation outcomes fires first.
+ *
+ * @return {void}
+ */
+function mountOnce() {
+	if (mounted) {
+		return
+	}
+	mounted = true
+	mountAdminSettings()
+}
+
+try {
+	const result = loadTranslations('app-template', mountOnce)
+	if (result && typeof result.then === 'function') {
+		result.then(mountOnce, mountOnce)
+	}
+} catch {
+	mountOnce()
+}

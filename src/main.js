@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: EUPL-1.2
 // Copyright (C) 2026 Conduction B.V.
 
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import { PiniaVuePlugin } from 'pinia'
+import { createApp } from 'vue'
+import { createRouter, createWebHistory } from 'vue-router'
 import { translate as t, translatePlural as n, loadTranslations, register } from '@nextcloud/l10n'
 import enTranslations from '../l10n/en.json'
 import { generateUrl } from '@nextcloud/router'
 import {
 	CnPageRenderer,
 	defaultPageTypes,
+	registerBuiltinDashboardWidgets,
 	registerIcons,
 	registerTranslations,
 } from '@conduction/nextcloud-vue'
@@ -29,9 +29,26 @@ import '@conduction/nextcloud-vue/css/index.css'
 // Global (unscoped) app styles
 import './assets/app.css'
 
-Vue.mixin({ methods: { t, n } })
-Vue.use(PiniaVuePlugin)
-Vue.use(VueRouter)
+// Populate the dashboard widget CATALOGUE (the "Add widget" palette).
+//
+// Note the two distinct registries — they are easy to confuse:
+//   * `BUILT_IN_WIDGETS` in CnWidgetGrid is a plain static import map. It is
+//     what resolves a manifest `widgetKey` at RENDER time, and it needs no
+//     registration call.
+//   * the dashboard widget catalogue is populated by SIDE EFFECT of each
+//     widget's `dashboardRegistration.js` being evaluated. That is what the
+//     dashboard editor's widget picker reads.
+//
+// A bundler that tree-shakes bare side-effect imports drops the second one, so
+// the library exports this explicit no-op to anchor it. Calling it costs
+// nothing and keeps the picker populated.
+//
+// It does NOT rescue a manifest `widgetKey` that simply does not exist — that
+// renders `.cn-unknown-widget` ("Widget unavailable") regardless. See the
+// manifest key fixes in this same change (`object-data` → `data`, and the
+// duplicate v2 `version-info` entry removed). tests/e2e/app-shell.spec.ts
+// asserts `.cn-unknown-widget` count is 0.
+registerBuiltinDashboardWidgets()
 
 // Register library-side icon set + lib translations once at bootstrap.
 registerIcons(appIcons)
@@ -68,12 +85,16 @@ function tryLoadTranslations() {
 	}
 }
 
-// Shallow-clone CnPageRenderer because the lib's barrel exports are
-// non-extensible (webpack ESM module records). Vue 2's `Vue.extend()`
-// adds an internal `_Ctor` cache to the component definition; mutating
-// a non-extensible export throws "Cannot add property _Ctor, object is
-// not extensible". Cloning gives Vue Router an extensible
-// component-options object without altering the lib's internals.
+// Shallow-clone CnPageRenderer before handing it to Vue Router.
+//
+// The lib's barrel exports are frozen / non-extensible module records, and
+// Vue Router writes bookkeeping onto a route's `component` in some code
+// paths. Cloning gives the router a plain, extensible component-options
+// object without mutating the library's own export. (Under Vue 2 this was
+// mandatory because `Vue.extend()` attached a `_Ctor` cache and threw
+// "Cannot add property _Ctor, object is not extensible"; Vue 3 has no
+// `_Ctor`, but the clone stays as cheap insurance — see the Vue 3 migration
+// playbook §4.1 on frozen lib exports.)
 const RoutePageRenderer = { ...CnPageRenderer }
 
 /**
@@ -84,7 +105,7 @@ const RoutePageRenderer = { ...CnPageRenderer }
  * consumer wiring it manually.
  *
  * @param {object} manifest The bundled manifest (with `pages[]`).
- * @return {Array<object>} vue-router 3 routes config.
+ * @return {Array<object>} vue-router 4 routes config.
  */
 function routesFromManifest(manifest) {
 	const routes = manifest.pages.map((page) => ({
@@ -94,25 +115,28 @@ function routesFromManifest(manifest) {
 		props: page.route.includes(':'),
 	}))
 	// Catch-all: redirect unknown paths to the first page (the dashboard).
-	routes.push({ path: '*', redirect: '/' })
+	// Vue Router 4 removed the bare `*` wildcard — an unmatched path must be
+	// captured with a named repeatable param or the route silently never
+	// matches and the app renders a blank page with no console error.
+	routes.push({ path: '/:pathMatch(.*)*', redirect: '/' })
 	return routes
 }
 
-const router = new VueRouter({
-	mode: 'history',
-	base: generateUrl('/apps/app-template'),
+const router = createRouter({
+	history: createWebHistory(generateUrl('/apps/app-template')),
 	routes: routesFromManifest(bundledManifest),
 })
 
 tryLoadTranslations()
 
-// Pass shallow copies of the registry maps to App.vue. The lib exports
-// `defaultPageTypes` (and consumers' `customComponents`) as frozen
-// module objects in some bundle shapes — Vue 2's `Vue.extend()` mutates
-// component definitions to attach an internal `_Ctor` cache, which
-// throws "Cannot add property _Ctor, object is not extensible" against
-// a frozen source map. Cloning here yields extensible objects without
-// changing the values the lib resolves at render time.
+// Pass shallow copies of the registry maps to App.vue.
+//
+// `defaultPageTypes` (and the consumer's `customComponents` / `registry`) are
+// exported FROZEN by the library — see the Vue 3 migration playbook §4.1.
+// Anything downstream that writes to them (a page-type override, a lazily
+// memoised resolution) would throw in strict mode or silently no-op
+// otherwise. Cloning here yields extensible objects without changing the
+// values the lib resolves at render time.
 const pageTypesProp = { ...defaultPageTypes }
 const customComponentsProp = { ...customComponents }
 // Shallow-clone the v2 registry for the same reason as above.
@@ -120,16 +144,23 @@ const customComponentsProp = { ...customComponents }
 // customComponents prop can be removed.
 const registryProp = { ...registry }
 
-// eslint-disable-next-line no-new
-new Vue({
-	pinia,
-	router,
-	render: (h) => h(App, {
-		props: {
-			manifest: bundledManifest,
-			customComponents: customComponentsProp,
-			pageTypes: pageTypesProp,
-			registry: registryProp,
-		},
-	}),
-}).$mount('#content')
+// Vue 3 bootstrap. `createApp(App, props)` passes the root props directly —
+// the Vue 2 `render: h => h(App, { props: {...} })` nesting is gone, and
+// passing a `{ props: ... }` wrapper here would hand App a literal prop
+// named "props" instead of the four it declares.
+const app = createApp(App, {
+	manifest: bundledManifest,
+	customComponents: customComponentsProp,
+	pageTypes: pageTypesProp,
+	registry: registryProp,
+})
+
+// `t` / `n` as global instance methods. Vue 3 has no global `Vue.mixin` —
+// mixins are registered per-app, so this MUST happen on the app instance
+// before mount or every `{{ t(...) }}` in a template throws
+// "t is not a function".
+app.mixin({ methods: { t, n } })
+
+app.use(pinia)
+app.use(router)
+app.mount('#content')

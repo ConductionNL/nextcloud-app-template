@@ -49,10 +49,18 @@ webpackConfig.resolve.alias = {
 	...(webpackConfig.resolve.alias || {}),
 	'@': path.resolve(__dirname, 'src'),
 	...(useLocalLib ? { '@conduction/nextcloud-vue': localLib } : {}),
+	// Single-instance pins. Only packages that still expose a `main` entry
+	// can be aliased to their directory like this.
+	//
+	// `@nextcloud/vue@9` and `@nextcloud/dialogs@7` deliberately ship an
+	// `exports` map and NO `main`, so a bare-directory alias cannot resolve
+	// them at all — under Vue 2 (`@nextcloud/vue@8`) it worked because that
+	// version still had a `main`. Leaving those two aliases in place after
+	// the Vue 3 bump produced 233 "Can't resolve '@nextcloud/vue'" errors.
+	// They are omitted on purpose: `resolve.modules` below already puts this
+	// app's own node_modules first, which is what the pin was buying.
 	vue$: path.resolve(__dirname, 'node_modules/vue'),
 	pinia$: path.resolve(__dirname, 'node_modules/pinia'),
-	'@nextcloud/vue$': path.resolve(__dirname, 'node_modules/@nextcloud/vue'),
-	'@nextcloud/dialogs': path.resolve(__dirname, 'node_modules/@nextcloud/dialogs'),
 	// Force the lib's transitive @nextcloud/axios import to resolve to
 	// the app's installed copy. Without the `$` exact-match suffix,
 	// webpack would walk up to the lib's own node_modules and load a

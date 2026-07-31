@@ -30,7 +30,7 @@ Screenshots are captured automatically from the tutorial flows, not pasted in by
 
 - Add a tutorial story: `/journeydoc-add-story`
 - Add stable `data-testid` hooks to a Vue component: `/journeydoc-instrument`
-- (Re)capture screenshots against a running Nextcloud: `NEXTCLOUD_URL=http://localhost:8080 npx playwright test --project docs-capture`
+- (Re)capture screenshots against a running Nextcloud: `PLAYWRIGHT_BASE_URL=http://localhost:8096 npx playwright test --project docs-capture`
 
 See the [Documentation](#documentation) section below for how the docs site itself is built and deployed.
 
@@ -50,7 +50,7 @@ Features are defined in [`openspec/specs/`](openspec/specs/). See the [roadmap](
 
 ```mermaid
 graph TD
-    A[Vue 2 Frontend] -->|REST API| B[OpenRegister API]
+    A[Vue 3 Frontend] -->|REST API| B[OpenRegister API]
     B --> C[(PostgreSQL JSON store)]
     A --> D[Nextcloud Activity]
     A --> E[Nextcloud Search]
@@ -81,7 +81,7 @@ app-template/
 │   ├── Repair/InitializeSettings.php
 │   └── Settings/               # AdminSettings, app_template_register.json
 ├── templates/                  # PHP templates (SPA shells)
-├── src/                        # Vue 2 frontend
+├── src/                        # Vue 3 frontend
 │   ├── manifest.json           # Pages + menu + dependencies (v2 — the source of truth)
 │   ├── main.js                 # App entry — bootstraps CnAppRoot from manifest
 │   ├── App.vue                 # Mounts CnAppRoot + #sidebar slot
@@ -110,6 +110,8 @@ app-template/
 │   ├── tutorials/              # journeydoc tutorial stories — user/ + admin/ tracks (ADR-030)
 │   └── static/screenshots/     # Captured tutorial screenshots (populated by docs-capture)
 ├── tests/                      # Unit and integration tests
+│   ├── e2e/app-shell.spec.ts    # app-shell regression suite (Playwright chromium project)
+│   ├── e2e/auth.setup.ts        # one-time admin login -> storageState, shared by every project
 │   ├── e2e/docs-screenshots.spec.ts # journeydoc screenshot capture suite (Playwright docs-capture project)
 │   ├── validate-manifest.js    # Ajv schema validator for src/manifest.json (nc-vue manifest schema)
 │   ├── validate-register.js    # Structural validator for lib/Settings/*_register.json (slugs, lifecycle requires→PHP, clobber heuristic)
@@ -361,11 +363,38 @@ npm install && npm run build
 docker exec nextcloud php occ app:enable app-template
 ```
 
+### End-to-end tests
+
+```bash
+PLAYWRIGHT_BASE_URL=http://localhost:8096 npx playwright test --project chromium
+```
+
+`PLAYWRIGHT_BASE_URL` is **required and has no default**, and the config
+rejects a `:8080` base URL outright.
+
+That is deliberate. `:8080` is the *shared* Nextcloud dev container: it bind-mounts
+real host checkouts, so anything a suite writes lands in somebody's working tree,
+and a login spec pointed at it fires failed logins and brute-force lockouts into an
+instance other people are using. Two apps in this fleet were found doing exactly
+that — one via a `NEXTCLOUD_URL ?? 'http://localhost:8080'` fallback, the other via
+a `hostname: 'localhost', port: 8080` pair that no URL grep would ever find.
+
+Run e2e against a **disposable** instance with its own port and a *named volume*
+(never a bind mount) for `/var/www/html`. Verify isolation before trusting a run —
+this must print `volume`, not `bind`:
+
+```bash
+docker inspect <your-e2e-container> --format '{{range .Mounts}}{{.Type}}{{end}}'
+```
+
+`npm install && npm run build` must happen *before* the app is copied into the
+container, or the suite silently tests a stale bundle.
+
 ## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | Vue 2.7, Pinia, @nextcloud/vue |
+| Frontend | Vue 3.5, Pinia, @nextcloud/vue 9 |
 | Build | Webpack 5, @nextcloud/webpack-vue-config |
 | Backend | PHP 8.1+, Nextcloud App Framework |
 | Data | OpenRegister (PostgreSQL JSON objects) |

@@ -42,7 +42,7 @@ const APP_TEMPLATE_ICON = (
 const TAGLINE = (
   <>
     A starting point for building Nextcloud apps the Conduction way:
-    a manifest-first Vue 2 frontend rendered by CnAppRoot, an
+    a manifest-first Vue 3 frontend rendered by CnAppRoot, an
     OpenRegister data layer, a Dashboard widget, an admin settings
     panel, an AI Chat Companion tool provider, and the full quality
     pipeline — clone it, rename it, ship it.
@@ -188,7 +188,7 @@ export default function Home() {
   return (
     <Layout
       title="Nextcloud App Template, the Conduction scaffold for new apps"
-      description="Conduction-style scaffold for Nextcloud apps. Manifest-first Vue 2, OpenRegister data layer, Dashboard widget, AI tools, and full quality pipeline."
+      description="Conduction-style scaffold for Nextcloud apps. Manifest-first Vue 3, OpenRegister data layer, Dashboard widget, AI tools, and full quality pipeline."
     >
       <main className="marketing-page">
         <DetailHero

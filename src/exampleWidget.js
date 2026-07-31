@@ -13,19 +13,22 @@
  * @see lib/Dashboard/ExampleWidget.php
  */
 
-import Vue from 'vue'
-import { PiniaVuePlugin } from 'pinia'
+import { createApp } from 'vue'
 
 import pinia from './pinia.js'
 import ExampleWidget from './views/widgets/ExampleWidget.vue'
 
-Vue.use(PiniaVuePlugin)
-
 OCA.Dashboard.register('app-template_example_widget', (el, { widget }) => {
-	Vue.mixin({ methods: { t, n } })
-	const View = Vue.extend(ExampleWidget)
-	new View({
-		pinia,
-		propsData: { title: widget.title },
-	}).$mount(el)
+	// Vue 3: one app instance per widget mount. `Vue.extend` + `propsData` +
+	// `$mount(el)` are all gone — root props are the second argument to
+	// `createApp`, and `mount(el)` REPLACES the element's content rather than
+	// replacing the element itself (Vue 2 swapped the node out).
+	//
+	// The `t` / `n` mixin must be registered on THIS app instance. Under Vue 2
+	// the `Vue.mixin` call inside this callback was global and leaked one extra
+	// copy of the mixin per widget mount; per-app registration scopes it.
+	const app = createApp(ExampleWidget, { title: widget.title })
+	app.mixin({ methods: { t, n } })
+	app.use(pinia)
+	app.mount(el)
 })

@@ -158,17 +158,24 @@ function validateRegister(file, errors, warnings) {
 				errors.push(`${at}: lifecycle requires "${cls}" but no matching PHP class found under lib/ (looked for "${cls}" and shortname "${short}")`)
 			}
 		}
-		// lifecycle transition target states should be declared
+		// Every state a transition references must be declared in states{}.
+		//
+		// This used to inspect only `t.to`, and only when `states{}` was
+		// present — so an undeclared `from` state, or an array `from`, went
+		// unreported. `lifecycleStates` already knows how to collect
+		// referenced states across the shape variants; passing it just the
+		// transitions block yields exactly the referenced set (passing the
+		// whole `lc` would fold the DECLARED states in too and make the
+		// comparison vacuous).
 		const lc = s['x-openregister-lifecycle']
-		if (lc && lc.transitions && lc.states) {
-			const declared = new Set(Object.keys(lc.states))
-			for (const [tn, t] of Object.entries(lc.transitions)) {
-				if (t && typeof t.to === 'string' && !declared.has(t.to)) {
-					warnings.push(`${at}: transition "${tn}" → "${t.to}" but "${t.to}" is not in states{}`)
+		if (lc && lc.transitions) {
+			const declared = new Set(Object.keys(lc.states || {}))
+			for (const st of lifecycleStates({ transitions: lc.transitions })) {
+				if (!declared.has(st)) {
+					warnings.push(`${at}: lifecycle transitions reference state "${st}" but it is not declared in states{}`)
 				}
 			}
 		}
-		void lifecycleStates // (helper retained for future deeper checks)
 	}
 }
 

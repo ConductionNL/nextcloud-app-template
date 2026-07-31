@@ -12,8 +12,11 @@
  * Run manually whenever the UI changes and tutorial screenshots need
  * to be refreshed:
  *
- *     NEXTCLOUD_URL=http://localhost:8080 \
+ *     PLAYWRIGHT_BASE_URL=http://localhost:8096 \
  *       npx playwright test --project docs-capture
+ *
+ * Point it at a DISPOSABLE instance. :8080 is the shared dev container and
+ * playwright.config.ts refuses it outright.
  *
  * Excluded from the default regression run via the `docs-capture`
  * project flag in `playwright.config.ts` so PR pipelines don't
@@ -38,6 +41,9 @@ const SHOT_ROOT = path.resolve(__dirname, '..', '..', 'docs', 'static', 'screens
  * `docs/static/screenshots/tutorials/<track>/<file>`.
  * Lives under `static/` so Docusaurus copies the PNG into the build
  * root — markdown image refs use `/screenshots/...` (root-absolute).
+ * @param page Playwright page to capture.
+ * @param track Tutorial track the shot belongs to.
+ * @param file Output PNG filename.
  */
 async function shoot(page: Page, track: 'user' | 'admin', file: string): Promise<void> {
 	const dir = path.join(SHOT_ROOT, track)

@@ -89,7 +89,7 @@ slot driven by that channel.
 #### Scenario: main.js does not block mount on translations
 - GIVEN `src/main.js`
 - WHEN reading the source
-- THEN the `new Vue(...).$mount('#content')` call MUST NOT be wrapped inside `loadTranslations(...)`'s callback
+- THEN the `createApp(...).mount('#content')` call MUST NOT be wrapped inside `loadTranslations(...)`'s callback
 
 ### Requirement: REQ-TMV1-6 The template MUST ship `src/customComponents.js` as the registry contract
 

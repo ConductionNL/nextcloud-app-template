@@ -27,9 +27,9 @@
 			:id="fieldId"
 			type="email"
 			class="email-field__input"
-			:value="value"
+			:value="modelValue"
 			:placeholder="placeholder"
-			@input="$emit('input', $event.target.value)">
+			@input="$emit('update:modelValue', $event.target.value)">
 	</div>
 </template>
 
@@ -40,8 +40,16 @@ export default {
 	name: 'EmailField',
 
 	props: {
-		/** Current field value. */
-		value: {
+		/**
+		 * Current field value.
+		 *
+		 * Vue 3 renamed the default `v-model` contract from
+		 * `value` + `@input` to `modelValue` + `@update:modelValue`. Keeping
+		 * the Vue 2 names here would leave `v-model="x"` on this component
+		 * silently dead — it would bind a prop the component does not declare
+		 * and listen for an event it never emits, with no console error.
+		 */
+		modelValue: {
 			type: String,
 			default: '',
 		},
@@ -57,7 +65,7 @@ export default {
 		},
 	},
 
-	emits: ['input'],
+	emits: ['update:modelValue'],
 
 	data() {
 		_counter += 1

@@ -3,7 +3,7 @@ schema: conduction
 context: |
   Project: App Template
   Repo: ConductionNL/nextcloud-app-template
-  Type: Nextcloud App (PHP backend + Vue 2 frontend)
+  Type: Nextcloud App (PHP backend + Vue 3 frontend)
   Description: Starter template for Conduction Nextcloud apps — replace this description with your app's purpose.
   Key components: Dashboard, Settings, Example objects
   Database: PostgreSQL (via OpenRegister's ObjectService)
@@ -12,7 +12,7 @@ context: |
   Architecture:
     Pattern: Thin client — App Template owns no database tables
     Data layer: OpenRegister (JSON object storage with schema validation)
-    Frontend: Vue 2.7 + Pinia stores querying OpenRegister API directly
+    Frontend: Vue 3.5 + Pinia stores querying OpenRegister API directly
     Backend: Minimal — SettingsController + SettingsService for register setup
 
   Shared specs: See ../openspec/specs/ for cross-project conventions

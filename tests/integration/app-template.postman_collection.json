@@ -23,8 +23,9 @@
 	"variable": [
 		{
 			"key": "base_url",
-			"value": "http://localhost:8080",
-			"type": "string"
+			"value": "",
+			"type": "string",
+			"description": "Target Nextcloud, e.g. http://localhost:8096. Intentionally EMPTY: this used to default to http://localhost:8080, which is the shared dev container, so any local `newman run` without an explicit --env-var silently drove writes and failed logins into an instance other people were using. Supply it explicitly: newman run ... --env-var base_url=http://localhost:8096"
 		},
 		{
 			"key": "admin_user",
