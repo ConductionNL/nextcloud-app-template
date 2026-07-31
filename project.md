@@ -8,7 +8,7 @@ When creating a new app, clone this template and use `/app-create` to rename all
 
 ## Architecture
 
-- **Type**: Nextcloud App (PHP backend + Vue 2 frontend)
+- **Type**: Nextcloud App (PHP backend + Vue 3 frontend)
 - **Data layer**: OpenRegister (all data stored as register objects)
 - **Pattern**: Thin client — App Template provides UI/UX, OpenRegister handles persistence
 - **License**: EUPL-1.2
@@ -18,7 +18,7 @@ When creating a new app, clone this template and use `/app-create` to rename all
 | Layer | Technology |
 |-------|------------|
 | Backend | PHP 8.1+, Nextcloud AppFramework |
-| Frontend | Vue 2.7, Pinia, @nextcloud/vue |
+| Frontend | Vue 3.5, Pinia, @nextcloud/vue 9 |
 | Data | OpenRegister (JSON object store) |
 | Testing | PHPUnit (unit + integration), Newman (API) |
 | Quality | PHPCS, PHPMD, Psalm, PHPStan, ESLint, Stylelint |

@@ -27,7 +27,7 @@ const BRAND_THEME = require.resolve('@conduction/docusaurus-preset/theme');
 
 const config = createConfig({
   title: 'Nextcloud App Template',
-  tagline: 'A template for creating new Nextcloud apps — manifest-first Vue 2 frontend, OpenRegister data layer, and the full Conduction quality pipeline',
+  tagline: 'A template for creating new Nextcloud apps — manifest-first Vue 3 frontend, OpenRegister data layer, and the full Conduction quality pipeline',
   url: 'https://app-template.conduction.nl',
   baseUrl: '/',
 

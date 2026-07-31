@@ -1,12 +1,12 @@
 ---
 sidebar_position: 1
-description: Scaffold for new Conduction-style Nextcloud apps. Manifest-first Vue 2, OpenRegister-backed data, Dashboard widget, AI tools, full quality gate.
+description: Scaffold for new Conduction-style Nextcloud apps. Manifest-first Vue 3, OpenRegister-backed data, Dashboard widget, AI tools, full quality gate.
 ---
 
 # Nextcloud App Template
 
 A starting point for building Nextcloud apps following ConductionNL
-conventions — a manifest-first Vue 2 frontend rendered by CnAppRoot, an
+conventions — a manifest-first Vue 3 frontend rendered by CnAppRoot, an
 OpenRegister data layer, a Dashboard widget, an admin settings panel, an
 AI Chat Companion tool provider, and the full PHP + frontend quality
 pipeline.
