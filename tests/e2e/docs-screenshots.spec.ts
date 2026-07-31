@@ -41,6 +41,9 @@ const SHOT_ROOT = path.resolve(__dirname, '..', '..', 'docs', 'static', 'screens
  * `docs/static/screenshots/tutorials/<track>/<file>`.
  * Lives under `static/` so Docusaurus copies the PNG into the build
  * root — markdown image refs use `/screenshots/...` (root-absolute).
+ * @param page Playwright page to capture.
+ * @param track Tutorial track the shot belongs to.
+ * @param file Output PNG filename.
  */
 async function shoot(page: Page, track: 'user' | 'admin', file: string): Promise<void> {
 	const dir = path.join(SHOT_ROOT, track)

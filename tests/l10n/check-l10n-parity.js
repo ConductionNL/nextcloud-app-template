@@ -55,7 +55,7 @@ const EUROPEAN = [
 	'ca', 'lb', 'rm',
 ].join(',')
 
-function readJson (p) {
+function readJson(p) {
 	return JSON.parse(fs.readFileSync(p, 'utf8'))
 }
 
@@ -72,8 +72,13 @@ if (!fs.existsSync(L10N_DIR)) {
 	process.exit(2)
 }
 
-/** Load an OC.L10N.register(...) .js file into its translations object. */
-function loadJs (file) {
+/**
+ * Load an OC.L10N.register(...) .js file into its translations object.
+ *
+ * @param {string} file Absolute path to the l10n .js file.
+ * @return {object} The registered translations map.
+ */
+function loadJs(file) {
 	const code = fs.readFileSync(file, 'utf8')
 	let captured = null
 	const sandbox = { OC: { L10N: { register: (id, obj) => { captured = obj } } } }
@@ -82,13 +87,23 @@ function loadJs (file) {
 	return captured || {}
 }
 
-/** Load an l10n .json file into its translations object. */
-function loadJsonSet (file) {
+/**
+ * Load an l10n .json file into its translations object.
+ *
+ * @param {string} file Absolute path to the l10n .json file.
+ * @return {object} The `translations` map, or an empty object.
+ */
+function loadJsonSet(file) {
 	return readJson(file).translations || {}
 }
 
-/** True when a translation value is empty (string) or has an empty plural. */
-function isEmpty (v) {
+/**
+ * True when a translation value is empty (string) or has an empty plural.
+ *
+ * @param {string|string[]} v The translation value to test.
+ * @return {boolean} True when the value carries no usable translation.
+ */
+function isEmpty(v) {
 	if (v == null) {
 		return true
 	}

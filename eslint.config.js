@@ -71,17 +71,23 @@ module.exports = defineConfig([{
 }, {
 	// Node-side CLI tools (build / validate scripts) legitimately use
 	// console + process.exit and ship as plain JS (no shebang).
-	files: [
-		'tests/validate-manifest.js',
-		'tests/validate-register.js',
-		'tests/validate-json-strict.js',
-		'tests/manifest-v2.spec.js',
-		'tests/registry.spec.js',
-	],
+	//
+	// This was an explicit file list, so every new checker added under
+	// tests/ (e.g. tests/l10n/check-l10n-parity.js) silently fell outside it.
+	// `npm run lint` only covered `src`, so nobody saw the resulting errors.
+	// A glob keeps new checkers covered by default.
+	files: ['tests/**/*.js'],
 	rules: {
 		'no-console': 'off',
 		'n/no-process-exit': 'off',
 		'n/shebang': 'off',
+	},
+}, {
+	// Test sources import devDependencies by definition; `n/no-unpublished-import`
+	// is about what ships in the published package, which tests/ never does.
+	files: ['tests/**/*.js', 'tests/**/*.ts'],
+	rules: {
+		'n/no-unpublished-import': 'off',
 	},
 },
 

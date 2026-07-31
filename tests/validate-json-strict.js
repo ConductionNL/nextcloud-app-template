@@ -45,10 +45,11 @@ function targetFiles() {
 // `pathPrefix` is the JSON-pointer-ish path used in the error message.
 function parseStrict(text, label) {
 	const dupErrors = []
-	const reviverPathStack = []
 	// JSON.parse's reviver can't see duplicates (the object is already
 	// collapsed). So we re-implement just enough: tokenise object keys.
 	// Simpler robust approach: walk the raw text with a tiny tokenizer.
+	// (A `reviverPathStack` was declared here for a reviver-based approach
+	// that was never built — removed rather than left as a dead binding.)
 	let i = 0
 	const n = text.length
 	function err(msg) {
@@ -66,8 +67,7 @@ function parseStrict(text, label) {
 			if (c === '"') return s
 			if (c === '\\') {
 				const e = text[i++]
-				if (e === 'u') { s += '\\u' + text.slice(i, i + 4); i += 4 }
-				else s += '\\' + e
+				if (e === 'u') { s += '\\u' + text.slice(i, i + 4); i += 4 } else s += '\\' + e
 			} else s += c
 		}
 		err('unterminated string')
