@@ -25,3 +25,19 @@ jobs:
       # additional-apps: '[]'  # Add app dependencies here if needed, e.g.:
       # additional-apps: '[{"repo":"ConductionNL/openregister","app":"openregister","ref":"main"}]'
       enable-sbom: true
+      # tests/e2e/app-shell.spec.ts is small (7 tests) but every one of them
+      # exists because the Vue 2 -> Vue 3 migration can break it SILENTLY:
+      # a failed `createApp().mount()` leaves the server-rendered container in
+      # place, an unregistered icon paints nothing rather than a fallback,
+      # a tree-shaken widget registration renders `.cn-unknown-widget` with an
+      # empty console, and Vue Router 4's dropped `path: '*'` leaves <main>
+      # blank with no 404. None of those produce an error a unit test or a
+      # build could see — they only differ from "working" under a browser.
+      #
+      # This is the app every Conduction app is scaffolded from, so a silent
+      # break here propagates to the whole fleet on the next `app-create`.
+      #
+      # `playwright-test-path` stays at its default (`tests/e2e`); the root
+      # `playwright.config.ts` is used, whose `chromium` project depends on the
+      # `setup` project for auth and testIgnores the journeydoc capture spec.
+      enable-playwright: true
