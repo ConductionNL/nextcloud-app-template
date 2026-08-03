@@ -42,7 +42,7 @@ appears in Nextcloud's occ repair output.
 
 ### REQ-INIT-002: Import configuration on install / upgrade
 
-The system MUST, when the repair step runs, invoke `SettingsService::loadConfiguration(force: true)`. If OpenRegister is not available, the step MUST log a warning and return without throwing. If the service call throws, the step MUST catch the exception, log the error with context, and continue — it MUST NOT let the failure abort the rest of the Nextcloud repair pass.
+The system MUST, when the repair step runs, invoke `SettingsService::loadConfiguration()` — the version-gated import path, as opposed to the admin-triggered `reloadConfiguration()` which forces a re-import. If OpenRegister is not available, the step MUST log a warning and return without throwing. If the service call throws, the step MUST catch the exception, log the error with context, and continue — it MUST NOT let the failure abort the rest of the Nextcloud repair pass.
 
 #### Scenario: Happy-path first install
 
@@ -50,7 +50,7 @@ The system MUST, when the repair step runs, invoke `SettingsService::loadConfigu
 - AND the app's bundled `app_template_register.json` is present
 - WHEN `InitializeSettings::run()` executes
 - THEN the system MUST write a progress message to the repair `IOutput`
-- AND the system MUST call `SettingsService::loadConfiguration(force: true)`
+- AND the system MUST call `SettingsService::loadConfiguration()`
 - AND on success, it MUST record the result (including schema/register IDs) in the server-side log at info level
 
 #### Scenario: OpenRegister is missing

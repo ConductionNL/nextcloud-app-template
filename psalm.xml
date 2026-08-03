@@ -11,7 +11,13 @@
 >
     <projectFiles>
         <directory name="lib" />
-        <ignoreFiles>
+        <!-- allowMissingFiles is REQUIRED: unlike phpcs <exclude-pattern> and phpstan
+             excludePaths, psalm resolves every <ignoreFiles> path at config-parse time and
+             hard-fails ("Could not resolve config path to ...") when one is absent. Without
+             it the optional lib/Resources/template entry below breaks psalm in every app
+             that does not ship that directory — which is most of them, including this
+             template. -->
+        <ignoreFiles allowMissingFiles="true">
             <directory name="vendor" />
             <!-- Apps that ship a verbatim template snapshot under lib/Resources/template/ (e.g. openbuild)
                  keep it out of psalm scope. No-op for apps without the directory. -->

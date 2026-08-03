@@ -129,15 +129,44 @@ class SettingsService
     }//end updateSettings()
 
     /**
-     * Load configuration from app_template_register.json via OpenRegister.
-     *
-     * @param bool $force Force re-import even if already configured.
+     * Load configuration from app_template_register.json via OpenRegister,
+     * letting OpenRegister skip the import when the installed version is
+     * already current. This is the install/upgrade path.
      *
      * @return array<string,mixed> Result with success flag, message, and version.
      *
      * @spec openspec/specs/settings-management/spec.md#REQ-CFG-003
      */
-    public function loadConfiguration(bool $force=false): array
+    public function loadConfiguration(): array
+    {
+        return $this->importConfiguration(force: false);
+
+    }//end loadConfiguration()
+
+    /**
+     * Re-import the configuration from app_template_register.json regardless of
+     * the installed version. This is the admin-triggered reload path.
+     *
+     * @return array<string,mixed> Result with success flag, message, and version.
+     *
+     * @spec openspec/specs/settings-management/spec.md#REQ-CFG-003
+     */
+    public function reloadConfiguration(): array
+    {
+        return $this->importConfiguration(force: true);
+
+    }//end reloadConfiguration()
+
+    /**
+     * Shared import routine behind loadConfiguration() and reloadConfiguration().
+     *
+     * @param bool $force Whether to re-import regardless of installed version.
+     *
+     * @return array<string,mixed> Result with success flag, message, and version.
+     *
+     * @spec openspec/specs/settings-management/spec.md#REQ-CFG-003
+     */
+    private function importConfiguration(bool $force): array
     {
         if ($this->isOpenRegisterAvailable() === false) {
             $this->logger->warning('AppTemplate: OpenRegister not available, skipping register initialization');
@@ -150,7 +179,7 @@ class SettingsService
         try {
             $configurationService = $this->container->get('OCA\OpenRegister\Service\ConfigurationService');
 
-            $absPath = $this->appManager->getAppPath(Application::APP_ID) . '/lib/Settings/' . Application::APP_ID . '_register.json';
+            $absPath = $this->appManager->getAppPath(Application::APP_ID).'/lib/Settings/'.Application::APP_ID.'_register.json';
             $version = '0.1.0';
             $data    = [];
             if (is_file($absPath) === true) {
@@ -188,5 +217,5 @@ class SettingsService
                 'message' => $e->getMessage(),
             ];
         }//end try
-    }//end loadConfiguration()
+    }//end importConfiguration()
 }//end class

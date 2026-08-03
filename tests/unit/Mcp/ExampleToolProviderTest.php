@@ -26,7 +26,6 @@ namespace OCA\AppTemplate\Tests\Unit\Mcp;
 use OCA\AppTemplate\AppInfo\Application;
 use OCA\AppTemplate\Mcp\ExampleToolProvider;
 use OCP\App\IAppManager;
-use OCP\IGroupManager;
 use OCP\IUser;
 use OCP\IUserSession;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -44,13 +43,6 @@ class ExampleToolProviderTest extends TestCase
      * @var IUserSession&MockObject
      */
     private $userSession;
-
-    /**
-     * The group manager mock.
-     *
-     * @var IGroupManager&MockObject
-     */
-    private $groupManager;
 
     /**
      * The app manager mock.
@@ -74,12 +66,10 @@ class ExampleToolProviderTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->userSession  = $this->createMock(IUserSession::class);
-        $this->groupManager = $this->createMock(IGroupManager::class);
-        $this->appManager   = $this->createMock(IAppManager::class);
-        $this->provider     = new ExampleToolProvider(
+        $this->userSession = $this->createMock(IUserSession::class);
+        $this->appManager  = $this->createMock(IAppManager::class);
+        $this->provider    = new ExampleToolProvider(
             $this->userSession,
-            $this->groupManager,
             $this->appManager
         );
 
