@@ -35,11 +35,16 @@ import { defineConfig, devices } from '@playwright/test'
  * Resolve the base URL, refusing to invent one.
  *
  * `NEXTCLOUD_URL` stays accepted as a legacy alias so existing tooling and
- * the docs-capture instructions keep working, but neither variable gets a
- * fallback — an unset base URL is a configuration error, not a default.
+ * the docs-capture instructions keep working, and `BASE_URL` is accepted
+ * because that is the variable the shared ConductionNL `quality.yml`
+ * Playwright job exports for its PHP built-in server. It is checked last so
+ * an explicit local override always wins. None of them gets a fallback — an
+ * unset base URL is a configuration error, not a default.
  */
 function resolveBaseURL(): string {
-	const url = process.env.PLAYWRIGHT_BASE_URL || process.env.NEXTCLOUD_URL
+	const url = process.env.PLAYWRIGHT_BASE_URL
+		|| process.env.NEXTCLOUD_URL
+		|| process.env.BASE_URL
 	if (!url) {
 		throw new Error(
 			'PLAYWRIGHT_BASE_URL is not set. Refusing to fall back to a default '
@@ -48,7 +53,19 @@ function resolveBaseURL(): string {
 			+ '  PLAYWRIGHT_BASE_URL=http://localhost:8096 npx playwright test',
 		)
 	}
-	if (/:8080(\/|$)/.test(url)) {
+	// The :8080 refusal is about the SHARED dev container, which only exists on
+	// a developer machine. On a CI runner :8080 is the job's OWN `php -S
+	// 0.0.0.0:8080`, spun up and torn down inside that job — the single most
+	// disposable instance there is, and the only one the shared workflow
+	// offers. Refusing it there does not protect anything; it just prevents the
+	// suite from ever running, which is how this app's e2e job came to be
+	// permanently unable to start.
+	//
+	// So keep the guard exactly as strict off CI, and let CI through. This is
+	// the same CI-gated exemption that opencatalogi's tests/e2e/ci-seed.sh and
+	// petstore's tests/e2e/_base-url.ts already use for the identical reason.
+	const isCI = process.env.GITHUB_ACTIONS === 'true' || process.env.CI === 'true'
+	if (/:8080(\/|$)/.test(url) && !isCI) {
 		throw new Error(
 			`Refusing to run against ${url}: :8080 is the SHARED dev container. `
 			+ 'Spin up a disposable instance on its own port instead.',
