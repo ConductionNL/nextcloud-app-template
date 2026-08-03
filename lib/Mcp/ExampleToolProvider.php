@@ -29,17 +29,16 @@ declare(strict_types=1);
 namespace OCA\AppTemplate\Mcp;
 
 use OCA\AppTemplate\AppInfo\Application;
-use OCA\OpenRegister\Mcp\AbstractToolHandler;
 use OCA\OpenRegister\Mcp\IMcpToolProvider;
 use OCP\App\IAppManager;
-use OCP\IGroupManager;
 use OCP\IUserSession;
 
 /**
  * Example MCP tool provider — the AI Chat Companion entry point for this app.
  *
- * Extends AbstractToolHandler to inherit standardised requireWriteRole() and
- * requireAdminUser() helpers (fleet-standard pattern per openbuild PR #173).
+ * Authorisation helpers (requireWriteRole()) are implemented locally rather than
+ * inherited: there is no shared base class for tool handlers in openregister, so
+ * a provider must own its own guards.
  *
  * This is teaching scaffolding. To wire your app into the in-app AI assistant:
  *
@@ -63,7 +62,7 @@ use OCP\IUserSession;
  * the full design, and decidesk's `OCA\Decidesk\Mcp\DecideskToolProvider` for a
  * production example with five real tools, deep links, and source descriptors.
  */
-class ExampleToolProvider extends AbstractToolHandler implements IMcpToolProvider
+class ExampleToolProvider implements IMcpToolProvider
 {
 
     /**
@@ -120,18 +119,39 @@ class ExampleToolProvider extends AbstractToolHandler implements IMcpToolProvide
      * and a way to read the app manifest ({@see IAppManager}). Real providers
      * usually also inject their service layer (see DecideskToolProvider).
      *
-     * @param IUserSession $userSession  The current user session (for auth checks)
-     * @param IGroupManager $groupManager The group manager (for admin checks)
+     * @param IUserSession $userSession The current user session (for auth checks)
      * @param IAppManager  $appManager  The app manager (for reading info.xml)
      */
     public function __construct(
-        IUserSession $userSession,
-        IGroupManager $groupManager,
+        private readonly IUserSession $userSession,
         private readonly IAppManager $appManager,
     ) {
-        $this->userSession  = $userSession;
-        $this->groupManager = $groupManager;
     }//end __construct()
+
+    /**
+     * Assert that there is an authenticated user before a tool touches data.
+     *
+     * Returns the structured error envelope that invokeTool() must hand back
+     * (never an exception), or null when the caller is authorised.
+     *
+     * @return array<string,mixed>|null Error envelope, or null when authorised.
+     *
+     * @spec openspec/specs/scaffold-components/spec.md
+     */
+    private function requireWriteRole(): ?array
+    {
+        if ($this->userSession->getUser() === null) {
+            return [
+                'error' => [
+                    'code'    => 'not_authenticated',
+                    'message' => 'You must be signed in to perform this action.',
+                ],
+            ];
+        }
+
+        return null;
+
+    }//end requireWriteRole()
 
     /**
      * Returns the app id that namespaces every tool id this provider exposes.
@@ -164,7 +184,7 @@ class ExampleToolProvider extends AbstractToolHandler implements IMcpToolProvide
      * Dispatch skeleton — for each tool:
      *   1. validate args
      *   2. authorise (per-object, BEFORE business logic) — use requireWriteRole()
-     *      or requireAdminUser() from AbstractToolHandler for standard checks
+     *      below, or add your own guard for stricter checks
      *   3. delegate to your service layer
      *   4. return the payload  /  return ['error' => ['code' => ..., 'message' => ...]]
      *
@@ -190,7 +210,7 @@ class ExampleToolProvider extends AbstractToolHandler implements IMcpToolProvide
 
             case Application::APP_ID.'.describeApp':
                 // 1. validate args  — none.
-                // 2. authorise — require an authenticated user via AbstractToolHandler.
+                // 2. authorise — require an authenticated user.
                 $authError = $this->requireWriteRole();
                 if ($authError !== null) {
                     return $authError;
