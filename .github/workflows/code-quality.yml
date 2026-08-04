@@ -22,8 +22,19 @@ jobs:
       enable-eslint: true
       enable-phpunit: true
       enable-newman: true
-      # additional-apps: '[]'  # Add app dependencies here if needed, e.g.:
-      # additional-apps: '[{"repo":"ConductionNL/openregister","app":"openregister","ref":"main"}]'
+      # `src/manifest.json` declares `"dependencies": ["openregister"]`, and
+      # nc-vue's CnAppRoot honours that at runtime: when a declared dependency
+      # app is not enabled it renders the "Required apps are missing" gate
+      # INSTEAD of the router outlet. That gate has no <main>, no
+      # `#app-navigation-vue`, and no `.cn-widget-wrapper` — so on a bare CI
+      # Nextcloud every app-shell assertion fails with "element(s) not found"
+      # while the app itself is behaving exactly as designed. The app mounts
+      # fine (the CnAppRoot / manifest-prop test passes); it simply refuses to
+      # render an app whose backing store is absent.
+      #
+      # So the dependency has to exist in the e2e instance, not be asserted
+      # around. Checked out and `occ app:enable`d by the shared workflow.
+      additional-apps: '[{"repo":"ConductionNL/openregister","app":"openregister","ref":"main"}]'
       enable-sbom: true
       # tests/e2e/app-shell.spec.ts is small (7 tests) but every one of them
       # exists because the Vue 2 -> Vue 3 migration can break it SILENTLY:
