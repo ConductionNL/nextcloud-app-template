@@ -35,7 +35,7 @@ import type { Page } from '@playwright/test'
 
 declare global {
 	interface Window {
-		OC?: { generateUrl: (path: string) => string }
+		OC?: { generateUrl: (_path: string) => string }
 	}
 }
 
@@ -48,6 +48,9 @@ let cached: string | null = null
  * Probes `/index.php/apps/dashboard/`, which is served whether or not
  * mod_rewrite is configured — it has to be, because that is the form
  * `generateUrl` falls back to.
+ *
+ * @param page Playwright page used to probe the instance.
+ * @return The app URL base, without a trailing slash.
  */
 export async function appBase(page: Page): Promise<string> {
 	if (cached !== null) {
@@ -75,7 +78,13 @@ export async function appBase(page: Page): Promise<string> {
 	return cached
 }
 
-/** Join a router path onto the resolved app base. */
+/**
+ * Join a router path onto the resolved app base.
+ *
+ * @param page      Playwright page used to probe the instance.
+ * @param routePath Router path relative to the app root, e.g. `examples`.
+ * @return An absolute path safe to hand to `page.goto`.
+ */
 export async function appUrl(page: Page, routePath = ''): Promise<string> {
 	const base = await appBase(page)
 	if (routePath === '' || routePath === '/') {
