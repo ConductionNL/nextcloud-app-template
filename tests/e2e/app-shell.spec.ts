@@ -20,9 +20,9 @@ import {
 	mountedComponentNames,
 	seedFirstVisitOverlaysSeen,
 } from '@conduction/nextcloud-vue/testing/playwright'
+import { appUrl } from './_app-url'
 
 const APP_ID = 'app-template'
-const APP_ROOT = `/apps/${APP_ID}/`
 
 test.beforeEach(async ({ page }) => {
 	await seedFirstVisitOverlaysSeen(page, APP_ID)
@@ -30,7 +30,7 @@ test.beforeEach(async ({ page }) => {
 
 test.describe('app shell', () => {
 	test('the Vue 3 app actually mounts CnAppRoot', async ({ page }) => {
-		await page.goto(APP_ROOT)
+		await page.goto(await appUrl(page))
 
 		// `createApp(...).mount('#content')` failing leaves the server-rendered
 		// container in place, so "the page loaded" proves nothing. Assert the
@@ -53,9 +53,9 @@ test.describe('app shell', () => {
 		// One route per manifest page. A Vue Router 4 misconfiguration renders
 		// the shell with an empty <main> rather than erroring.
 		const routes = [
-			{ path: APP_ROOT, expect: /Recent examples/ },
-			{ path: `/apps/${APP_ID}/examples`, expect: /No items found|Table/ },
-			{ path: `/apps/${APP_ID}/settings`, expect: /Application information/ },
+			{ path: await appUrl(page), expect: /Recent examples/ },
+			{ path: await appUrl(page, 'examples'), expect: /No items found|Table/ },
+			{ path: await appUrl(page, 'settings'), expect: /Application information/ },
 		]
 
 		for (const route of routes) {
@@ -74,7 +74,12 @@ test.describe('app shell', () => {
 		// rather than mis-wired. This caught a real regression on the Settings
 		// page (`version-info`) and on the detail page, whose sidebar declared
 		// `object-data` when the library's key is `data`.
-		for (const path of [APP_ROOT, `/apps/${APP_ID}/examples`, `/apps/${APP_ID}/settings`, `/apps/${APP_ID}/examples/1`]) {
+		for (const path of [
+			await appUrl(page),
+			await appUrl(page, 'examples'),
+			await appUrl(page, 'settings'),
+			await appUrl(page, 'examples/1'),
+		]) {
 			await page.goto(path)
 			await expect(page.locator('main')).not.toHaveText(/^\s*$/)
 			await expect(
@@ -85,7 +90,7 @@ test.describe('app shell', () => {
 	})
 
 	test('navigation icons render as real glyphs', async ({ page }) => {
-		await page.goto(APP_ROOT)
+		await page.goto(await appUrl(page))
 
 		// An icon name that is not in src/icons.js renders NOTHING — not a
 		// fallback glyph — so a missing registration is invisible unless the
@@ -106,7 +111,7 @@ test.describe('app shell', () => {
 	})
 
 	test('dashboard widgets have non-zero width', async ({ page }) => {
-		await page.goto(APP_ROOT)
+		await page.goto(await appUrl(page))
 
 		const widget = page.locator('.cn-widget-wrapper').first()
 		await expect(widget).toBeVisible()
@@ -125,7 +130,14 @@ test.describe('app shell', () => {
 		// Vue Router 4 removed the bare `path: '*'` wildcard. Left unmigrated,
 		// the catch-all never matches: the shell renders and <main> stays
 		// empty, with no console error and no 404.
-		await page.goto(`/apps/${APP_ID}/this-route-does-not-exist`)
+		//
+		// This has to be navigated through `appUrl`, not the pretty literal.
+		// With a base the router cannot strip, EVERY path bounces to the
+		// dashboard — so this spec passed while proving nothing, because
+		// "the catch-all redirected me" and "routing is completely broken"
+		// produce the identical page. Resolving the base is what makes the
+		// redirect evidence of the catch-all rather than of the bug.
+		await page.goto(await appUrl(page, 'this-route-does-not-exist'))
 
 		await expect(page).toHaveURL(new RegExp(`/apps/${APP_ID}/?$`))
 		await expect(page.locator('main')).toContainText(/Recent examples/)
