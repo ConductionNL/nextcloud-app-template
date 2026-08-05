@@ -62,8 +62,6 @@ class Application extends App implements IBootstrap
      * @param IRegistrationContext $context The registration context
      *
      * @return void
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function register(IRegistrationContext $context): void
     {
@@ -99,7 +97,12 @@ class Application extends App implements IBootstrap
      *
      * @return void
      *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter) $context is mandated by
+     *                   OCP\AppFramework\Bootstrap\IBootstrap::boot(). The
+     *                   template has nothing to do at boot time, but the
+     *                   parameter cannot be dropped without breaking the
+     *                   interface contract. Copies of this template that DO
+     *                   boot something should delete this tag once they use it.
      */
     public function boot(IBootContext $context): void
     {

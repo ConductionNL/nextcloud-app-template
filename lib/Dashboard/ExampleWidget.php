@@ -38,6 +38,21 @@ use OCP\Util;
 class ExampleWidget implements IWidget
 {
     /**
+     * The webpack chunks this widget needs, in load order.
+     *
+     * Each entry is suffixed onto `Application::APP_ID.'-'` to form the script
+     * name webpack emits. The two shared chunks MUST precede the per-widget
+     * bundle — see {@see load()}.
+     *
+     * @var string[]
+     */
+    private const SCRIPT_CHUNKS = [
+        'shared-vendor',
+        'shared-nc-vue',
+        'exampleWidget',
+    ];
+
+    /**
      * Constructor.
      *
      * @param IL10N $l10n Localisation service.
@@ -120,13 +135,19 @@ class ExampleWidget implements IWidget
      *
      * @return void
      *
-     * @SuppressWarnings(PHPMD.StaticAccess) — Nextcloud Util API is static by design
+     * @spec openspec/specs/scaffold-components/spec.md
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess) OCP\Util is a static-only facade —
+     *                                       Nextcloud exposes no injectable
+     *                                       equivalent of addScript(), so this
+     *                                       single loop is the one unavoidable
+     *                                       static call site in the widget.
      */
     public function load(): void
     {
-        Util::addScript(application: Application::APP_ID, file: Application::APP_ID.'-shared-vendor');
-        Util::addScript(application: Application::APP_ID, file: Application::APP_ID.'-shared-nc-vue');
-        Util::addScript(application: Application::APP_ID, file: Application::APP_ID.'-exampleWidget');
+        foreach (self::SCRIPT_CHUNKS as $chunk) {
+            Util::addScript(application: Application::APP_ID, file: Application::APP_ID.'-'.$chunk);
+        }
 
     }//end load()
 }//end class
