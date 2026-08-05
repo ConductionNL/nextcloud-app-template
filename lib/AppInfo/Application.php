@@ -19,10 +19,17 @@
  *
  * @link https://conduction.nl
  *
- * @spec openspec/changes/example-change/tasks.md#task-N
+ * @spec openspec/changes/example-change/tasks.md#task-4
  *   (file-level @spec tag — link back to the OpenSpec change that created or
  *   last modified this file. Multiple @spec tags allowed. Public methods SHOULD
- *   also carry their own @spec tag. ADR-003.)
+ *   also carry their own @spec tag. ADR-003.
+ *
+ *   The anchor must RESOLVE — gate-46 (spec-anchor-existence) opens the target
+ *   and looks for the heading or task id. This one points at task-4, the
+ *   DeepLinkRegistrationListener subscription that register() below performs.
+ *   It used to read `#task-N`, a literal placeholder that resolved to nothing
+ *   and failed the gate on every PR that touched this file. When you copy this
+ *   template, repoint it at your own change — do not leave a placeholder.)
  */
 
 declare(strict_types=1);
