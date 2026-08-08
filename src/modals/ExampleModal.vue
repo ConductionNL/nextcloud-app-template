@@ -15,7 +15,7 @@
   3. Reference it in manifest actions via
      { type: "open-modal", target: "<your-key>", props: { ... } }.
 
-  @spec openspec/changes/scaffold-v2/specs/scaffold-v2/spec.md
+  @spec openspec/specs/scaffold-v2/spec.md#requirement-five-kind-registry-shipped
 -->
 <template>
 	<NcDialog

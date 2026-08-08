@@ -19,17 +19,24 @@
  *
  * @link https://conduction.nl
  *
- * @spec openspec/changes/example-change/tasks.md#task-4
- *   (file-level @spec tag — link back to the OpenSpec change that created or
- *   last modified this file. Multiple @spec tags allowed. Public methods SHOULD
- *   also carry their own @spec tag. ADR-003.
+ * @spec openspec/specs/deep-linking/spec.md#REQ-LINK-001
+ *   (file-level @spec tag — link back to the REQUIREMENT this file exists to
+ *   satisfy. Multiple @spec tags allowed. Public methods SHOULD also carry
+ *   their own @spec tag. ADR-003.
  *
- *   The anchor must RESOLVE — gate-46 (spec-anchor-existence) opens the target
- *   and looks for the heading or task id. This one points at task-4, the
+ *   Point at the CANONICAL spec under `openspec/specs/<capability>/spec.md`,
+ *   never at `openspec/changes/<name>/tasks.md`. A change directory is
+ *   temporary: completing the change moves it to
+ *   `openspec/changes/archive/<date>-<name>/` or removes it, and every tag
+ *   pointing into it dangles from that moment on — which is how an app
+ *   scaffolded from this template inherits gate-46 findings it never wrote.
+ *   See ConductionNL/.github#228.
+ *
+ *   The anchor must also RESOLVE — gate-46 (spec-anchor-existence) opens the
+ *   target and looks for the heading. This one names REQ-LINK-001, the
  *   DeepLinkRegistrationListener subscription that register() below performs.
- *   It used to read `#task-N`, a literal placeholder that resolved to nothing
- *   and failed the gate on every PR that touched this file. When you copy this
- *   template, repoint it at your own change — do not leave a placeholder.)
+ *   When you copy this template, repoint it at your own capability spec — do
+ *   not leave a placeholder such as `#task-N`, which resolves to nothing.)
  */
 
 declare(strict_types=1);

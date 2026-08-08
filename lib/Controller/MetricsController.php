@@ -19,9 +19,14 @@
  *
  * @link https://conduction.nl
  *
- * @spec openspec/changes/example-change/tasks.md#task-8
+ * @spec openspec/specs/observability/spec.md#REQ-OBS-001
  *   (Illustrative stub per ADR-006 — every app MUST expose `GET /api/metrics`
- *   as Prometheus text, admin auth. Replace the metric values with real data.)
+ *   as Prometheus text, admin auth. Replace the metric values with real data.
+ *
+ *   Point @spec at the CANONICAL spec under `openspec/specs/`, never at
+ *   `openspec/changes/<name>/`: a change directory is archived or deleted when
+ *   the change completes, and every tag into it dangles from that moment on.
+ *   Gate-46 (spec-anchor-existence) reports those. See ConductionNL/.github#228.)
  */
 
 declare(strict_types=1);
@@ -61,7 +66,7 @@ class MetricsController extends Controller
      *
      * @return void
      *
-     * @spec openspec/changes/example-change/tasks.md#task-8
+     * @spec openspec/specs/observability/spec.md#REQ-OBS-001
      */
     public function __construct(
         IRequest $request,
@@ -76,7 +81,7 @@ class MetricsController extends Controller
      *
      * @return DataDisplayResponse
      *
-     * @spec openspec/changes/example-change/tasks.md#task-8
+     * @spec openspec/specs/observability/spec.md#REQ-OBS-001
      */
     public function index(): DataDisplayResponse
     {
