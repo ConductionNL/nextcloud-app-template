@@ -81,6 +81,22 @@ export default defineConfig({
 	fullyParallel: false,
 	retries: process.env.CI ? 1 : 0,
 	workers: 1,
+	// The shared ConductionNL CI job caps the Playwright suite at
+	// `timeout-minutes: 45` (.github/workflows/quality.yml). A job cancelled by
+	// that cap produces NO verdict: Playwright never prints its tally, the
+	// `if: failure()` trace upload never fires, and the `if: always()` report
+	// upload does not run on a cancelled job either. The one run you most need
+	// to read is then the one that leaves nothing behind — and it surfaces as
+	// "fail" in `gh pr checks` while carrying no information at all.
+	//
+	// Stopping on our own clock a few minutes early turns that silent
+	// cancellation into a reported timeout WITH a tally and WITH artifacts.
+	// Measured overhead in the shared job before the `Run Playwright tests`
+	// step even starts is 2.0-2.4 min (openconnector run 31257480415: 2m20s;
+	// opencatalogi, doriath, openregister all in the same band), and the
+	// upload steps after it are seconds. 38m + ~2.5m setup + uploads lands
+	// comfortably under the 45m cap, with ~7 min of margin.
+	globalTimeout: 38 * 60_000,
 	reporter: [
 		['html', { open: 'never', outputFolder: 'tests/e2e/playwright-report' }],
 		['list'],
@@ -89,7 +105,19 @@ export default defineConfig({
 
 	use: {
 		baseURL: resolveBaseURL(),
-		trace: 'on-first-retry',
+		// `on-first-retry` only writes a trace when a retry actually HAPPENS.
+		// That makes the trace artifact a function of `retries`: with
+		// `retries: 0` — which is what this config does off CI, and what two
+		// fleet repos scaffolded from this template ended up with on CI too —
+		// there is no first retry to trigger on, so the config reads as if
+		// tracing were configured while producing nothing, ever. The defect is
+		// invisible in exactly the situation it exists to cover.
+		//
+		// `retain-on-failure` captures every test and keeps only the ones that
+		// failed. It is strictly more informative than `on-first-retry` and is
+		// independent of the retry count, so an app that later sets
+		// `retries: 0` cannot silently lose its traces. Do not change this back.
+		trace: 'retain-on-failure',
 		screenshot: 'only-on-failure',
 	},
 
