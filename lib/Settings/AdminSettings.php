@@ -1,4 +1,5 @@
 <?php
+
 // SPDX-License-Identifier: EUPL-1.2
 
 /**
@@ -40,51 +41,47 @@ use OCP\Settings\ISettings;
  * https://docs.nextcloud.com/server/latest/developer_manual/app_development/settings.html
  * for usage guidance. For most apps, ISettings is the correct choice.
  */
-class AdminSettings implements ISettings
-{
-    /**
-     * Constructor.
-     *
-     * @param IAppManager $appManager The app manager.
-     */
-    public function __construct(
-        private readonly IAppManager $appManager,
-    ) {
-    }//end __construct()
+class AdminSettings implements ISettings {
+	/**
+	 * Constructor.
+	 *
+	 * @param IAppManager $appManager The app manager.
+	 */
+	public function __construct(
+		private readonly IAppManager $appManager,
+	) {
+	}//end __construct()
 
-    /**
-     * Get the settings form template.
-     *
-     * @return TemplateResponse
-     */
-    public function getForm(): TemplateResponse
-    {
-        $version = $this->appManager->getAppVersion(appId: Application::APP_ID);
+	/**
+	 * Get the settings form template.
+	 *
+	 * @return TemplateResponse
+	 */
+	public function getForm(): TemplateResponse {
+		$version = $this->appManager->getAppVersion(appId: Application::APP_ID);
 
-        return new TemplateResponse(
-            Application::APP_ID,
-            'settings/admin',
-            ['version' => $version]
-        );
-    }//end getForm()
+		return new TemplateResponse(
+			Application::APP_ID,
+			'settings/admin',
+			['version' => $version]
+		);
+	}//end getForm()
 
-    /**
-     * Get the section ID this settings page belongs to.
-     *
-     * @return string
-     */
-    public function getSection(): string
-    {
-        return 'app-template';
-    }//end getSection()
+	/**
+	 * Get the section ID this settings page belongs to.
+	 *
+	 * @return string
+	 */
+	public function getSection(): string {
+		return 'app-template';
+	}//end getSection()
 
-    /**
-     * Get the priority for ordering within the section.
-     *
-     * @return int
-     */
-    public function getPriority(): int
-    {
-        return 10;
-    }//end getPriority()
+	/**
+	 * Get the priority for ordering within the section.
+	 *
+	 * @return int
+	 */
+	public function getPriority(): int {
+		return 10;
+	}//end getPriority()
 }//end class
