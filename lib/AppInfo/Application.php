@@ -56,69 +56,65 @@ use OCP\AppFramework\Bootstrap\IRegistrationContext;
 /**
  * Main application class for the AppTemplate Nextcloud app.
  */
-class Application extends App implements IBootstrap
-{
-    public const APP_ID = 'app-template';
+class Application extends App implements IBootstrap {
+	public const APP_ID = 'app-template';
 
-    /**
-     * Constructor for the Application class.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct(appName: self::APP_ID);
-    }//end __construct()
+	/**
+	 * Constructor for the Application class.
+	 *
+	 * @return void
+	 */
+	public function __construct() {
+		parent::__construct(appName: self::APP_ID);
+	}//end __construct()
 
-    /**
-     * Register event listeners and services.
-     *
-     * @param IRegistrationContext $context The registration context
-     *
-     * @return void
-     */
-    public function register(IRegistrationContext $context): void
-    {
-        // Register deep link patterns with OpenRegister's unified search provider.
-        // Only fires when OpenRegister is installed and dispatches the event.
-        $context->registerEventListener(
-            event: DeepLinkRegistrationEvent::class,
-            listener: DeepLinkRegistrationListener::class
-        );
+	/**
+	 * Register event listeners and services.
+	 *
+	 * @param IRegistrationContext $context The registration context
+	 *
+	 * @return void
+	 */
+	public function register(IRegistrationContext $context): void {
+		// Register deep link patterns with OpenRegister's unified search provider.
+		// Only fires when OpenRegister is installed and dispatches the event.
+		$context->registerEventListener(
+			event: DeepLinkRegistrationEvent::class,
+			listener: DeepLinkRegistrationListener::class
+		);
 
-        // Initialize register and schemas on install/upgrade.
-        $context->registerRepairStep(InitializeSettings::class);
+		// Initialize register and schemas on install/upgrade.
+		$context->registerRepairStep(InitializeSettings::class);
 
-        // Sample dashboard widget — see lib/Dashboard/ExampleWidget.php.
-        // Delete this line and the ExampleWidget files if your app has no
-        // dashboard widgets.
-        $context->registerDashboardWidget(ExampleWidget::class);
+		// Sample dashboard widget — see lib/Dashboard/ExampleWidget.php.
+		// Delete this line and the ExampleWidget files if your app has no
+		// dashboard widgets.
+		$context->registerDashboardWidget(ExampleWidget::class);
 
-        // AI Chat Companion (hydra ADR-034/035): expose this app's capabilities to the in-app AI
-        // by registering an IMcpToolProvider under the alias OCA\OpenRegister\Mcp\IMcpToolProvider::{appId}.
-        // OpenRegister's McpToolsService discovers providers by this alias. See lib/Mcp/ExampleToolProvider.php.
-        $context->registerServiceAlias(
-            'OCA\\OpenRegister\\Mcp\\IMcpToolProvider::'.self::APP_ID,
-            ExampleToolProvider::class
-        );
+		// AI Chat Companion (hydra ADR-034/035): expose this app's capabilities to the in-app AI
+		// by registering an IMcpToolProvider under the alias OCA\OpenRegister\Mcp\IMcpToolProvider::{appId}.
+		// OpenRegister's McpToolsService discovers providers by this alias. See lib/Mcp/ExampleToolProvider.php.
+		$context->registerServiceAlias(
+			'OCA\\OpenRegister\\Mcp\\IMcpToolProvider::' . self::APP_ID,
+			ExampleToolProvider::class
+		);
 
-    }//end register()
+	}//end register()
 
-    /**
-     * Boot the application.
-     *
-     * @param IBootContext $context The boot context
-     *
-     * @return void
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter) $context is mandated by
-     *                   OCP\AppFramework\Bootstrap\IBootstrap::boot(). The
-     *                   template has nothing to do at boot time, but the
-     *                   parameter cannot be dropped without breaking the
-     *                   interface contract. Copies of this template that DO
-     *                   boot something should delete this tag once they use it.
-     */
-    public function boot(IBootContext $context): void
-    {
-    }//end boot()
+	/**
+	 * Boot the application.
+	 *
+	 * @param IBootContext $context The boot context
+	 *
+	 * @return void
+	 *
+	 * @SuppressWarnings(PHPMD.UnusedFormalParameter) $context is mandated by
+	 *                   OCP\AppFramework\Bootstrap\IBootstrap::boot(). The
+	 *                   template has nothing to do at boot time, but the
+	 *                   parameter cannot be dropped without breaking the
+	 *                   interface contract. Copies of this template that DO
+	 *                   boot something should delete this tag once they use it.
+	 */
+	public function boot(IBootContext $context): void {
+	}//end boot()
 }//end class
