@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d71be8fec9bf02f4751f317a8db215dd",
+    "content-hash": "d17bfdd3f9c361b985a1542e99ddef08",
     "packages": [],
     "packages-dev": [
         {
@@ -512,16 +512,16 @@
         },
         {
             "name": "conduction/hydra-gates",
-            "version": "dev-feat/centralised-quality-config",
+            "version": "v1.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ConductionNL/.github.git",
-                "reference": "c3a8fb53362f6c5c38c4252e53309f04ad2bbf16"
+                "reference": "487e8d235b650a211328d5dfd1dbf90531b26436"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ConductionNL/.github/zipball/c3a8fb53362f6c5c38c4252e53309f04ad2bbf16",
-                "reference": "c3a8fb53362f6c5c38c4252e53309f04ad2bbf16",
+                "url": "https://api.github.com/repos/ConductionNL/.github/zipball/487e8d235b650a211328d5dfd1dbf90531b26436",
+                "reference": "487e8d235b650a211328d5dfd1dbf90531b26436",
                 "shasum": ""
             },
             "require": {
@@ -538,14 +538,7 @@
                     "schemas": "hydra-gates/scripts/schemas"
                 }
             },
-            "scripts": {
-                "gates": [
-                    "hydra-gates/bin/hydra-gates"
-                ],
-                "test:package": [
-                    "bash hydra-gates/tests/test-hydra-gates-bin.sh"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "EUPL-1.2"
             ],
@@ -565,10 +558,11 @@
                 "static-analysis"
             ],
             "support": {
+                "docs": "https://github.com/ConductionNL/.github/blob/main/hydra-gates/README.md",
                 "issues": "https://github.com/ConductionNL/.github/issues",
-                "docs": "https://github.com/ConductionNL/.github/blob/main/hydra-gates/README.md"
+                "source": "https://github.com/ConductionNL/.github/tree/v1.7.1"
             },
-            "time": "2026-08-12T09:03:08+00:00"
+            "time": "2026-08-12T12:57:31+00:00"
         },
         {
             "name": "consolidation/annotated-command",
@@ -7929,7 +7923,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "conduction/hydra-gates": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": false,
@@ -7937,9 +7930,9 @@
     "platform": {
         "php": "^8.3"
     },
-    "platform-dev": {},
+    "platform-dev": [],
     "platform-overrides": {
         "php": "8.3"
     },
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }

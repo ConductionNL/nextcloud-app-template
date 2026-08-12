@@ -14,7 +14,14 @@ jobs:
       app-name: app-template
       php-version: "8.3"
       php-test-versions: '["8.3", "8.4"]'
-      nextcloud-test-refs: '["stable34"]'
+      # The whole range `appinfo/info.xml` declares (min-version="32",
+      # max-version="34"), not just its top. With only `stable34` listed, 32 and
+      # 33 were advertised as supported and tested by nothing.
+      # `stable34` MUST stay FIRST: newman, playwright and journeydoc-capture
+      # each read `fromJSON(inputs.nextcloud-test-refs)[0]` as their single
+      # server, so element 0 is the ref those legs run against — it has to be
+      # the newest supported release, not whichever ref happens to sort first.
+      nextcloud-test-refs: '["stable34", "stable32", "stable33"]'
       enable-psalm: true
       enable-phpstan: true
       enable-phpmetrics: true
