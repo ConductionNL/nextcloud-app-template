@@ -18,10 +18,7 @@
   @spec openspec/specs/scaffold-v2/spec.md#requirement-five-kind-registry-shipped
 -->
 <template>
-	<NcDialog
-		:name="title"
-		:open="open"
-		@update:open="$emit('update:open', $event)">
+	<NcDialog :name="title" :open="open" @update:open="$emit('update:open', $event)">
 		<p>{{ message }}</p>
 		<template #actions>
 			<NcButton @click="onConfirm">

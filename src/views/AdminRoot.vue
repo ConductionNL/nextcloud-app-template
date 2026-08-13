@@ -20,9 +20,19 @@
 	<div class="apptemplate-admin-settings">
 		<NcSettingsSection
 			:name="t('apptemplate', 'App Template')"
-			:description="t('apptemplate', 'Pre-app-boot configuration. Most settings live inside the app at /settings (manifest-driven).')">
+			:description="
+				t(
+					'apptemplate',
+					'Pre-app-boot configuration. Most settings live inside the app at /settings (manifest-driven).',
+				)
+			">
 			<p class="apptemplate-admin-settings__hint">
-				{{ t('apptemplate', 'No pre-boot settings yet. Edit `src/views/AdminRoot.vue` to add fields here.') }}
+				{{
+					t(
+						'apptemplate',
+						'No pre-boot settings yet. Edit `src/views/AdminRoot.vue` to add fields here.',
+					)
+				}}
 			</p>
 		</NcSettingsSection>
 	</div>

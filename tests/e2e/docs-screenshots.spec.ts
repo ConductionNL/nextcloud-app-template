@@ -34,7 +34,15 @@ import { test, type Page } from '@playwright/test'
 import * as path from 'path'
 import * as fs from 'fs'
 
-const SHOT_ROOT = path.resolve(__dirname, '..', '..', 'docs', 'static', 'screenshots', 'tutorials')
+const SHOT_ROOT = path.resolve(
+	__dirname,
+	'..',
+	'..',
+	'docs',
+	'static',
+	'screenshots',
+	'tutorials',
+)
 
 /**
  * Save a screenshot under
@@ -45,7 +53,11 @@ const SHOT_ROOT = path.resolve(__dirname, '..', '..', 'docs', 'static', 'screens
  * @param track Tutorial track the shot belongs to.
  * @param file Output PNG filename.
  */
-async function shoot(page: Page, track: 'user' | 'admin', file: string): Promise<void> {
+async function shoot(
+	page: Page,
+	track: 'user' | 'admin',
+	file: string,
+): Promise<void> {
 	const dir = path.join(SHOT_ROOT, track)
 	if (!fs.existsSync(dir)) {
 		fs.mkdirSync(dir, { recursive: true })
