@@ -19,9 +19,9 @@ tool — run locally by a developer — opens a PR on every app in the fleet.
 | File | What it does |
 |---|---|
 | `phpcs.xml` | PHPCS ruleset. Wires the Conduction custom sniffs + standard NC + PHPCompatibility. |
-| `phpmd.xml` | PHPMD ruleset for `lib/` source. |
+| `phpmd.xml` | Nine-line **stub** that references `vendor/conduction/hydra-gates/quality-config/phpmd.xml`. The rules themselves live in the package, not here. |
 | `psalm.xml` | Psalm config (level + ignored files). |
-| `phpstan.neon` | PHPStan config (level + paths). |
+| `phpstan.neon` | Stub that `includes:` `vendor/conduction/hydra-gates/quality-config/phpstan-base.neon` plus this app's own baseline. |
 | `phpstan-bootstrap.php` | Bootstrap stubs so PHPStan can resolve `\OC` accessors. |
 | `phpcs-custom-sniffs/CustomSniffs/Sniffs/**` | The custom-sniff ruleset (SpecTagSniff, NoLegacyServerAccessorsSniff, etc.). |
 | `stylelint.config.js` | CSS/SCSS lint config for `src/**`. |
@@ -32,12 +32,20 @@ tool — run locally by a developer — opens a PR on every app in the fleet.
 | `.nvmrc` | Node version floor (currently `20`). |
 
 **No per-app deviations.** The canonical files sync byte-for-byte including
-their description / ruleset-name strings. The template's `phpcs.xml` and
-`phpmd.xml` use app-generic descriptions
-(`"Conduction Nextcloud app coding standard…"`) precisely so no per-app
-re-stamping is needed after sync. If an app needs different rules, the
+their description / ruleset-name strings. If an app needs different rules, the
 change goes into the template first and propagates to the fleet via the
 next sync.
+
+**Exception — the PHPMD and PHPStan configs are no longer synced content; they
+are pointers.** Since `conduction/hydra-gates` v1.7.3 the rules live in the
+package's `quality-config/` directory and every app ships a stub that names
+itself and references the package. A stub is a handful of lines, so the only
+per-app text in it is the app name, and the thing that used to drift — the rule
+list — is a single versioned file the whole fleet resolves through composer.
+Centralising files never stopped drift on its own; a gate does. `gate-65`
+currently guards `phpcs.xml` only, so `phpmd.xml`, `phpstan.neon`,
+`stylelint.config.js` and `eslint.config.js` can still drift back
+(ConductionNL/.github, gate-65 scope).
 
 The earlier convention of allowing per-app `<description>` and
 `<ruleset name>` strings was retired in 2026-05 — it created a manual
