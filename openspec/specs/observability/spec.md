@@ -45,8 +45,8 @@ version) and `{app_id}_health_status` (1 when healthy, 0 when degraded).
 - GIVEN Prometheus is configured to scrape with an admin-scoped credential
 - WHEN a scrape request hits `MetricsController::index()`
 - THEN the system MUST return HTTP 200 with `Content-Type` `text/plain; version=0.0.4`
-- AND the response body MUST contain an `app_template_info{app="app-template",version="<v>"} 1` line
-- AND the response body MUST contain an `app_template_health_status <0-or-1>` line
+- AND the response body MUST contain an `apptemplate_info{app="apptemplate",version="<v>"} 1` line
+- AND the response body MUST contain an `apptemplate_health_status <0-or-1>` line
 
 #### Scenario: Non-admin scrape attempt
 
@@ -74,7 +74,7 @@ all required dependencies are present, 503 when one or more are missing.
 - GIVEN OpenRegister is installed and enabled
 - WHEN a probe sends `GET /api/health`
 - THEN the system MUST return HTTP 200
-- AND the JSON body MUST include `status: "ok"`, `app: "app-template"`, `version: "<v>"`, and `dependencies: { "openregister": true }`
+- AND the JSON body MUST include `status: "ok"`, `app: "apptemplate"`, `version: "<v>"`, and `dependencies: { "openregister": true }`
 
 #### Scenario: A required dependency is missing
 

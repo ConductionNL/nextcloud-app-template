@@ -14,7 +14,7 @@
 - [x] 2.1 Rewrite `src/main.js` to the mount-survivable Tier-4 bootstrap pattern (decidesk's `50e4df7c` + `866ff132`): import `bundledManifest from './manifest.json'` and `customComponents from './customComponents.js'`; shallow-clone `CnPageRenderer`, `defaultPageTypes`, and `customComponents` before passing to App.vue; build vue-router routes from `manifest.pages[*].{id, route}` via a `routesFromManifest()` helper.
 - [x] 2.2 Mount immediately on `#content`; do NOT wait for `loadTranslations` (NC dev installs commonly 404 the `/l10n/*.json` route).
 - [x] 2.3 Replace `src/App.vue` with `<CnAppRoot>` shell receiving `manifest`, `customComponents`, `pageTypes`, `app-id`, `translate`, and `permissions`. Provide an `objectSidebarState` Vue.observable channel. Mount a `CnObjectSidebar` in the `#sidebar` slot driven by that channel.
-- [x] 2.4 Pass `translateForApp(key)` closure that delegates to `@nextcloud/l10n`'s `translate('app-template', key)`.
+- [x] 2.4 Pass `translateForApp(key)` closure that delegates to `@nextcloud/l10n`'s `translate('apptemplate', key)`.
 
 ## 3. Custom components registry
 

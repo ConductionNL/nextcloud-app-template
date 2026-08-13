@@ -29,7 +29,7 @@
 		@row-click="onRowClick">
 		<template #footer>
 			<a class="cn-data-table__view-all" @click.prevent="onViewAll">
-				{{ t('app-template', 'View all') }} →
+				{{ t('apptemplate', 'View all') }} →
 			</a>
 		</template>
 	</CnDataTable>
@@ -62,18 +62,18 @@ export default {
 	 * @return {Promise<void>}
 	 */
 	async mounted() {
-		this.emptyMessage = t('app-template', 'No data yet')
+		this.emptyMessage = t('apptemplate', 'No data yet')
 		try {
 			// Replace this with your own data source. The pattern here —
 			// fetch from /api/<your-resource> via @nextcloud/axios — is
 			// what you'd use for OpenRegister-driven widgets too.
-			const url = generateUrl('/apps/app-template/api/items')
+			const url = generateUrl('/apps/apptemplate/api/items')
 			const { data } = await axios.get(url, { params: { limit: 7 } })
 			this.items = (data?.results || []).map(o => ({
 				id: o.id,
 				mainText: o.title || o.name || `#${o.id}`,
 				subText: o.status || '',
-				targetUrl: generateUrl(`/apps/app-template/examples/${o.id}`),
+				targetUrl: generateUrl(`/apps/apptemplate/examples/${o.id}`),
 			}))
 		} catch (err) {
 			console.warn('[ExampleWidget] fetch failed — empty state', err)
@@ -103,7 +103,7 @@ export default {
 		 * @return {void}
 		 */
 		onViewAll() {
-			window.location.href = generateUrl('/apps/app-template/examples')
+			window.location.href = generateUrl('/apps/apptemplate/examples')
 		},
 	},
 }

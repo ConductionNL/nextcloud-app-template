@@ -47,7 +47,7 @@ The system MUST, when the repair step runs, invoke `SettingsService::loadConfigu
 #### Scenario: Happy-path first install
 
 - GIVEN the `openregister` app is installed and enabled
-- AND the app's bundled `app_template_register.json` is present
+- AND the app's bundled `apptemplate_register.json` is present
 - WHEN `InitializeSettings::run()` executes
 - THEN the system MUST write a progress message to the repair `IOutput`
 - AND the system MUST call `SettingsService::loadConfiguration()`

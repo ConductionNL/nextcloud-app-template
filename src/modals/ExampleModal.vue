@@ -25,10 +25,10 @@
 		<p>{{ message }}</p>
 		<template #actions>
 			<NcButton @click="onConfirm">
-				{{ t('app-template', 'Confirm') }}
+				{{ t('apptemplate', 'Confirm') }}
 			</NcButton>
 			<NcButton @click="onCancel">
-				{{ t('app-template', 'Cancel') }}
+				{{ t('apptemplate', 'Cancel') }}
 			</NcButton>
 		</template>
 	</NcDialog>

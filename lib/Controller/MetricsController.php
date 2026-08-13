@@ -48,64 +48,62 @@ use Psr\Log\LoggerInterface;
  * MUST include `{app}_health_status` and `{app}_info` per ADR-006.
  * Admin-only (no `@NoAdminRequired`) — ADR-006 mandates admin auth.
  */
-class MetricsController extends Controller
-{
-    /**
-     * Metric prefix.
-     *
-     * @var string
-     */
-    private const METRIC_PREFIX = 'app_template';
+class MetricsController extends Controller {
+	/**
+	 * Metric prefix.
+	 *
+	 * @var string
+	 */
+	private const METRIC_PREFIX = 'apptemplate';
 
-    /**
-     * Constructor.
-     *
-     * @param IRequest        $request         The request object
-     * @param SettingsService $settingsService For OpenRegister availability check
-     * @param LoggerInterface $logger          The logger
-     *
-     * @return void
-     *
-     * @spec openspec/specs/observability/spec.md#REQ-OBS-001
-     */
-    public function __construct(
-        IRequest $request,
-        private SettingsService $settingsService,
-        private LoggerInterface $logger,
-    ) {
-        parent::__construct(appName: Application::APP_ID, request: $request);
-    }//end __construct()
+	/**
+	 * Constructor.
+	 *
+	 * @param IRequest $request The request object
+	 * @param SettingsService $settingsService For OpenRegister availability check
+	 * @param LoggerInterface $logger The logger
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/observability/spec.md#REQ-OBS-001
+	 */
+	public function __construct(
+		IRequest $request,
+		private SettingsService $settingsService,
+		private LoggerInterface $logger,
+	) {
+		parent::__construct(appName: Application::APP_ID, request: $request);
+	}//end __construct()
 
-    /**
-     * Prometheus text exposition. Admin auth per ADR-006.
-     *
-     * @return DataDisplayResponse
-     *
-     * @spec openspec/specs/observability/spec.md#REQ-OBS-001
-     */
-    public function index(): DataDisplayResponse
-    {
-        try {
-            $prefix  = self::METRIC_PREFIX;
-            $healthy = (int) $this->settingsService->isOpenRegisterAvailable();
+	/**
+	 * Prometheus text exposition. Admin auth per ADR-006.
+	 *
+	 * @return DataDisplayResponse
+	 *
+	 * @spec openspec/specs/observability/spec.md#REQ-OBS-001
+	 */
+	public function index(): DataDisplayResponse {
+		try {
+			$prefix = self::METRIC_PREFIX;
+			$healthy = (int)$this->settingsService->isOpenRegisterAvailable();
 
-            $lines = [
-                '# HELP '.$prefix.'_info Static app information',
-                '# TYPE '.$prefix.'_info gauge',
-                $prefix.'_info{app="'.Application::APP_ID.'",version="0.1.0"} 1',
-                '# HELP '.$prefix.'_health_status 1 when OpenRegister reachable, 0 otherwise',
-                '# TYPE '.$prefix.'_health_status gauge',
-                $prefix.'_health_status '.$healthy,
-            ];
+			$lines = [
+				'# HELP ' . $prefix . '_info Static app information',
+				'# TYPE ' . $prefix . '_info gauge',
+				$prefix . '_info{app="' . Application::APP_ID . '",version="0.1.0"} 1',
+				'# HELP ' . $prefix . '_health_status 1 when OpenRegister reachable, 0 otherwise',
+				'# TYPE ' . $prefix . '_health_status gauge',
+				$prefix . '_health_status ' . $healthy,
+			];
 
-            return new DataDisplayResponse(
-                implode("\n", $lines)."\n",
-                Http::STATUS_OK,
-                ['Content-Type' => 'text/plain; version=0.0.4; charset=utf-8']
-            );
-        } catch (\Throwable $e) {
-            $this->logger->error('AppTemplate: metrics generation failed', ['exception' => $e]);
-            return new DataDisplayResponse('', Http::STATUS_INTERNAL_SERVER_ERROR);
-        }//end try
-    }//end index()
+			return new DataDisplayResponse(
+				implode("\n", $lines) . "\n",
+				Http::STATUS_OK,
+				['Content-Type' => 'text/plain; version=0.0.4; charset=utf-8']
+			);
+		} catch (\Throwable $e) {
+			$this->logger->error('AppTemplate: metrics generation failed', ['exception' => $e]);
+			return new DataDisplayResponse('', Http::STATUS_INTERNAL_SERVER_ERROR);
+		}//end try
+	}//end index()
 }//end class

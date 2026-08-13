@@ -57,13 +57,23 @@ function phpClassIndex(appNamespace) {
 	return found
 }
 
-// Derive the PHP namespace OCA\<App> from appinfo/info.xml's <id>.
+// Derive the PHP namespace OCA\<App> from appinfo/info.xml.
+//
+// `<namespace>` wins when present, because that is exactly what Nextcloud
+// itself does: `\OC\AppFramework\App::buildAppNamespace()` reads
+// `$appInfo['namespace']` first and only camel-cases the `<id>` as a fallback.
+// Deriving from the id alone is wrong for every app whose namespace does not
+// round-trip through that transform — this app is one: id `apptemplate`,
+// namespace `AppTemplate`.
 function appNamespace() {
 	const infoXml = path.join(REPO_ROOT, 'appinfo', 'info.xml')
 	if (!fs.existsSync(infoXml)) return null
-	const m = fs.readFileSync(infoXml, 'utf8').match(/<id>([^<]+)<\/id>/)
+	const xml = fs.readFileSync(infoXml, 'utf8')
+	const declared = xml.match(/<namespace>([^<]+)<\/namespace>/)
+	if (declared) return `OCA\\${declared[1].trim()}`
+	const m = xml.match(/<id>([^<]+)<\/id>/)
 	if (!m) return null
-	// app id like "openconnector" or "app-template" → namespace "OpenConnector" / "AppTemplate"
+	// app id like "openconnector" or "app_template" → "OpenConnector" / "AppTemplate"
 	const camel = m[1].split(/[-_]/).map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join('')
 	return `OCA\\${camel}`
 }

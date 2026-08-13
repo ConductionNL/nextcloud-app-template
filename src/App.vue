@@ -29,7 +29,7 @@
 		:custom-components="customComponents"
 		:page-types="pageTypes"
 		:registry="registry"
-		app-id="app-template"
+		app-id="apptemplate"
 		:translate="translateForApp"
 		:permissions="permissions"
 		:requires-apps="[]">
@@ -56,9 +56,9 @@
 		<template #user-settings>
 			<NcAppSettingsSection
 				id="general"
-				:name="t('app-template', 'General')">
+				:name="t('apptemplate', 'General')">
 				<p class="app-root__settings-hint">
-					{{ t('app-template', 'Add your settings fields here. See src/views/AdminRoot.vue for the pre-boot admin panel.') }}
+					{{ t('apptemplate', 'Add your settings fields here. See src/views/AdminRoot.vue for the pre-boot admin panel.') }}
 				</p>
 			</NcAppSettingsSection>
 		</template>
@@ -187,7 +187,7 @@ export default {
 		 * @return {string} Translated string (or the key on miss).
 		 */
 		translateForApp(key) {
-			return ncT('app-template', key)
+			return ncT('apptemplate', key)
 		},
 	},
 }

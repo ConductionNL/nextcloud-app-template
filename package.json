@@ -1,5 +1,5 @@
 {
-  "name": "app-template",
+  "name": "apptemplate",
   "version": "0.1.0",
   "license": "EUPL-1.2",
   "engines": {
@@ -12,7 +12,7 @@
     "watch": "NODE_ENV=development webpack --config webpack.config.js --progress --watch",
     "lint": "eslint src tests --max-warnings 0",
     "lint-fix": "npm run lint -- --fix",
-    "stylelint": "stylelint src/**/*.vue src/**/*.scss src/**/*.css",
+    "stylelint": "stylelint \"src/**/*.{vue,scss,css}\"",
     "stylelint-fix": "stylelint src/**/*.vue src/**/*.scss src/**/*.css --fix",
     "check:manifest": "node tests/validate-manifest.js",
     "check:manifest-v2": "node tests/manifest-v2.spec.js",

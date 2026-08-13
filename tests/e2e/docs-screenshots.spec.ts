@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2026 Nextcloud App Template Contributors
  * SPDX-License-Identifier: EUPL-1.2
  *
- * Documentation screenshot capture suite — app-template.
+ * Documentation screenshot capture suite — apptemplate.
  *
  * This spec is *not* a regression test — it drives the app's UI
  * through every flow documented under `docs/tutorials/{user,admin}/*.md`
@@ -58,7 +58,7 @@ async function shoot(page: Page, track: 'user' | 'admin', file: string): Promise
 }
 
 // Capture flows are independent — each test re-navigates from
-// `/apps/app-template/` so a selector miss on one doesn't cascade.
+// `/apps/apptemplate/` so a selector miss on one doesn't cascade.
 // Selector misses are the expected first-run failure mode (UI markup
 // drifts faster than docs); failures land per-test in `test-results/`
 // rather than killing the suite.
@@ -66,7 +66,7 @@ test.describe.configure({ mode: 'default' })
 
 test.beforeEach(async ({ page }) => {
 	page.setViewportSize({ width: 1280, height: 800 })
-	await page.goto('/apps/app-template/')
+	await page.goto('/apps/apptemplate/')
 })
 
 // ---------------------------------------------------------------------------
@@ -88,7 +88,7 @@ test.describe('docs: user track', () => {
 
 test.describe('docs: admin track', () => {
 	test.beforeEach(async ({ page }) => {
-		await page.goto('/settings/admin/app-template')
+		await page.goto('/settings/admin/apptemplate')
 		await page.waitForLoadState('networkidle')
 	})
 

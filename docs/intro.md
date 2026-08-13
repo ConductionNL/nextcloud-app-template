@@ -41,14 +41,17 @@ ships:
 
 ## Getting started
 
-Clone the template, rename `app-template` to your slug, and build:
+Clone the template, rename `apptemplate` to your slug, and build. The
+directory name must equal the app id — Nextcloud loads an app from
+`custom_apps/<app-id>` — and the id must match the App Store's
+`[a-z]+[a-z0-9_]*[a-z0-9]+` pattern, so no hyphens:
 
 ```bash
 cd /var/www/html/custom_apps
-git clone https://codeberg.org/Conduction/nextcloud-app-template.git app-template
-cd app-template
+git clone https://codeberg.org/Conduction/nextcloud-app-template.git apptemplate
+cd apptemplate
 npm install && npm run build
-php occ app:enable app-template
+php occ app:enable apptemplate
 ```
 
 > OpenRegister must be installed first unless you remove the dependency

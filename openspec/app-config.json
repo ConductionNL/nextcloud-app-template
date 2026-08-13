@@ -1,5 +1,5 @@
 {
-  "id": "app-template",
+  "id": "apptemplate",
   "name": "Nextcloud App Template",
   "namespace": "AppTemplate",
   "summary": "A template for creating new Nextcloud apps",
