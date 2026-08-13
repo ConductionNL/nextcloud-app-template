@@ -22,7 +22,7 @@ import {
 } from '@conduction/nextcloud-vue/testing/playwright'
 import { appUrl } from './_app-url'
 
-const APP_ID = 'app-template'
+const APP_ID = 'apptemplate'
 
 test.beforeEach(async ({ page }) => {
 	await seedFirstVisitOverlaysSeen(page, APP_ID)
@@ -145,12 +145,12 @@ test.describe('app shell', () => {
 
 	test('the admin settings panel mounts from its own entry point', async ({ page }) => {
 		// src/settings.js is a SEPARATE webpack entry with its own
-		// `createApp(...).mount('#app-template-settings')`. It mounts inside a
+		// `createApp(...).mount('#apptemplate-settings')`. It mounts inside a
 		// translation callback, so a rejected translation fetch used to leave
 		// the panel permanently blank.
-		await page.goto('/settings/admin/app-template')
+		await page.goto('/settings/admin/apptemplate')
 
-		const section = page.locator('#app-template-settings')
+		const section = page.locator('#apptemplate-settings')
 		await expect(section).toContainText(/App Template/)
 		await expect(section).toContainText(/Pre-app-boot configuration/)
 	})

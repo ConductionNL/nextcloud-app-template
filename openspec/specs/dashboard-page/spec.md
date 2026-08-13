@@ -29,9 +29,9 @@ The system MUST expose a public (no-admin-required, no-CSRF-token-required) HTTP
 
 #### Scenario: Authenticated user opens the dashboard
 
-- GIVEN a signed-in Nextcloud user navigates to `/apps/app-template/`
+- GIVEN a signed-in Nextcloud user navigates to `/apps/apptemplate/`
 - WHEN the request reaches `DashboardController::page()`
-- THEN the system MUST return a `TemplateResponse` for template `index` under app id `app-template`
+- THEN the system MUST return a `TemplateResponse` for template `index` under app id `apptemplate`
 - AND the response MUST be accessible without an admin role (`#[NoAdminRequired]`)
 - AND the request MUST be accepted without a CSRF token (`#[NoCSRFRequired]`) so that first-request GETs work
 
@@ -41,7 +41,7 @@ The system MUST expose a catch-all route that also returns the dashboard SPA so 
 
 #### Scenario: Deep link to an in-app route
 
-- GIVEN a user opens `/apps/app-template/items/abc-123` directly (e.g. from an external link)
+- GIVEN a user opens `/apps/apptemplate/items/abc-123` directly (e.g. from an external link)
 - WHEN the request reaches `DashboardController::catchAll()`
 - THEN the system MUST return the same `TemplateResponse` as `page()`
 - AND the Vue router MUST resolve the `/items/abc-123` path client-side after hydration

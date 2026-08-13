@@ -7,7 +7,7 @@
 // the SPA at `/settings` and is rendered by CnSettingsPage.
 //
 // Nextcloud's admin app-settings is a tiny standalone Vue mount into
-// `#app-template-settings` (see `templates/settings/admin.php`). Most
+// `#apptemplate-settings` (see `templates/settings/admin.php`). Most
 // new apps drive the entire settings story from the manifest's
 // CnSettingsPage with `version-info` / `register-mapping` widgets and
 // can simplify or remove this entry-point. It stays in the template
@@ -29,7 +29,7 @@ function mountAdminSettings() {
 	const app = createApp(AdminRoot)
 	app.mixin({ methods: { t, n } })
 	app.use(pinia)
-	app.mount('#app-template-settings')
+	app.mount('#apptemplate-settings')
 }
 
 // `loadTranslations` REJECTS on a 404, and many Nextcloud installs have no
@@ -54,7 +54,7 @@ function mountOnce() {
 }
 
 try {
-	const result = loadTranslations('app-template', mountOnce)
+	const result = loadTranslations('apptemplate', mountOnce)
 	if (result && typeof result.then === 'function') {
 		result.then(mountOnce, mountOnce)
 	}

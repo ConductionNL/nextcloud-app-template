@@ -57,14 +57,14 @@ try {
 } catch (e) {
 	// Non-fatal — lib translations fall back to English source.
 	// eslint-disable-next-line no-console
-	console.warn('[app-template] registerTranslations failed; falling back to English', e)
+	console.warn('[apptemplate] registerTranslations failed; falling back to English', e)
 }
 
 // Register English translations from the bundled en.json. loadTranslations()
 // short-circuits for the 'en' locale (it assumes the key IS the English text),
 // but this template uses slugged keys like 'app-availability.title', so we must
 // register en.json explicitly to get readable strings instead of raw slugs.
-register('app-template', enTranslations.translations)
+register('apptemplate', enTranslations.translations)
 
 // Fire-and-forget translation load. Some Nextcloud installs (including
 // standard dev containers) only allow the JS/CSS allowlist through
@@ -76,7 +76,7 @@ register('app-template', enTranslations.translations)
 // not depend on this resolving.
 function tryLoadTranslations() {
 	try {
-		const result = loadTranslations('app-template', () => {})
+		const result = loadTranslations('apptemplate', () => {})
 		if (result && typeof result.then === 'function') {
 			result.then(() => {}, () => {})
 		}
@@ -123,7 +123,7 @@ function routesFromManifest(manifest) {
 }
 
 const router = createRouter({
-	history: createWebHistory(generateUrl('/apps/app-template')),
+	history: createWebHistory(generateUrl('/apps/apptemplate')),
 	routes: routesFromManifest(bundledManifest),
 })
 

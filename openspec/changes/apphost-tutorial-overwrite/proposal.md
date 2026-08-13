@@ -17,8 +17,8 @@ The 2026-06-12 fleet inventory found the template's 18 PHP/template files byte-i
 Restructure the template into a **three-layer teaching example**:
 
 1. **Layer 1 — pure declarative.** `appinfo/routes.php` becomes `return \OCA\OpenRegister\AppHost\Routes::standard();`. `lib/AppInfo/Application.php` shrinks to ~20 lines: `APP_ID` const + `Bootstrap::register($context, self::APP_ID)` (plus the existing MCP/widget registrations, which stay). `src/manifest.json` gains an `observability` block with 1–2 simple worked-example descriptors (a `database` + `orAvailable` health check; one `objectCount` metric against the template's own register/schema slugs). Dashboard, Preferences, and Settings endpoints are served by the AppHost generic controllers via Bootstrap aliases — the local copies are deleted.
-2. **Layer 2 — declarative + override.** Exactly ONE local controller survives as a worked override: `lib/Controller/HealthController.php` is rewritten as `class HealthController extends GenericHealthController` overriding **one** protected hook to add a tutorial-only check to the response. It is heavily commented, written for someone scaffolding a new app (placeholder names like `app_template`, "rename this to your app id" guidance), and `Bootstrap::register()`'s option to keep a local class for one alias is the demonstrated mechanism.
-3. **Layer 3 — imperative escape hatch.** A new, heavily commented `lib/Observability/ExampleMetricsProvider.php` (same path as the petstore sibling) implements `OCA\OpenRegister\AppHost\IMetricsProvider`, is registered under the ADR-035-style service alias (`...IMetricsProvider::app_template`), and is wired by a `{"kind":"provider"}` descriptor in the manifest's `metrics[]`. It emits one obviously-fake sample so a scaffolder sees the full provider path end to end.
+2. **Layer 2 — declarative + override.** Exactly ONE local controller survives as a worked override: `lib/Controller/HealthController.php` is rewritten as `class HealthController extends GenericHealthController` overriding **one** protected hook to add a tutorial-only check to the response. It is heavily commented, written for someone scaffolding a new app (placeholder names like `apptemplate`, "rename this to your app id" guidance), and `Bootstrap::register()`'s option to keep a local class for one alias is the demonstrated mechanism.
+3. **Layer 3 — imperative escape hatch.** A new, heavily commented `lib/Observability/ExampleMetricsProvider.php` (same path as the petstore sibling) implements `OCA\OpenRegister\AppHost\IMetricsProvider`, is registered under the ADR-035-style service alias (`...IMetricsProvider::apptemplate`), and is wired by a `{"kind":"provider"}` descriptor in the manifest's `metrics[]`. It emits one obviously-fake sample so a scaffolder sees the full provider path end to end.
 
 ### Per-file delete/keep table
 
@@ -37,7 +37,7 @@ Restructure the template into a **three-layer teaching example**:
 | `lib/Repair/InitializeActions.php` | **Rewrite** → one-line subclass stub | Layer 1 floor |
 | `lib/Settings/AdminSettings.php` | **Rewrite** → one-line subclass stub (`extends GenericAdminSettings`) — info.xml `<settings>` needs a concrete app-namespace class | Layer 1 floor |
 | `lib/Sections/SettingsSection.php` | **Rewrite** → one-line subclass stub | Layer 1 floor |
-| `lib/Settings/app_template_register.json` | **Keep** — the data model; consumed by `GenericInitializeSettings` | Layer 1 |
+| `lib/Settings/apptemplate_register.json` | **Keep** — the data model; consumed by `GenericInitializeSettings` | Layer 1 |
 | `lib/Dashboard/ExampleWidget.php` | **Keep** unchanged — teaching artifact (NC Dashboard API, not AppHost scope) | tutorial |
 | `lib/Mcp/ExampleToolProvider.php` | **Keep** unchanged — teaching artifact (ADR-034/035 MCP provider pattern) | tutorial |
 | `lib/Listener/DeepLinkRegistrationListener.php` | **Keep** unchanged — teaching artifact (event-listener pattern) | tutorial |
@@ -53,7 +53,7 @@ This repo is what `app-create` scaffolding copies. Every doc that inventories th
 
 ### Byte-alignment invariant (template-specific)
 
-Every PHP file this change keeps or rewrites MUST stay byte-identical to the petstore sibling change `petstore/openspec/changes/apphost-tutorial-overwrite` modulo namespace tokens (`AppTemplate`↔`Petstore`, `app-template`↔`petstore`, `app_template`↔`petstore`). The check is the namespace-normalised md5 comparison used in the 2026-06-12 inventory, proposed as a CI-able script (see tasks). Domain-flavoured identifiers inside aligned files (the Layer-2 tutorial check id, the Layer-3 provider sample name — petstore's draft uses `store_status`) must either use app-token-derived names or be added to the agreed normalisation map; this is reconciled with the petstore change owner before implementation.
+Every PHP file this change keeps or rewrites MUST stay byte-identical to the petstore sibling change `petstore/openspec/changes/apphost-tutorial-overwrite` modulo namespace tokens (`AppTemplate`↔`Petstore`, `apptemplate`↔`petstore`). The check is the namespace-normalised md5 comparison used in the 2026-06-12 inventory, proposed as a CI-able script (see tasks). Domain-flavoured identifiers inside aligned files (the Layer-2 tutorial check id, the Layer-3 provider sample name — petstore's draft uses `store_status`) must either use app-token-derived names or be added to the agreed normalisation map; this is reconciled with the petstore change owner before implementation.
 
 ## Impact
 

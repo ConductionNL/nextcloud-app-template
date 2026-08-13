@@ -6,12 +6,12 @@ import { useSettingsStore } from './modules/settings.js'
  *
  * `createObjectStore` from @conduction/nextcloud-vue handles CSRF headers,
  * pagination, single-flight de-duplication, and consistent error surfacing.
- * Replace 'app-template' / 'example' with your app's register and schema slug.
+ * Replace 'apptemplate' / 'example' with your app's register and schema slug.
  *
  * @spec openspec/specs/frontend-data-stores/spec.md#REQ-STORE-001
  */
 export const useObjectStore = createObjectStore('example', {
-	register: 'app-template',
+	register: 'apptemplate',
 	schema: 'example',
 })
 

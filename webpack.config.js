@@ -15,7 +15,7 @@ webpackConfig.stats = {
 	modules: false,
 }
 
-const appId = 'app-template'
+const appId = 'apptemplate'
 
 // Each Nextcloud Dashboard widget needs its own webpack entry-point so the
 // widget's JS can be attached via `Util::addScript()` from PHP. Add a new

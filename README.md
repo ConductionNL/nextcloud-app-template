@@ -69,7 +69,7 @@ _Data model is defined using OpenRegister schemas. See [`openspec/specs/`](opens
 ### Directory Structure
 
 ```
-app-template/
+apptemplate/
 ├── appinfo/                    # Nextcloud app manifest, routes, navigation
 ├── lib/                        # PHP backend
 │   ├── AppInfo/Application.php
@@ -79,7 +79,7 @@ app-template/
 │   ├── Service/SettingsService.php
 │   ├── Listener/DeepLinkRegistrationListener.php
 │   ├── Repair/InitializeSettings.php
-│   └── Settings/               # AdminSettings, app_template_register.json
+│   └── Settings/               # AdminSettings, apptemplate_register.json
 ├── templates/                  # PHP templates (SPA shells)
 ├── src/                        # Vue 3 frontend
 │   ├── manifest.json           # Pages + menu + dependencies (v2 — the source of truth)
@@ -146,10 +146,10 @@ app-template/
 
 ```bash
 cd /var/www/html/custom_apps
-git clone https://codeberg.org/Conduction/nextcloud-app-template.git app-template
-cd app-template
+git clone https://codeberg.org/Conduction/nextcloud-app-template.git apptemplate
+cd apptemplate
 npm install && npm run build
-php occ app:enable app-template
+php occ app:enable apptemplate
 ```
 
 ## Development
@@ -209,12 +209,38 @@ canonical example.
 
 ### Renaming the app
 
-Search-and-replace `app-template` (the `<id>` from `appinfo/info.xml`)
-in: `appinfo/info.xml`, `package.json`, `openspec/app-config.json`,
+Search-and-replace `apptemplate` (the `<id>` from `appinfo/info.xml`)
+in: `appinfo/info.xml` (`<id>`, the navigation `<id>`, and the navigation
+`<route>` — the route name is `<app-id>.<controller>.<method>`),
+`lib/AppInfo/Application.php` (`APP_ID`), `lib/Sections/SettingsSection.php`
+(`getID()` and the `imagePath()` app name), `lib/Settings/AdminSettings.php`
+(`getSection()`), `lib/Listener/DeepLinkRegistrationListener.php`,
+`lib/Controller/MetricsController.php` (`METRIC_PREFIX`), `package.json`,
+`composer.json`, `phpcs.xml`, `eslint.config.js`,
+`openspec/app-config.json`, `openspec/config.yaml` (the mount path),
 `src/main.js` (the `app-id` prop, the `loadTranslations` arg, and the
 `generateUrl` base path), `src/App.vue` (the `app-id` prop and
-`translateForApp` argument), and `webpack.config.js` (the `appId`
-constant). The manifest itself does not carry the app id.
+`translateForApp` argument), the remaining `t('apptemplate', …)` call sites
+and `/apps/apptemplate/…` URLs under `src/`, the `#apptemplate-settings`
+mount id in `templates/settings/admin.php` + `src/settings.js`,
+`src/exampleWidget.js` (the dashboard widget id), `webpack.config.js` (the
+`appId` constant), `Makefile` (the `dev-link` symlink name), the
+`app-name:` / `app-id:` inputs in `.github/workflows/*.yml` and
+`.forgejo/workflows/app-tests.yml`, and `tests/` (`APP_ID`, the e2e URLs,
+`tests/bootstrap.php`). Two files are named after the id and must be
+renamed, not just edited: `lib/Settings/apptemplate_register.json` (the path
+is built as `Application::APP_ID . '_register.json'`, so a stale name makes
+the register import silently seed nothing) and
+`tests/integration/apptemplate.postman_collection.json`.
+
+Two things that are *not* the app id and must stay put: the repository name
+`nextcloud-app-template` (clone paths, remotes, `ConductionNL/…` URLs) and
+the PHP namespace `AppTemplate`, which `appinfo/info.xml` declares explicitly
+via `<namespace>` and which is therefore independent of the id.
+
+The app id must match `[a-z]+[a-z0-9_]*[a-z0-9]+` — the App Store's own
+`info.xsd` pattern. Hyphens are rejected; the `info.xml lint` CI job is what
+catches it. The manifest itself does not carry the app id.
 
 ### Manifest v2 ready
 
@@ -308,7 +334,7 @@ Companion (a floating assistant rendered by `CnAppRoot` from
 
 - `lib/Mcp/ExampleToolProvider.php` — the heavily-commented starting point. It
   implements `OCA\OpenRegister\Mcp\IMcpToolProvider` and exposes two trivial
-  tools: `app-template.ping` (echoes a message) and `app-template.describeApp`
+  tools: `apptemplate.ping` (echoes a message) and `apptemplate.describeApp`
   (returns the app id, version, and name).
 - `lib/AppInfo/Application.php` — registers the provider under the service
   alias `OCA\OpenRegister\Mcp\IMcpToolProvider::{appId}`; OpenRegister's
@@ -352,7 +378,7 @@ npm run stylelint       # CSS linting
 
 ### Enable locally
 
-Nextcloud requires the app directory name to match the `<id>` in `appinfo/info.xml` (`app-template`).
+Nextcloud requires the app directory name to match the `<id>` in `appinfo/info.xml` (`apptemplate`).
 When this repo is cloned as `nextcloud-app-template`, create a relative symlink first.
 
 > **Note:** The `js/` build output is not committed. You must build the frontend before enabling the app, or the UI will be blank.
@@ -360,7 +386,7 @@ When this repo is cloned as `nextcloud-app-template`, create a relative symlink 
 ```bash
 make dev-link
 npm install && npm run build
-docker exec nextcloud php occ app:enable app-template
+docker exec nextcloud php occ app:enable apptemplate
 ```
 
 ### End-to-end tests
@@ -413,7 +439,7 @@ container, or the suite silently tests a stale bundle.
 
 The user-facing documentation site lives in [`docs/`](docs/) — a Docusaurus site built on [`@conduction/docusaurus-preset`](https://www.npmjs.com/package/@conduction/docusaurus-preset) with the brand `<DetailHero>` / `<WidgetShelf>` landing page, the journeydoc tutorial scaffold ([`docs/tutorials/`](docs/tutorials/) — user "first launch" + admin "manage settings"), and the Playwright `docs-capture` project for screenshots (hydra ADR-030).
 
-`.github/workflows/documentation.yml` deploys the site on every push to `development`: it runs `cd docs && npm ci && npm run build` and publishes to `<slug>.conduction.nl` (the template's placeholder slug is `app-template`, so `app-template.conduction.nl` — `docs/static/CNAME` carries this and is rewritten by the renaming pass). Build the site locally with:
+`.github/workflows/documentation.yml` deploys the site on every push to `development`: it runs `cd docs && npm ci && npm run build` and publishes to `<slug>.conduction.nl`. That slug is the **documentation-site** slug, not the app id — it is carried by `docs/static/CNAME` (and mirrored in `docusaurus.config.js` and the `cname:` input of `documentation.yml`), and the template's placeholder value is `app-template`, so `app-template.conduction.nl`. Rewrite it to your own docs hostname during the renaming pass; renaming the *app id* does not move it. Build the site locally with:
 
 ```bash
 cd docs
@@ -455,18 +481,18 @@ The `js/` build output is not committed to the repo. Run the frontend build befo
 npm install && npm run build
 ```
 
-### "Could not download app app-template" when running `occ app:enable`
+### "Could not download app apptemplate" when running `occ app:enable`
 
 Nextcloud requires the app directory name to exactly match the `<id>` in `appinfo/info.xml`. When this repo is cloned as `nextcloud-app-template`, create a symlink first:
 
 ```bash
-make dev-link   # creates apps-extra/app-template -> nextcloud-app-template
+make dev-link   # creates apps-extra/apptemplate -> nextcloud-app-template
 ```
 
 Then enable the app again:
 
 ```bash
-docker exec nextcloud php occ app:enable app-template
+docker exec nextcloud php occ app:enable apptemplate
 ```
 
 ## Support

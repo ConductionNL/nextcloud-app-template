@@ -11,10 +11,15 @@
  *
  * This is the *default* docs site every new Conduction app inherits
  * from the template (ADR-030 / journeydoc). When you scaffold a new
- * app, the renaming pass swaps `app-template` / `Nextcloud App
+ * app, the renaming pass swaps `apptemplate` / `Nextcloud App
  * Template` for your slug / title throughout this file — review the
  * title, tagline, url, projectName, editUrl, and the navbar GitHub
  * link, then commit.
+ *
+ * `url` and `projectName` are NOT the app id: `url` is the docs-site
+ * hostname (kept in step with `static/CNAME` and the `cname:` input of
+ * `.github/workflows/documentation.yml`), and `projectName` is the
+ * GitHub repository the editUrl points at.
  */
 
 const { createConfig, baseFooterLinks } = require('@conduction/docusaurus-preset');
@@ -32,7 +37,7 @@ const config = createConfig({
   baseUrl: '/',
 
   organizationName: 'ConductionNL',
-  projectName: 'app-template',
+  projectName: 'nextcloud-app-template',
 
   /* English-only for now (ADR-030). The brand preset ships a
      multi-locale i18n block (nl/en/de/fr), but enabling locales

@@ -49,7 +49,7 @@ use OCP\IUserSession;
  *  2. Register the provider in lib/AppInfo/Application.php under the service
  *     alias `OCA\OpenRegister\Mcp\IMcpToolProvider::{appId}` — OpenRegister's
  *     McpToolsService discovers per-app providers by exactly that alias key.
- *  3. Namespace every tool id `{appId}.{toolName}` (e.g. `app-template.ping`).
+ *  3. Namespace every tool id `{appId}.{toolName}` (e.g. `apptemplate.ping`).
  *     The companion uses the prefix to route a tool call back to your app.
  *  4. Run per-object authorisation INSIDE invokeTool() — after argument
  *     validation but BEFORE any business logic or data access. Never assume the
@@ -183,7 +183,7 @@ class ExampleToolProvider implements IMcpToolProvider {
 	 *
 	 * NEVER throw. Unknown tool ids return a structured error envelope.
 	 *
-	 * @param string $toolId The tool id (e.g. "app-template.ping")
+	 * @param string $toolId The tool id (e.g. "apptemplate.ping")
 	 * @param array<string, mixed> $arguments Tool arguments from the LLM call
 	 *
 	 * @return array<string, mixed>

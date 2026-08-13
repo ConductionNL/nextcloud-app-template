@@ -26,7 +26,7 @@ export const useSettingsStore = defineStore('settings', {
 		async fetchSettings() {
 			this.loading = true
 			try {
-				const response = await fetch(generateUrl('/apps/app-template/api/settings'), {
+				const response = await fetch(generateUrl('/apps/apptemplate/api/settings'), {
 					headers: { requesttoken: getRequestToken() },
 				})
 				if (response.ok) {
@@ -54,7 +54,7 @@ export const useSettingsStore = defineStore('settings', {
 		async saveSettings(settings) {
 			this.loading = true
 			try {
-				const response = await fetch(generateUrl('/apps/app-template/api/settings'), {
+				const response = await fetch(generateUrl('/apps/apptemplate/api/settings'), {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',

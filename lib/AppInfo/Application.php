@@ -57,7 +57,7 @@ use OCP\AppFramework\Bootstrap\IRegistrationContext;
  * Main application class for the AppTemplate Nextcloud app.
  */
 class Application extends App implements IBootstrap {
-	public const APP_ID = 'app-template';
+	public const APP_ID = 'apptemplate';
 
 	/**
 	 * Constructor for the Application class.

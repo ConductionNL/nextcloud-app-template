@@ -52,7 +52,7 @@ class SettingsSection implements IIconSection {
 	 * @return string
 	 */
 	public function getID(): string {
-		return 'app-template';
+		return 'apptemplate';
 	}//end getID()
 
 	/**
@@ -79,6 +79,6 @@ class SettingsSection implements IIconSection {
 	 * @return string
 	 */
 	public function getIcon(): string {
-		return $this->urlGenerator->imagePath(appName: 'app-template', file: 'app-dark.svg');
+		return $this->urlGenerator->imagePath(appName: 'apptemplate', file: 'app-dark.svg');
 	}//end getIcon()
 }//end class

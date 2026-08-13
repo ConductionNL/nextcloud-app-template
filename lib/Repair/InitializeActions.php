@@ -89,7 +89,7 @@ class InitializeActions implements IRepairStep {
 
 		if (file_exists(self::SEED_PATH) === false) {
 			$output->warning('actions.seed.json not found — matrix left empty (default-deny).');
-			$this->logger->warning('[app-template] ADR-023 seed file missing at ' . self::SEED_PATH);
+			$this->logger->warning('[apptemplate] ADR-023 seed file missing at ' . self::SEED_PATH);
 			return;
 		}
 
@@ -103,7 +103,7 @@ class InitializeActions implements IRepairStep {
 			$parsed = json_decode($raw, associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
 		} catch (\JsonException $e) {
 			$output->warning('actions.seed.json invalid JSON: ' . $e->getMessage());
-			$this->logger->error('[app-template] ADR-023 seed malformed: ' . $e->getMessage());
+			$this->logger->error('[apptemplate] ADR-023 seed malformed: ' . $e->getMessage());
 			return;
 		}
 

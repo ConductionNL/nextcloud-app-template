@@ -125,7 +125,7 @@ class SettingsService {
 	}//end updateSettings()
 
 	/**
-	 * Load configuration from app_template_register.json via OpenRegister,
+	 * Load configuration from apptemplate_register.json via OpenRegister,
 	 * letting OpenRegister skip the import when the installed version is
 	 * already current. This is the install/upgrade path.
 	 *
@@ -138,7 +138,7 @@ class SettingsService {
 	}//end loadConfiguration()
 
 	/**
-	 * Re-import the configuration from app_template_register.json regardless of
+	 * Re-import the configuration from apptemplate_register.json regardless of
 	 * the installed version. This is the admin-triggered reload path.
 	 *
 	 * @return array<string,mixed> Result with success flag, message, and version.

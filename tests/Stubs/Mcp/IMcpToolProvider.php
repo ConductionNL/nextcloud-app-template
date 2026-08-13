@@ -38,7 +38,7 @@ if (interface_exists(IMcpToolProvider::class) === false) {
 		/**
 		 * Returns the app ID that namespaces every tool id this provider exposes.
 		 *
-		 * @return string The app slug (e.g. "app-template")
+		 * @return string The app slug (e.g. "apptemplate")
 		 */
 		public function getAppId(): string;
 
@@ -58,7 +58,7 @@ if (interface_exists(IMcpToolProvider::class) === false) {
 		 * Returns a success payload or a structured error envelope.
 		 * MUST NOT throw — all failure paths return an array.
 		 *
-		 * @param string $toolId The tool id (e.g. "app-template.ping")
+		 * @param string $toolId The tool id (e.g. "apptemplate.ping")
 		 * @param array<string, mixed> $arguments Tool arguments from the LLM call
 		 *
 		 * @return array<string, mixed>

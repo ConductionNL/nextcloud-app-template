@@ -103,7 +103,7 @@ module.exports = defineConfig([{
 	// does not currently switch these off, so they are handled here.
 	// TODO(nc-vue): fold these into `conductionVue3Fixes` upstream; every
 	// migrated app needs the same two lines.
-	name: 'app-template/vue3-inverted-rules',
+	name: 'apptemplate/vue3-inverted-rules',
 	files: ['**/*.vue'],
 	rules: {
 		// `v-model:open="x"` is the Vue 3 replacement for `:open.sync="x"`.

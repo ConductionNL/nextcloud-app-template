@@ -31,6 +31,6 @@ jobs:
   tests:
     uses: ./.forgejo/workflows/tests.yml
     with:
-      app-id: app-template
+      app-id: apptemplate
       run-e2e: ${{ github.event.inputs.run-e2e == 'true' }}
       run-newman: ${{ github.event.inputs.run-newman == 'true' }}

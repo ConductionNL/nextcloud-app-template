@@ -7,7 +7,7 @@
   },
   "x-openregister": {
     "type": "application",
-    "app": "app-template",
+    "app": "apptemplate",
     "openregister": "^v0.2.10",
     "description": "App Template — replace with your app description",
     "rbac": true,

@@ -52,13 +52,13 @@ class DeepLinkRegistrationListener implements IEventListener {
 		}
 
 		// Register example object deep links.
-		// Replace 'app-template' with your app ID and update the register slug,
+		// Replace 'apptemplate' with your app ID and update the register slug,
 		// schema slug, and URL template to match your app's actual schemas.
 		$event->register(
-			appId: 'app-template',
-			registerSlug: 'app-template',
+			appId: 'apptemplate',
+			registerSlug: 'apptemplate',
 			schemaSlug: 'example',
-			urlTemplate: '/apps/app-template/#/examples/{uuid}'
+			urlTemplate: '/apps/apptemplate/#/examples/{uuid}'
 		);
 
 	}//end handle()

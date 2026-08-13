@@ -7,7 +7,7 @@ use OCP\Util;
 $appId = Application::APP_ID;
 
 // Inject the app version via Nextcloud's IInitialState API so the Vue settings
-// app can read it with loadState('app-template', 'version') — the NC-standard
+// app can read it with loadState('apptemplate', 'version') — the NC-standard
 // CSP-compliant approach (replaces the prior data-version DOM attribute).
 \OC::$server->get(\OCP\IInitialStateService::class)
     ->provideInitialState($appId, 'version', $_['version'] ?? '');
@@ -20,4 +20,4 @@ Util::addScript($appId, $appId . '-shared-vendor');
 Util::addScript($appId, $appId . '-shared-nc-vue');
 Util::addScript($appId, $appId . '-settings');
 ?>
-<div id="app-template-settings"></div>
+<div id="apptemplate-settings"></div>

@@ -54,7 +54,7 @@ class MetricsController extends Controller {
 	 *
 	 * @var string
 	 */
-	private const METRIC_PREFIX = 'app_template';
+	private const METRIC_PREFIX = 'apptemplate';
 
 	/**
 	 * Constructor.

@@ -50,7 +50,7 @@
 						"type": "stats-block",
 						"iconClass": "icon-files",
 						"dataSource": {
-							"register": "app-template",
+							"register": "apptemplate",
 							"schema": "example",
 							"aggregate": "count"
 						},
@@ -65,7 +65,7 @@
 						"type": "stats-block",
 						"iconClass": "icon-loading",
 						"dataSource": {
-							"register": "app-template",
+							"register": "apptemplate",
 							"schema": "example",
 							"aggregate": "count"
 						},
@@ -80,7 +80,7 @@
 						"type": "stats-block",
 						"iconClass": "icon-checkmark",
 						"dataSource": {
-							"register": "app-template",
+							"register": "apptemplate",
 							"schema": "example",
 							"aggregate": "count"
 						},
@@ -108,7 +108,7 @@
 					"props": {
 						"title": "Recent examples",
 						"source": {
-							"register": "app-template",
+							"register": "apptemplate",
 							"schema": "example",
 							"filter": { "created": { "lt": "@today" } },
 							"order": { "created": "desc" },
@@ -143,7 +143,7 @@
 			"type": "index",
 			"title": "Examples",
 			"config": {
-				"register": "app-template",
+				"register": "apptemplate",
 				"schema": "example",
 				"columns": [
 					"title",
@@ -172,7 +172,7 @@
 			"type": "detail",
 			"title": "Example",
 			"config": {
-				"register": "app-template",
+				"register": "apptemplate",
 				"schema": "example",
 				"sidebar": true
 			},
@@ -203,7 +203,7 @@
 			"type": "settings",
 			"title": "Settings",
 			"config": {
-				"saveEndpoint": "/index.php/apps/app-template/api/settings",
+				"saveEndpoint": "/index.php/apps/apptemplate/api/settings",
 				"sections": [
 					{
 						"title": "Version",

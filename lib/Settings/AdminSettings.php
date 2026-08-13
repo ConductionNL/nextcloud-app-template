@@ -71,7 +71,7 @@ class AdminSettings implements ISettings {
 	 * @return string
 	 */
 	public function getSection(): string {
-		return 'app-template';
+		return 'apptemplate';
 	}//end getSection()
 
 	/**

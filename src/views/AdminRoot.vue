@@ -4,7 +4,7 @@
 <!--
  Nextcloud admin app-settings panel.
 
- Mounted into `#app-template-settings` by `src/settings.js` (which
+ Mounted into `#apptemplate-settings` by `src/settings.js` (which
  itself is loaded from `templates/settings/admin.php` via
  `Util::addScript`). This is the panel users reach via Nextcloud's
  "Administration settings" → "App Template".
@@ -17,12 +17,12 @@
  manifest renders).
 -->
 <template>
-	<div class="app-template-admin-settings">
+	<div class="apptemplate-admin-settings">
 		<NcSettingsSection
-			:name="t('app-template', 'App Template')"
-			:description="t('app-template', 'Pre-app-boot configuration. Most settings live inside the app at /settings (manifest-driven).')">
-			<p class="app-template-admin-settings__hint">
-				{{ t('app-template', 'No pre-boot settings yet. Edit `src/views/AdminRoot.vue` to add fields here.') }}
+			:name="t('apptemplate', 'App Template')"
+			:description="t('apptemplate', 'Pre-app-boot configuration. Most settings live inside the app at /settings (manifest-driven).')">
+			<p class="apptemplate-admin-settings__hint">
+				{{ t('apptemplate', 'No pre-boot settings yet. Edit `src/views/AdminRoot.vue` to add fields here.') }}
 			</p>
 		</NcSettingsSection>
 	</div>
@@ -40,11 +40,11 @@ export default {
 </script>
 
 <style scoped>
-.app-template-admin-settings {
+.apptemplate-admin-settings {
 	max-width: 720px;
 }
 
-.app-template-admin-settings__hint {
+.apptemplate-admin-settings__hint {
 	margin: 0;
 	color: var(--color-text-maxcontrast);
 	line-height: 1.5;
