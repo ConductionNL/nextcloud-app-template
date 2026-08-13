@@ -42,15 +42,16 @@ import { defineConfig, devices } from '@playwright/test'
  * unset base URL is a configuration error, not a default.
  */
 function resolveBaseURL(): string {
-	const url = process.env.PLAYWRIGHT_BASE_URL
+	const url =
+		process.env.PLAYWRIGHT_BASE_URL
 		|| process.env.NEXTCLOUD_URL
 		|| process.env.BASE_URL
 	if (!url) {
 		throw new Error(
 			'PLAYWRIGHT_BASE_URL is not set. Refusing to fall back to a default '
-			+ 'host — that is how e2e suites end up running against a shared '
-			+ 'Nextcloud instance. Example:\n'
-			+ '  PLAYWRIGHT_BASE_URL=http://localhost:8096 npx playwright test',
+				+ 'host — that is how e2e suites end up running against a shared '
+				+ 'Nextcloud instance. Example:\n'
+				+ '  PLAYWRIGHT_BASE_URL=http://localhost:8096 npx playwright test',
 		)
 	}
 	// The :8080 refusal is about the SHARED dev container, which only exists on
@@ -68,7 +69,7 @@ function resolveBaseURL(): string {
 	if (/:8080(\/|$)/.test(url) && !isCI) {
 		throw new Error(
 			`Refusing to run against ${url}: :8080 is the SHARED dev container. `
-			+ 'Spin up a disposable instance on its own port instead.',
+				+ 'Spin up a disposable instance on its own port instead.',
 		)
 	}
 	return url

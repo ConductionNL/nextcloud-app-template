@@ -20,7 +20,8 @@
   the whole dashboard mount.
 -->
 <template>
-	<CnDataTable :rows="items"
+	<CnDataTable
+		:rows="items"
 		:columns="columns"
 		:loading="loading"
 		hide-header
@@ -69,7 +70,7 @@ export default {
 			// what you'd use for OpenRegister-driven widgets too.
 			const url = generateUrl('/apps/apptemplate/api/items')
 			const { data } = await axios.get(url, { params: { limit: 7 } })
-			this.items = (data?.results || []).map(o => ({
+			this.items = (data?.results || []).map((o) => ({
 				id: o.id,
 				mainText: o.title || o.name || `#${o.id}`,
 				subText: o.status || '',

@@ -61,7 +61,9 @@ export async function appBase(page: Page): Promise<string> {
 		await page.goto('/index.php/apps/dashboard/')
 	}
 
-	const base = await page.evaluate(() => window.OC?.generateUrl('/apps/apptemplate'))
+	const base = await page.evaluate(() =>
+		window.OC?.generateUrl('/apps/apptemplate'),
+	)
 
 	if (!base) {
 		// Refuse to fall back to a literal. A guessed base is exactly the
@@ -69,8 +71,8 @@ export async function appBase(page: Page): Promise<string> {
 		// content mismatch three files away from the cause.
 		throw new Error(
 			'Could not read OC.generateUrl from the page. Without it the app URL '
-			+ 'base is a guess, and a wrong base silently redirects every route to '
-			+ 'the dashboard instead of failing.',
+				+ 'base is a guess, and a wrong base silently redirects every route to '
+				+ 'the dashboard instead of failing.',
 		)
 	}
 

@@ -3,7 +3,12 @@
 
 import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
-import { translate as t, translatePlural as n, loadTranslations, register } from '@nextcloud/l10n'
+import {
+	translate as t,
+	translatePlural as n,
+	loadTranslations,
+	register,
+} from '@nextcloud/l10n'
 import enTranslations from '../l10n/en.json'
 import { generateUrl } from '@nextcloud/router'
 import {
@@ -57,7 +62,10 @@ try {
 } catch (e) {
 	// Non-fatal — lib translations fall back to English source.
 	// eslint-disable-next-line no-console
-	console.warn('[apptemplate] registerTranslations failed; falling back to English', e)
+	console.warn(
+		'[apptemplate] registerTranslations failed; falling back to English',
+		e,
+	)
 }
 
 // Register English translations from the bundled en.json. loadTranslations()
@@ -78,7 +86,10 @@ function tryLoadTranslations() {
 	try {
 		const result = loadTranslations('apptemplate', () => {})
 		if (result && typeof result.then === 'function') {
-			result.then(() => {}, () => {})
+			result.then(
+				() => {},
+				() => {},
+			)
 		}
 	} catch {
 		// no-op

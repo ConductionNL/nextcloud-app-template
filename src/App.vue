@@ -54,11 +54,14 @@
 		  Replace the placeholder section with your app's actual settings.
 		-->
 		<template #user-settings>
-			<NcAppSettingsSection
-				id="general"
-				:name="t('apptemplate', 'General')">
+			<NcAppSettingsSection id="general" :name="t('apptemplate', 'General')">
 				<p class="app-root__settings-hint">
-					{{ t('apptemplate', 'Add your settings fields here. See src/views/AdminRoot.vue for the pre-boot admin panel.') }}
+					{{
+						t(
+							'apptemplate',
+							'Add your settings fields here. See src/views/AdminRoot.vue for the pre-boot admin panel.',
+						)
+					}}
 				</p>
 			</NcAppSettingsSection>
 		</template>

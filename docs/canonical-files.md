@@ -26,7 +26,7 @@ tool — run locally by a developer — opens a PR on every app in the fleet.
 | `phpcs-custom-sniffs/CustomSniffs/Sniffs/**` | The custom-sniff ruleset (SpecTagSniff, NoLegacyServerAccessorsSniff, etc.). |
 | `stylelint.config.js` | CSS/SCSS lint config for `src/**`. |
 | `eslint.config.js` | ESLint flat config (replaces `.eslintrc.*`) for `src/`. |
-| `.prettierrc` | Prettier config. |
+| `.prettierignore` | What `npm run format` must not touch: build output, `vendor/`, and the Docusaurus site. |
 | `.gitattributes` | Line-ending normalization + binary-file marks. |
 | `.npmrc` | npm registry policy (cooldown + `legacy-peer-deps=true`). |
 | `.nvmrc` | Node version floor (currently `20`). |

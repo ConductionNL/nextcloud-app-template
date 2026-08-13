@@ -55,17 +55,25 @@ test.describe('app shell', () => {
 		const routes = [
 			{ path: await appUrl(page), expect: /Recent examples/ },
 			{ path: await appUrl(page, 'examples'), expect: /No items found|Table/ },
-			{ path: await appUrl(page, 'settings'), expect: /Application information/ },
+			{
+				path: await appUrl(page, 'settings'),
+				expect: /Application information/,
+			},
 		]
 
 		for (const route of routes) {
 			await page.goto(route.path)
 			const main = page.locator('main')
-			await expect(main, `${route.path} should render page content`).toContainText(route.expect)
+			await expect(
+				main,
+				`${route.path} should render page content`,
+			).toContainText(route.expect)
 		}
 	})
 
-	test('no built-in widget resolves to the "Widget unavailable" placeholder', async ({ page }) => {
+	test('no built-in widget resolves to the "Widget unavailable" placeholder', async ({
+		page,
+	}) => {
 		// Built-in widgets self-register as a module side effect, which webpack
 		// tree-shakes unless `registerBuiltinDashboardWidgets()` is called at
 		// bootstrap. When it is missing, EVERY built-in widgetKey renders
@@ -95,19 +103,29 @@ test.describe('app shell', () => {
 		// An icon name that is not in src/icons.js renders NOTHING — not a
 		// fallback glyph — so a missing registration is invisible unless the
 		// painted size is measured. Four manifest menu entries carry an icon.
-		const navIcons = page.locator('#app-navigation-vue a svg, nav[aria-label] a svg')
+		const navIcons = page.locator(
+			'#app-navigation-vue a svg, nav[aria-label] a svg',
+		)
 		await expect(navIcons.first()).toBeVisible()
 
-		const sizes = await page.locator('#app-navigation-vue a').evaluateAll((links) =>
-			links.map((a) => {
-				const svg = a.querySelector('svg')
-				const r = svg?.getBoundingClientRect()
-				return { label: a.textContent?.trim() ?? '', w: r ? Math.round(r.width) : 0 }
-			}),
-		)
+		const sizes = await page
+			.locator('#app-navigation-vue a')
+			.evaluateAll((links) =>
+				links.map((a) => {
+					const svg = a.querySelector('svg')
+					const r = svg?.getBoundingClientRect()
+					return {
+						label: a.textContent?.trim() ?? '',
+						w: r ? Math.round(r.width) : 0,
+					}
+				}),
+			)
 
 		const painted = sizes.filter((s) => s.w > 0)
-		expect(painted.length, `expected 4 painted nav icons, got ${JSON.stringify(sizes)}`).toBe(4)
+		expect(
+			painted.length,
+			`expected 4 painted nav icons, got ${JSON.stringify(sizes)}`,
+		).toBe(4)
 	})
 
 	test('dashboard widgets have non-zero width', async ({ page }) => {
@@ -126,7 +144,9 @@ test.describe('app shell', () => {
 		expect(box!.height).toBeGreaterThan(20)
 	})
 
-	test('the router catch-all redirects unknown paths to the dashboard', async ({ page }) => {
+	test('the router catch-all redirects unknown paths to the dashboard', async ({
+		page,
+	}) => {
 		// Vue Router 4 removed the bare `path: '*'` wildcard. Left unmigrated,
 		// the catch-all never matches: the shell renders and <main> stays
 		// empty, with no console error and no 404.
@@ -143,7 +163,9 @@ test.describe('app shell', () => {
 		await expect(page.locator('main')).toContainText(/Recent examples/)
 	})
 
-	test('the admin settings panel mounts from its own entry point', async ({ page }) => {
+	test('the admin settings panel mounts from its own entry point', async ({
+		page,
+	}) => {
 		// src/settings.js is a SEPARATE webpack entry with its own
 		// `createApp(...).mount('#apptemplate-settings')`. It mounts inside a
 		// translation callback, so a rejected translation fetch used to leave

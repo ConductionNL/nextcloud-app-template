@@ -73,7 +73,14 @@ jobs:
       # it is not part of that aggregate.
       # Measured on this tree before enabling: `check:specs` PASSES,
       # `check:manifest` FAILS (`pages[4].type: "roadmap" not in v1.1 enum`).
-      frontend-checks: '["check:specs", "check:manifest"]'
+      #
+      # `format` (prettier --check) is listed here because the shared workflow
+      # has NO prettier job of its own — it runs eslint and stylelint only.
+      # Without this leg, `npm run format` would take effect solely on a
+      # developer's keystrokes and the repo would drift straight back out of
+      # prettier format between merges, which is precisely the failure mode
+      # that made the old inert `.prettierrc` worth deleting.
+      frontend-checks: '["check:specs", "check:manifest", "format"]'
 
       # ── Coverage ratchet ─────────────────────────────────────────────────
       # `enable-coverage-guard` defaults to FALSE, which is why both

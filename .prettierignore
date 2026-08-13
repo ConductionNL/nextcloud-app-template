@@ -1,0 +1,8 @@
+js/
+dist/
+build/
+node_modules/
+vendor/
+coverage/
+docs/
+*.min.*
