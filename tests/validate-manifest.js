@@ -97,8 +97,12 @@ function loadAjv() {
 	// "https://json-schema.org/draft/2020-12/schema"). Standard Ajv (v7+)
 	// does not auto-load the 2020 meta-schema; we need the `ajv/dist/2020`
 	// entry point.
-	let Ajv2020 = null
-	let addFormats = null
+	//
+	// Declared without an initialiser: `no-useless-assignment` correctly points
+	// out that the `null` is never read — every path through the try/catch below
+	// assigns before use.
+	let Ajv2020
+	let addFormats
 	try {
 		// Ajv 8+ ships the 2020 draft entry point.
 		Ajv2020 = require('ajv/dist/2020').default || require('ajv/dist/2020')

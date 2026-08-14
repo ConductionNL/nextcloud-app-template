@@ -24,10 +24,11 @@
 		:rows="items"
 		:columns="columns"
 		:loading="loading"
-		hide-header
+		hideHeader
 		borderless
-		:empty-text="emptyMessage"
-		@row-click="onRowClick">
+		:ariaLabel="title"
+		:emptyText="emptyMessage"
+		@rowClick="onRowClick">
 		<template #footer>
 			<a class="cn-data-table__view-all" @click.prevent="onViewAll">
 				{{ t('apptemplate', 'View all') }} →
@@ -37,16 +38,24 @@
 </template>
 
 <script>
+import { CnDataTable } from '@conduction/nextcloud-vue'
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
-import { CnDataTable } from '@conduction/nextcloud-vue'
+import logger from '../../logger.js'
 
 export default {
 	name: 'ExampleWidget',
 	components: { CnDataTable },
 	props: {
+		// Passed by `src/exampleWidget.js` from `widget.title`. The dashboard
+		// chrome draws the visible heading itself, so rendering it again would
+		// duplicate it — it is bound to the table's `ariaLabel` instead, which
+		// gives the list an accessible name it otherwise lacks under
+		// `hideHeader`. (It was previously declared and never read at all, which
+		// `vue/no-unused-properties` reports.)
 		title: { type: String, default: '' },
 	},
+
 	data: () => ({
 		items: [],
 		loading: true,
@@ -56,6 +65,7 @@ export default {
 			{ key: 'subText', cellClass: 'cn-cell--muted cn-cell--end' },
 		],
 	}),
+
 	/**
 	 * Load widget rows on mount; degrade to an empty state on failure.
 	 *
@@ -77,12 +87,15 @@ export default {
 				targetUrl: generateUrl(`/apps/apptemplate/examples/${o.id}`),
 			}))
 		} catch (err) {
-			console.warn('[ExampleWidget] fetch failed — empty state', err)
+			logger.warn('ExampleWidget fetch failed — falling back to empty state', {
+				error: err,
+			})
 			this.items = []
 		} finally {
 			this.loading = false
 		}
 	},
+
 	methods: {
 		/**
 		 * Navigate to the clicked row in the same tab. The native dashboard
@@ -97,6 +110,7 @@ export default {
 				window.location.href = row.targetUrl
 			}
 		},
+
 		/**
 		 * Navigate to the app's full list in the same tab.
 		 *

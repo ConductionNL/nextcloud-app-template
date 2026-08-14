@@ -86,7 +86,12 @@ function parseRegistry(srcPath) {
 	try {
 		vm.runInNewContext(src, sandbox)
 	} catch (err) {
-		throw new Error(`Failed to evaluate registry.js: ${err.message}`)
+		// `cause` preserves the original stack — `preserve-caught-error`. Without
+		// it the evaluation failure's own trace is lost and only the message
+		// survives, which is the hardest kind of test failure to diagnose.
+		throw new Error(`Failed to evaluate registry.js: ${err.message}`, {
+			cause: err,
+		})
 	}
 	return sandbox.module.exports
 }

@@ -14,13 +14,13 @@
  * dismissal races the mount, seeding does not.
  */
 
-import { expect, test } from '@playwright/test'
 import {
 	findMounted,
 	mountedComponentNames,
 	seedFirstVisitOverlaysSeen,
 } from '@conduction/nextcloud-vue/testing/playwright'
-import { appUrl } from './_app-url'
+import { expect, test } from '@playwright/test'
+import { appUrl } from './_app-url.ts'
 
 const APP_ID = 'apptemplate'
 
