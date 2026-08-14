@@ -146,7 +146,7 @@ function loadJsonSet(file) {
  * @return {boolean} True when the value carries no usable translation.
  */
 function isEmpty(v) {
-	if (v == null) {
+	if (v === null || v === undefined) {
 		return true
 	}
 	if (Array.isArray(v)) {
@@ -204,13 +204,9 @@ for (const set of sets) {
 			})
 			continue
 		}
-		const missing = enKeys.filter(
-			(k) => !Object.prototype.hasOwnProperty.call(locObj, k),
-		)
+		const missing = enKeys.filter((k) => !Object.hasOwn(locObj, k))
 		const empty = enKeys.filter(
-			(k) =>
-				Object.prototype.hasOwnProperty.call(locObj, k)
-				&& isEmpty(locObj[k]),
+			(k) => Object.hasOwn(locObj, k) && isEmpty(locObj[k]),
 		)
 		if (missing.length || empty.length) {
 			failures.push({

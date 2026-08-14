@@ -102,7 +102,7 @@ function parseStrict(text, label) {
 			return
 		}
 		let idx = 0
-		// eslint-disable-next-line no-constant-condition
+
 		while (true) {
 			readValue(`${pathStr}/${idx}`)
 			idx++
@@ -127,7 +127,7 @@ function parseStrict(text, label) {
 			i++
 			return
 		}
-		// eslint-disable-next-line no-constant-condition
+
 		while (true) {
 			skipWs()
 			if (text[i] !== '"') err('expected string key in object')
