@@ -21,14 +21,15 @@
         "icon": "FileDocumentOutline",
         "version": "0.1.0",
         "title": "Example",
-        "description": "Example schema — replace with your app's actual schemas.",
+        "description": "Example schema — replace with your app's actual schemas. NOTE the `authorization` block below: declare one on EVERY schema you add. A schema that declares none inherits whatever OpenRegister's default happens to be, which is not a decision anyone made about your data.",
         "type": "object",
         "required": [
           "title"
         ],
-        "x-openregister": {
-          "publicRead": false,
-          "publicWrite": false
+        "authorization": {
+          "read": [
+            "authenticated"
+          ]
         },
         "properties": {
           "title": {
