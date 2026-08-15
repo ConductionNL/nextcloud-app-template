@@ -66,6 +66,44 @@ _Update this diagram during `/app-explore` sessions as the architecture evolves.
 
 _Data model is defined using OpenRegister schemas. See [`openspec/specs/`](openspec/specs/) for feature-level design decisions and [`openspec/architecture/`](openspec/architecture/) for architectural decisions._
 
+#### Who can read a schema
+
+Declare an `authorization` block on **every** schema. Access is decided by
+OpenRegister's RBAC groups and by nothing else — `public` is a special group
+meaning "an anonymous visitor", and `authenticated` means "any logged-in user".
+
+```jsonc
+// authenticated users only — the safe default, and what this template ships
+"authorization": { "read": ["authenticated"] }
+
+// genuinely public content
+"authorization": { "read": ["public"] }
+
+// public, but only once a condition holds — e.g. a publication that is live.
+// RBAC then answers "may they read it" and "is it ready" in one place, instead
+// of every call site having to remember the second question.
+"authorization": {
+  "read": [
+    { "group": "public", "match": { "status": "published" } },
+    "authenticated"
+  ]
+}
+
+// a named group, for role-gated data
+"authorization": { "read": ["some-group-id"] }
+```
+
+> ⚠️ **`x-openregister.publicRead` / `publicWrite` are not a thing.** Earlier
+> versions of this template shipped them and they are not part of
+> OpenRegister's schema contract — nothing reads them, so a schema marked
+> `"publicRead": false` was never protected by that line. They have been
+> removed. If you find them in an app, replace them with an `authorization`
+> block.
+
+> ⚠️ **A schema that declares nothing inherits a default**, which is not a
+> decision anyone made about your data. Declare the block even when the answer
+> is the boring one.
+
 ### Directory Structure
 
 ```
