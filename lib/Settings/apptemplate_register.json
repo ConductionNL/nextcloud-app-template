@@ -29,6 +29,15 @@
         "authorization": {
           "read": [
             "authenticated"
+          ],
+          "create": [
+            "authenticated"
+          ],
+          "update": [
+            "authenticated"
+          ],
+          "delete": [
+            "authenticated"
           ]
         },
         "properties": {
