@@ -2,17 +2,25 @@
 // Copyright (C) 2026 Conduction B.V.
 //
 // Webpack entry-point for the Nextcloud admin app-settings panel
-// (Admin > Administration settings > App Template). This is DISTINCT
-// from the manifest's `type: "settings"` page, which lives inside
-// the SPA at `/settings` and is rendered by CnSettingsPage.
+// (Admin > Administration settings > App Template). THIS IS THE ONLY
+// SETTINGS SURFACE.
+//
+// The manifest used to ALSO declare a `type: "settings"` page at `/settings`
+// inside the SPA, so app configuration had two homes and this file described
+// itself as "distinct" from the other one. ADR-079 D1 settles it: app
+// configuration lives at /settings/admin/<app>, and an in-app page claiming
+// the platform meaning of "Settings" is a violation (gate-63). The manifest
+// page is gone; every app scaffolded from this template used to inherit that
+// violation on day one.
 //
 // Nextcloud's admin app-settings is a tiny standalone Vue mount into
-// `#apptemplate-settings` (see `templates/settings/admin.php`). Most
-// new apps drive the entire settings story from the manifest's
-// CnSettingsPage with `version-info` / `register-mapping` widgets and
-// can simplify or remove this entry-point. It stays in the template
-// because the Nextcloud admin section is the canonical place for
-// "before the app boots" config (e.g. an app's OR register binding).
+// `#apptemplate-settings` (see `templates/settings/admin.php`). It is the
+// canonical place for "before the app boots" config — e.g. an app's
+// OpenRegister register binding, which the SPA cannot ask for because it
+// needs it in order to start.
+//
+// A domain page that merely happens to be *called* settings is fine; it just
+// must not be `type: "settings"` and must not be named Settings.
 
 import {
 	loadTranslations,

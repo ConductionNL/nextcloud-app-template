@@ -34,11 +34,13 @@
         "properties": {
           "title": {
             "type": "string",
+            "title": "Title",
             "description": "The title of the example object",
             "example": "My example"
           },
           "description": {
             "type": "string",
+            "title": "Description",
             "description": "An optional description",
             "example": "This is an example"
           }

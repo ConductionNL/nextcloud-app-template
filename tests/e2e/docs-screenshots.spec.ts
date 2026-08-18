@@ -102,8 +102,17 @@ test.describe('docs: user track', () => {
 
 test.describe('docs: admin track', () => {
 	test.beforeEach(async ({ page }) => {
-		await page.goto('/settings/admin/apptemplate')
-		await page.waitForLoadState('networkidle')
+		// `domcontentloaded`, never `networkidle`: Nextcloud keeps background
+		// requests in flight, so networkidle does not settle — it burns the
+		// full timeout and then proceeds anyway (ADR-074 rule 4). Wait for the
+		// settings form itself, which is the thing these screenshots need.
+		await page.goto('/settings/admin/apptemplate', {
+			waitUntil: 'domcontentloaded',
+		})
+		await page
+			.locator('#apptemplate-admin-settings, .apptemplate-admin, form')
+			.first()
+			.waitFor({ state: 'visible', timeout: 30_000 })
 	})
 
 	test('AN admin-settings', async ({ page }) => {

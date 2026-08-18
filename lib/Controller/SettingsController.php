@@ -26,7 +26,9 @@ namespace OCA\AppTemplate\Controller;
 
 use OCA\AppTemplate\AppInfo\Application;
 use OCA\AppTemplate\Service\SettingsService;
+use OCA\AppTemplate\Settings\AdminSettings;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IRequest;
 
@@ -75,10 +77,17 @@ class SettingsController extends Controller {
 	/**
 	 * Update settings with provided data.
 	 *
+	 * Admin-only, and now says so. This method writes app configuration and
+	 * carried no auth attribute at all, so its protection came entirely from
+	 * Nextcloud's admin-required default — correct, but invisible to the
+	 * router, to an audit and to a reader. index() above is deliberately
+	 * @NoAdminRequired and strips admin-sensitive fields; the WRITE is not.
+	 *
 	 * @return JSONResponse
 	 *
 	 * @spec openspec/specs/settings-management/spec.md#REQ-CFG-002
 	 */
+	#[AuthorizedAdminSetting(AdminSettings::class)]
 	public function create(): JSONResponse {
 		$data = $this->request->getParams();
 		$config = $this->settingsService->updateSettings($data);

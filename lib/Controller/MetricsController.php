@@ -37,6 +37,7 @@ use OCA\AppTemplate\AppInfo\Application;
 use OCA\AppTemplate\Service\SettingsService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\IRequest;
 use Psr\Log\LoggerInterface;
@@ -76,12 +77,24 @@ class MetricsController extends Controller {
 	}//end __construct()
 
 	/**
-	 * Prometheus text exposition. Admin auth per ADR-006.
+	 * Prometheus text exposition. This endpoint is admin-only per ADR-006.
+	 *
+	 * NOT #[PublicPage], deliberately. Metrics describe the instance, so
+	 * publishing them to anonymous callers to satisfy a gate would be a
+	 * security regression rather than a fix — openregister's own
+	 * GenericMetricsController takes the same position, carrying only
+	 * #[NoCSRFRequired] while its GenericHealthController IS public. The
+	 * attribute below satisfies the router; the admin-only posture is stated
+	 * here because that is where ADR-006 records it.
+	 *
+	 * A scraper cannot hold a CSRF token, which is what NoCSRFRequired is for;
+	 * it does not weaken the admin requirement.
 	 *
 	 * @return DataDisplayResponse
 	 *
 	 * @spec openspec/specs/observability/spec.md#REQ-OBS-001
 	 */
+	#[NoCSRFRequired]
 	public function index(): DataDisplayResponse {
 		try {
 			$prefix = self::METRIC_PREFIX;

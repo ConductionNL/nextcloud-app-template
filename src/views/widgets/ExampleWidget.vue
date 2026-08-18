@@ -30,9 +30,15 @@
 		:emptyText="emptyMessage"
 		@rowClick="onRowClick">
 		<template #footer>
-			<a class="cn-data-table__view-all" @click.prevent="onViewAll">
+			<!-- A <button>, not an <a>. This fires a handler and navigates
+			     nothing, so an anchor without href was never reachable by
+			     keyboard and announced no role — an onclick handler on a
+			     non-semantic element (WCAG 2.2 AA 2.1.1 Keyboard, 4.1.2 Name,
+			     Role, Value). A real button gets focus, Enter and Space for
+			     free rather than needing role/tabindex/@keydown bolted on. -->
+			<button type="button" class="cn-data-table__view-all" @click="onViewAll">
 				{{ t('apptemplate', 'View all') }} →
-			</a>
+			</button>
 		</template>
 	</CnDataTable>
 </template>
@@ -123,3 +129,23 @@ export default {
 	},
 }
 </script>
+
+<style scoped>
+/*
+ * The library styles `.cn-data-table__view-all` for an <a>: font-size, primary
+ * colour, pointer cursor, no underline until hover. A <button> carries browser
+ * chrome an anchor does not — background, border, padding, its own font — so
+ * swapping the element for accessibility would have changed how the footer
+ * LOOKS. This resets exactly those four things and nothing else, so the
+ * control keeps the library's appearance while being a real button.
+ *
+ * `font: inherit` rather than a font-size: the library rule still supplies 13px,
+ * and restating it here would fork the value.
+ */
+.cn-data-table__view-all {
+	padding: 0;
+	border: none;
+	background: none;
+	font: inherit;
+}
+</style>

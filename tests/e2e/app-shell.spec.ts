@@ -46,7 +46,14 @@ test.describe('app shell', () => {
 		const [app] = await findMounted(page, 'App')
 		expect(app, 'App component should be mounted').toBeTruthy()
 		expect(app.props.manifest, 'manifest prop must reach App').toBeTruthy()
-		expect((app.props.manifest as { pages?: unknown[] }).pages?.length).toBe(5)
+		// FOUR, not five. The manifest used to declare an in-app
+		// `type: "settings"` page at /settings alongside the Nextcloud admin
+		// section, which is two homes for one concern and an ADR-079 D1
+		// violation (gate-63). That page was removed; app configuration lives
+		// at /settings/admin/apptemplate. Update this number deliberately if a
+		// page is added — it is here to catch a manifest that silently stopped
+		// reaching App, and a wrong number would hide exactly that.
+		expect((app.props.manifest as { pages?: unknown[] }).pages?.length).toBe(4)
 	})
 
 	test('every manifest page renders its own content', async ({ page }) => {
@@ -82,10 +89,15 @@ test.describe('app shell', () => {
 		// rather than mis-wired. This caught a real regression on the Settings
 		// page (`version-info`) and on the detail page, whose sidebar declared
 		// `object-data` when the library's key is `data`.
+		// `settings` was in this list until the in-app type:settings page was
+		// removed (ADR-079 D1). Left in, it would have kept "passing" against
+		// the catch-all's dashboard render — a route that no longer exists
+		// looking exactly like a route that works. `features-roadmap` is a
+		// real page and carries the same built-in widgets.
 		for (const path of [
 			await appUrl(page),
 			await appUrl(page, 'examples'),
-			await appUrl(page, 'settings'),
+			await appUrl(page, 'features-roadmap'),
 			await appUrl(page, 'examples/1'),
 		]) {
 			await page.goto(path)
