@@ -40,7 +40,15 @@ test.describe('visual: FeaturesRoadmap', () => {
 		// Wait for the app's own content, not for the network: Nextcloud keeps
 		// background requests in flight, so `networkidle` never settles here
 		// (ADR-074 rule 4).
-		const content = page.locator('main')
+		//
+		// `#content` and NOT `main`: Nextcloud's own chrome renders a <main>
+		// and so does the app inside it, so `locator('main')` matches TWO
+		// elements and Playwright fails the whole test on a strict-mode
+		// violation. `#content` is the single element the app mounts into
+		// (`createApp(...).mount('#content')`), which is also exactly the
+		// region this baseline should cover — the server chrome around it
+		// changes between Nextcloud versions and is not this app's to pin.
+		const content = page.locator('#content')
 		await expect(content).toBeVisible()
 		await expect(content).not.toHaveText(/^\s*$/)
 

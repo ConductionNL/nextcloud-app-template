@@ -59,18 +59,27 @@ test.describe('app shell', () => {
 	test('every manifest page renders its own content', async ({ page }) => {
 		// One route per manifest page. A Vue Router 4 misconfiguration renders
 		// the shell with an empty <main> rather than erroring.
+		// `settings` used to be the third entry, asserting /Application
+		// information/. That page is gone (ADR-079 D1 — app configuration lives
+		// at /settings/admin/apptemplate, not in the SPA), so the route would
+		// have fallen through to the catch-all and this spec would have been
+		// asserting against the dashboard while claiming to cover a settings
+		// page. `features-roadmap` is the real third manifest page.
 		const routes = [
 			{ path: await appUrl(page), expect: /Recent examples/ },
 			{ path: await appUrl(page, 'examples'), expect: /No items found|Table/ },
 			{
-				path: await appUrl(page, 'settings'),
-				expect: /Application information/,
+				path: await appUrl(page, 'features-roadmap'),
+				expect: /Features & roadmap|Features and roadmap/,
 			},
 		]
 
 		for (const route of routes) {
 			await page.goto(route.path)
-			const main = page.locator('main')
+			// `#content`, not `main` — the roadmap page renders its own <main>
+			// inside Nextcloud's, and a two-element match is a strict-mode
+			// failure rather than a content assertion.
+			const main = page.locator('#content')
 			await expect(
 				main,
 				`${route.path} should render page content`,
@@ -101,7 +110,13 @@ test.describe('app shell', () => {
 			await appUrl(page, 'examples/1'),
 		]) {
 			await page.goto(path)
-			await expect(page.locator('main')).not.toHaveText(/^\s*$/)
+			// `#content`, not `main`: the FeaturesRoadmap page renders its own
+			// <main> inside Nextcloud's, so `locator('main')` matches two
+			// elements and Playwright fails on a strict-mode violation. This
+			// only surfaced when the dead `settings` route in the list
+			// above was replaced with a real page — the old route fell through
+			// to the catch-all, which rendered a single-<main> dashboard.
+			await expect(page.locator('#content')).not.toHaveText(/^\s*$/)
 			await expect(
 				page.locator('.cn-unknown-widget'),
 				`${path} must not render any "Widget unavailable" placeholder`,

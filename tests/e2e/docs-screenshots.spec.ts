@@ -109,9 +109,14 @@ test.describe('docs: admin track', () => {
 		await page.goto('/settings/admin/apptemplate', {
 			waitUntil: 'domcontentloaded',
 		})
+		// `#apptemplate-settings` is the real mount point — templates/settings/
+		// admin.php renders exactly that div and src/settings.js mounts into
+		// it. An earlier version of this wait guessed at
+		// `#apptemplate-admin-settings, .apptemplate-admin, form`, none of
+		// which exist, so it timed out after 30s instead of waiting for
+		// anything.
 		await page
-			.locator('#apptemplate-admin-settings, .apptemplate-admin, form')
-			.first()
+			.locator('#apptemplate-settings')
 			.waitFor({ state: 'visible', timeout: 30_000 })
 	})
 
