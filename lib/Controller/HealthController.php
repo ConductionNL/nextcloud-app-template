@@ -38,6 +38,7 @@ use OCA\AppTemplate\AppInfo\Application;
 use OCA\AppTemplate\Service\SettingsService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\AnonRateLimit;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IRequest;
 use Psr\Log\LoggerInterface;
@@ -77,8 +78,21 @@ class HealthController extends Controller {
 	 *
 	 * @return JSONResponse
 	 *
+	 * A PUBLIC ENDPOINT NEEDS A VOLUME CEILING (ADR-082). This one is
+	 * unauthenticated by design so probes can poll it, which also means anyone
+	 * on the network can poll it — and each call reaches through to
+	 * isOpenRegisterAvailable(). Without a ceiling a health endpoint is a free
+	 * amplifier pointed at the very thing it reports on.
+	 *
+	 * 60/minute fits the actual consumers rather than being a round number: a
+	 * Prometheus blackbox exporter and a K8s liveness+readiness pair poll on
+	 * the order of once every 10–30 seconds, so several probes sit comfortably
+	 * inside it. The limit is per remote address, so distinct probes do not
+	 * compete for one budget.
+	 *
 	 * @spec openspec/specs/observability/spec.md#REQ-OBS-002
 	 */
+	#[AnonRateLimit(limit: 60, period: 60)]
 	public function index(): JSONResponse {
 		try {
 			$openRegister = $this->settingsService->isOpenRegisterAvailable();
