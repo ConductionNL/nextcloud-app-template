@@ -102,8 +102,22 @@ test.describe('docs: user track', () => {
 
 test.describe('docs: admin track', () => {
 	test.beforeEach(async ({ page }) => {
-		await page.goto('/settings/admin/apptemplate')
-		await page.waitForLoadState('networkidle')
+		// `domcontentloaded`, never `networkidle`: Nextcloud keeps background
+		// requests in flight, so networkidle does not settle — it burns the
+		// full timeout and then proceeds anyway (ADR-074 rule 4). Wait for the
+		// settings form itself, which is the thing these screenshots need.
+		await page.goto('/settings/admin/apptemplate', {
+			waitUntil: 'domcontentloaded',
+		})
+		// `#apptemplate-settings` is the real mount point — templates/settings/
+		// admin.php renders exactly that div and src/settings.js mounts into
+		// it. An earlier version of this wait guessed at
+		// `#apptemplate-admin-settings, .apptemplate-admin, form`, none of
+		// which exist, so it timed out after 30s instead of waiting for
+		// anything.
+		await page
+			.locator('#apptemplate-settings')
+			.waitFor({ state: 'visible', timeout: 30_000 })
 	})
 
 	test('AN admin-settings', async ({ page }) => {

@@ -27,7 +27,7 @@ namespace OCA\AppTemplate\Settings;
 use OCA\AppTemplate\AppInfo\Application;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\Settings\ISettings;
+use OCP\Settings\IDelegatedSettings;
 
 /**
  * Provides the admin settings form for the AppTemplate application.
@@ -39,7 +39,7 @@ use OCP\Settings\ISettings;
  * https://docs.nextcloud.com/server/latest/developer_manual/app_development/settings.html
  * for usage guidance. For most apps, ISettings is the correct choice.
  */
-class AdminSettings implements ISettings {
+class AdminSettings implements IDelegatedSettings {
 	/**
 	 * Constructor.
 	 *
@@ -82,4 +82,36 @@ class AdminSettings implements ISettings {
 	public function getPriority(): int {
 		return 10;
 	}//end getPriority()
+
+	/**
+	 * The settings section's display name for the delegation UI.
+	 *
+	 * Null means "use the section's own name", which is what every fleet app
+	 * does; there is no second sub-section to distinguish here.
+	 *
+	 * @return string|null
+	 */
+	public function getName(): ?string {
+		return null;
+	}//end getName()
+
+	/**
+	 * App config keys an authorized (delegated) admin may manage.
+	 *
+	 * Returned as a map of appId => list of allowed config keys. This template
+	 * exposes no delegatable sub-keys, so it is intentionally empty — the
+	 * #[AuthorizedAdminSetting] attribute on the controller still scopes those
+	 * endpoints to full administrators.
+	 *
+	 * WHY IDelegatedSettings AND NOT ISettings: #[AuthorizedAdminSetting] is
+	 * typed `class-string<IDelegatedSettings>`. Under plain ISettings the
+	 * attribute is the only route to an explicit admin posture on a settings
+	 * write endpoint, and it does not type-check — so apps scaffolded from this
+	 * template were left with no honest way to satisfy gate-5 on those routes.
+	 *
+	 * @return array<string, list<string>>
+	 */
+	public function getAuthorizedAppConfig(): array {
+		return [];
+	}//end getAuthorizedAppConfig()
 }//end class

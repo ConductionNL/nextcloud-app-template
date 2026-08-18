@@ -53,6 +53,13 @@ class DashboardController extends Controller {
 	 * @return TemplateResponse
 	 *
 	 * @spec openspec/specs/dashboard-page/spec.md#REQ-DASH-001
+	 *
+	 * @contract exclude renders the SPA shell, it has no JSON contract — the
+	 * only thing a contract test could assert is that Nextcloud returned a
+	 * TemplateResponse, which tests the framework rather than this app. The
+	 * behaviour that matters here (the shell boots and the app mounts) is
+	 * covered end-to-end by tests/e2e/app-shell.spec.ts, which is the right
+	 * instrument for a page.
 	 */
 	public function page(): TemplateResponse {
 		return new TemplateResponse(Application::APP_ID, 'index');
@@ -67,6 +74,10 @@ class DashboardController extends Controller {
 	 * @return TemplateResponse
 	 *
 	 * @spec openspec/specs/dashboard-page/spec.md#REQ-DASH-002
+	 *
+	 * @contract exclude same shell as page(), which it delegates to verbatim —
+	 * see the exclusion there. Deep-link routing is a browser concern and is
+	 * exercised by the e2e suite, not by an HTTP contract test.
 	 */
 	public function catchAll(): TemplateResponse {
 		return $this->page();
