@@ -88,54 +88,48 @@
 							"countLabel": "examples",
 							"variant": "success"
 						}
+					},
+					{
+						"id": "recent-examples",
+						"title": "Recent examples",
+						"type": "object-table",
+						"content": {
+							"source": {
+								"register": "apptemplate",
+								"schema": "example",
+								"filter": { "created": { "lt": "@today" } },
+								"order": { "created": "desc" },
+								"limit": 5
+							},
+							"columns": [
+								{ "key": "title", "cellClass": "cn-cell--strong" },
+								{ "key": "created", "formatter": "daysSince", "cellClass": "cn-cell--muted cn-cell--end" }
+							],
+							"hideHeader": true,
+							"borderless": true,
+							"rowRoute": "ExampleDetail",
+							"viewAllRoute": { "name": "Examples" },
+							"emptyText": "No examples yet",
+							"actions": [
+								{
+									"id": "close-example",
+									"label": "Close example",
+									"type": "object-op",
+									"op": "patch",
+									"values": { "status": "closed" },
+									"confirm": true
+								}
+							]
+						}
 					}
 				],
 				"layout": [
 					{ "id": 1, "widgetId": "open-examples", "gridX": 0, "gridY": 0, "gridWidth": 3, "gridHeight": 1 },
 					{ "id": 2, "widgetId": "in-progress", "gridX": 3, "gridY": 0, "gridWidth": 3, "gridHeight": 1 },
-					{ "id": 3, "widgetId": "closed", "gridX": 6, "gridY": 0, "gridWidth": 3, "gridHeight": 1 }
+					{ "id": 3, "widgetId": "closed", "gridX": 6, "gridY": 0, "gridWidth": 3, "gridHeight": 1 },
+					{ "id": 4, "widgetId": "recent-examples", "gridX": 0, "gridY": 1, "gridWidth": 6, "gridHeight": 4 }
 				]
-			},
-			"widgets": [
-				{
-					"id": "recent-examples",
-					"widgetKey": "object-table",
-					"slot": "body",
-					"gridX": 0,
-					"gridY": 1,
-					"gridWidth": 6,
-					"gridHeight": 4,
-					"props": {
-						"title": "Recent examples",
-						"source": {
-							"register": "apptemplate",
-							"schema": "example",
-							"filter": { "created": { "lt": "@today" } },
-							"order": { "created": "desc" },
-							"limit": 5
-						},
-						"columns": [
-							{ "key": "title", "cellClass": "cn-cell--strong" },
-							{ "key": "created", "formatter": "daysSince", "cellClass": "cn-cell--muted cn-cell--end" }
-						],
-						"hideHeader": true,
-						"borderless": true,
-						"rowRoute": "ExampleDetail",
-						"viewAllRoute": { "name": "Examples" },
-						"emptyText": "No examples yet",
-						"actions": [
-							{
-								"id": "close-example",
-								"label": "Close example",
-								"type": "object-op",
-								"op": "patch",
-								"values": { "status": "closed" },
-								"confirm": true
-							}
-						]
-					}
-				}
-			]
+			}
 		},
 		{
 			"id": "Examples",
@@ -154,17 +148,7 @@
 					"enabled": true,
 					"showMetadata": true
 				}
-			},
-			"widgets": [
-				{
-					"widgetKey": "object-table",
-					"slot": "body",
-					"gridX": 0,
-					"gridY": 0,
-					"gridWidth": 12,
-					"gridHeight": 6
-				}
-			]
+			}
 		},
 		{
 			"id": "ExampleDetail",
