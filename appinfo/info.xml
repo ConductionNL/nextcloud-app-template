@@ -23,7 +23,7 @@
     <bugs>https://github.com/ConductionNL/nextcloud-app-template/issues</bugs>
     <repository>https://github.com/ConductionNL/nextcloud-app-template</repository>
 
-    <screenshot>https://raw.githubusercontent.com/ConductionNL/nextcloud-app-template/main/img/app-store.svg</screenshot>
+    <screenshot>https://raw.githubusercontent.com/ConductionNL/nextcloud-app-template/development/img/app-store.svg</screenshot>
 
     <!-- Element order in this file is not cosmetic: appstore's info.xsd models
          <info> and <dependencies> as xs:sequence, so a correct element in the
