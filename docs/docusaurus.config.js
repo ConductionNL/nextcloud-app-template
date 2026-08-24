@@ -71,7 +71,7 @@ const config = createConfig({
              plus the standard node_modules bucket. */
           exclude: ['**/node_modules/**', 'src/**'],
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://codeberg.org/Conduction/nextcloud-app-template/src/branch/development/docs/',
+          editUrl: 'https://github.com/ConductionNL/nextcloud-app-template/edit/development/docs/',
         },
         blog: false,
         theme: {
@@ -96,8 +96,8 @@ const config = createConfig({
         label: 'Documentation',
       },
       {
-        href: 'https://codeberg.org/Conduction/nextcloud-app-template',
-        label: 'Codeberg',
+        href: 'https://github.com/ConductionNL/nextcloud-app-template',
+        label: 'GitHub',
         position: 'right',
       },
       { type: 'localeDropdown', position: 'right' },
