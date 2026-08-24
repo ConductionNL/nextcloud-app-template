@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2026 Nextcloud App Template Contributors
  * SPDX-License-Identifier: EUPL-1.2
  *
- * Documentation screenshot capture suite — app-template.
+ * Documentation screenshot capture suite — apptemplate.
  *
  * This spec is *not* a regression test — it drives the app's UI
  * through every flow documented under `docs/tutorials/{user,admin}/*.md`
@@ -30,11 +30,21 @@
  * Pattern reference: ADR-030 (hydra/openspec/architecture/).
  */
 
-import { test, type Page } from '@playwright/test'
-import * as path from 'path'
-import * as fs from 'fs'
+import type { Page } from '@playwright/test'
 
-const SHOT_ROOT = path.resolve(__dirname, '..', '..', 'docs', 'static', 'screenshots', 'tutorials')
+import { test } from '@playwright/test'
+import * as fs from 'fs'
+import * as path from 'path'
+
+const SHOT_ROOT = path.resolve(
+	__dirname,
+	'..',
+	'..',
+	'docs',
+	'static',
+	'screenshots',
+	'tutorials',
+)
 
 /**
  * Save a screenshot under
@@ -45,7 +55,11 @@ const SHOT_ROOT = path.resolve(__dirname, '..', '..', 'docs', 'static', 'screens
  * @param track Tutorial track the shot belongs to.
  * @param file Output PNG filename.
  */
-async function shoot(page: Page, track: 'user' | 'admin', file: string): Promise<void> {
+async function shoot(
+	page: Page,
+	track: 'user' | 'admin',
+	file: string,
+): Promise<void> {
 	const dir = path.join(SHOT_ROOT, track)
 	if (!fs.existsSync(dir)) {
 		fs.mkdirSync(dir, { recursive: true })
@@ -58,7 +72,7 @@ async function shoot(page: Page, track: 'user' | 'admin', file: string): Promise
 }
 
 // Capture flows are independent — each test re-navigates from
-// `/apps/app-template/` so a selector miss on one doesn't cascade.
+// `/apps/apptemplate/` so a selector miss on one doesn't cascade.
 // Selector misses are the expected first-run failure mode (UI markup
 // drifts faster than docs); failures land per-test in `test-results/`
 // rather than killing the suite.
@@ -66,7 +80,7 @@ test.describe.configure({ mode: 'default' })
 
 test.beforeEach(async ({ page }) => {
 	page.setViewportSize({ width: 1280, height: 800 })
-	await page.goto('/apps/app-template/')
+	await page.goto('/apps/apptemplate/')
 })
 
 // ---------------------------------------------------------------------------
@@ -88,8 +102,22 @@ test.describe('docs: user track', () => {
 
 test.describe('docs: admin track', () => {
 	test.beforeEach(async ({ page }) => {
-		await page.goto('/settings/admin/app-template')
-		await page.waitForLoadState('networkidle')
+		// `domcontentloaded`, never `networkidle`: Nextcloud keeps background
+		// requests in flight, so networkidle does not settle — it burns the
+		// full timeout and then proceeds anyway (ADR-074 rule 4). Wait for the
+		// settings form itself, which is the thing these screenshots need.
+		await page.goto('/settings/admin/apptemplate', {
+			waitUntil: 'domcontentloaded',
+		})
+		// `#apptemplate-settings` is the real mount point — templates/settings/
+		// admin.php renders exactly that div and src/settings.js mounts into
+		// it. An earlier version of this wait guessed at
+		// `#apptemplate-admin-settings, .apptemplate-admin, form`, none of
+		// which exist, so it timed out after 30s instead of waiting for
+		// anything.
+		await page
+			.locator('#apptemplate-settings')
+			.waitFor({ state: 'visible', timeout: 30_000 })
 	})
 
 	test('AN admin-settings', async ({ page }) => {

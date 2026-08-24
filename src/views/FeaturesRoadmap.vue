@@ -33,9 +33,14 @@ export default {
 
 	data() {
 		return {
-			repo: loadState('app-template', 'features_roadmap_repo', 'ConductionNL/nextcloud-app-template'),
-			features: loadState('app-template', 'features_roadmap_features', []),
-			disabled: loadState('app-template', 'features_roadmap_disabled', false),
+			repo: loadState(
+				'apptemplate',
+				'features_roadmap_repo',
+				'ConductionNL/nextcloud-app-template',
+			),
+
+			features: loadState('apptemplate', 'features_roadmap_features', []),
+			disabled: loadState('apptemplate', 'features_roadmap_disabled', false),
 		}
 	},
 }

@@ -1,5 +1,5 @@
 {
-  "id": "app-template",
+  "id": "apptemplate",
   "name": "Nextcloud App Template",
   "namespace": "AppTemplate",
   "summary": "A template for creating new Nextcloud apps",
@@ -8,7 +8,7 @@
   "version": "0.1.0",
   "license": "EUPL-1.2",
   "author": "Conduction B.V.",
-  "repository": "https://codeberg.org/Conduction/nextcloud-app-template",
+  "repository": "https://github.com/ConductionNL/nextcloud-app-template",
   "dependencies": {
     "requiresOpenRegister": true,
     "additionalCiApps": [

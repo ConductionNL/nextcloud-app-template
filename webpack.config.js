@@ -15,7 +15,7 @@ webpackConfig.stats = {
 	modules: false,
 }
 
-const appId = 'app-template'
+const appId = 'apptemplate'
 
 // Each Nextcloud Dashboard widget needs its own webpack entry-point so the
 // widget's JS can be attached via `Util::addScript()` from PHP. Add a new
@@ -44,7 +44,10 @@ const useLocalLib = process.env.USE_LOCAL_LIB !== 'false' && fs.existsSync(local
 
 // Extend the base resolve config (preserves defaults from @nextcloud/webpack-vue-config)
 webpackConfig.resolve = webpackConfig.resolve || {}
-webpackConfig.resolve.modules = [path.resolve(__dirname, 'node_modules'), 'node_modules']
+webpackConfig.resolve.modules = [
+	path.resolve(__dirname, 'node_modules'),
+	'node_modules',
+]
 webpackConfig.resolve.alias = {
 	...(webpackConfig.resolve.alias || {}),
 	'@': path.resolve(__dirname, 'src'),
@@ -85,7 +88,9 @@ webpackConfig.plugins = [
 	new VueLoaderPlugin(),
 	new NodePolyfillPlugin({ additionalAliases: ['process'] }),
 	new webpack.DefinePlugin({ appName: JSON.stringify(appId) }),
-	new webpack.DefinePlugin({ appVersion: JSON.stringify(process.env.npm_package_version) }),
+	new webpack.DefinePlugin({
+		appVersion: JSON.stringify(process.env.npm_package_version),
+	}),
 ]
 
 // Share Vue + @nextcloud/vue + pinia + icons + @conduction/nextcloud-vue across

@@ -18,17 +18,14 @@
   @spec openspec/specs/scaffold-v2/spec.md#requirement-five-kind-registry-shipped
 -->
 <template>
-	<NcDialog
-		:name="title"
-		:open="open"
-		@update:open="$emit('update:open', $event)">
+	<NcDialog :name="title" :open="open" @update:open="$emit('update:open', $event)">
 		<p>{{ message }}</p>
 		<template #actions>
 			<NcButton @click="onConfirm">
-				{{ t('app-template', 'Confirm') }}
+				{{ t('apptemplate', 'Confirm') }}
 			</NcButton>
 			<NcButton @click="onCancel">
-				{{ t('app-template', 'Cancel') }}
+				{{ t('apptemplate', 'Cancel') }}
 			</NcButton>
 		</template>
 	</NcDialog>
@@ -51,11 +48,13 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
 		/** Modal heading (i18n key resolved by the caller). */
 		title: {
 			type: String,
 			default: 'Confirm action',
 		},
+
 		/** Modal body text. */
 		message: {
 			type: String,
@@ -76,6 +75,7 @@ export default {
 			this.$emit('confirm')
 			this.$emit('update:open', false)
 		},
+
 		/**
 		 * Relay a cancellation, then request the parent close the modal.
 		 *

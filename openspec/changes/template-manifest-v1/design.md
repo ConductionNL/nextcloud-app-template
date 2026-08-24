@@ -68,7 +68,7 @@ entries — so cloners see the shape of every supported page type
 | `ItemDetail` | detail    | `/items/:id`   | Detail view with default audit + data tabs                  |
 | `Settings`   | settings  | `/settings`    | `version-info` widget rich section                          |
 
-The OR `register` slug is the placeholder string `"app-template"` and
+The OR `register` slug is the placeholder string `"apptemplate"` and
 the `schema` slug is `"item"` — both intentionally placeholder names
 that show the cloner where to substitute their own register / schema
 slugs.
@@ -100,10 +100,10 @@ the template still produces a working app:
 
 ```bash
 # 1. Clone + rename
-git clone https://codeberg.org/Conduction/nextcloud-app-template.git my-app
+git clone https://github.com/ConductionNL/nextcloud-app-template.git my-app
 cd my-app
 
-# 2. Customise app id (search-and-replace 'app-template' → 'my-app'
+# 2. Customise app id (search-and-replace 'apptemplate' → 'myapp'
 #    in appinfo/info.xml, package.json, openspec/app-config.json,
 #    src/manifest.json — the manifest does NOT carry the app id;
 #    main.js passes it via the app-id prop on CnAppRoot).
@@ -129,7 +129,7 @@ docker exec nextcloud php occ app:enable my-app
 #      - CnAppNav renders 3 left-side menu entries (Dashboard,
 #        Items, Documentation) + Settings in the footer section.
 #      - Dashboard renders the placeholder widget without errors.
-#      - Items lists rows from register=app-template / schema=item
+#      - Items lists rows from register=apptemplate / schema=item
 #        (or "Schema not found" if the cloner hasn't created it
 #        yet — this is the expected next step, not a template bug).
 #      - Settings renders the Version widget.

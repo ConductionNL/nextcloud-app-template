@@ -7,7 +7,7 @@
  *
  * This is the *default* landing page every new Conduction app inherits
  * from the template. When you scaffold a new app, the renaming pass
- * swaps `app-template` / `Nextcloud App Template` for your slug /
+ * swaps `apptemplate` / `Nextcloud App Template` for your slug /
  * title — then replace the placeholder glyph, tagline, and the three
  * mock widget panels below with your app's real surface (use
  * <AppMock app="…" /> from the preset once your app has a registered
@@ -200,7 +200,7 @@ export default function Home() {
           tagline={TAGLINE}
           primaryCta={{
             label: 'View on GitHub',
-            href: 'https://codeberg.org/Conduction/nextcloud-app-template',
+            href: 'https://github.com/ConductionNL/nextcloud-app-template',
             tone: 'orange',
           }}
           secondaryCta={{ label: 'Read the docs', href: '/docs/intro' }}

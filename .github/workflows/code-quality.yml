@@ -2,7 +2,35 @@ name: Code Quality
 
 on:
   push:
-    branches: [main, development, feature/**, bugfix/**, hotfix/**]
+    # An ALLOW-LIST of branch prefixes is a gate with a hole in it, and the
+    # hole is SILENT: a branch matching nothing gets no CI at all, and its last
+    # visible status is whatever it inherited — indistinguishable, on every
+    # dashboard, from a branch that passed.
+    #
+    # Two live examples, both found 2026-08-14: `perf/**` was uncovered in
+    # openconnector, where a merge carrying unresolved conflict markers and 84
+    # failing tests was pushed and nothing ran; and `feat/**` was uncovered in
+    # openregister — note the list said `feature/**`, so every branch anyone
+    # named `feat/...` had been running unchecked.
+    #
+    # Prefixes are added rather than replaced with `**` because this workflow is
+    # expensive (PHPUnit matrix, Newman, Playwright). The fast structural checks
+    # DO run on `**` — see merge-hygiene.yml, added in the same change.
+    #
+    # ⚠️ Adding prefixes is not the durable fix; the next invented one is
+    # uncovered again. The durable fix is branch protection requiring a PR into
+    # development, which the pull_request trigger below already gates correctly.
+    branches:
+      - main
+      - development
+      - feature/**
+      - feat/**
+      - bugfix/**
+      - hotfix/**
+      - perf/**
+      - refactor/**
+      - chore/**
+      - fix/**
   pull_request:
     branches: [main, master, development, beta]
   workflow_dispatch:
@@ -11,10 +39,17 @@ jobs:
   quality:
     uses: ConductionNL/.github/.github/workflows/quality.yml@main
     with:
-      app-name: app-template
+      app-name: apptemplate
       php-version: "8.3"
       php-test-versions: '["8.3", "8.4"]'
-      nextcloud-test-refs: '["stable31", "stable32", "stable33"]'
+      # The whole range `appinfo/info.xml` declares (min-version="32",
+      # max-version="34"), not just its top. With only `stable34` listed, 32 and
+      # 33 were advertised as supported and tested by nothing.
+      # `stable34` MUST stay FIRST: newman, playwright and journeydoc-capture
+      # each read `fromJSON(inputs.nextcloud-test-refs)[0]` as their single
+      # server, so element 0 is the ref those legs run against — it has to be
+      # the newest supported release, not whichever ref happens to sort first.
+      nextcloud-test-refs: '["stable34", "stable32", "stable33"]'
       enable-psalm: true
       enable-phpstan: true
       enable-phpmetrics: true
@@ -66,7 +101,14 @@ jobs:
       # it is not part of that aggregate.
       # Measured on this tree before enabling: `check:specs` PASSES,
       # `check:manifest` FAILS (`pages[4].type: "roadmap" not in v1.1 enum`).
-      frontend-checks: '["check:specs", "check:manifest"]'
+      #
+      # `format` (prettier --check) is listed here because the shared workflow
+      # has NO prettier job of its own — it runs eslint and stylelint only.
+      # Without this leg, `npm run format` would take effect solely on a
+      # developer's keystrokes and the repo would drift straight back out of
+      # prettier format between merges, which is precisely the failure mode
+      # that made the old inert `.prettierrc` worth deleting.
+      frontend-checks: '["check:specs", "check:manifest", "format"]'
 
       # ── Coverage ratchet ─────────────────────────────────────────────────
       # `enable-coverage-guard` defaults to FALSE, which is why both

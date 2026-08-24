@@ -19,9 +19,7 @@
   @spec openspec/specs/scaffold-v2/spec.md#requirement-five-kind-registry-shipped
 -->
 <template>
-	<span
-		class="status-badge"
-		:class="`status-badge--${normalised}`">
+	<span class="status-badge" :class="`status-badge--${normalised}`">
 		{{ value }}
 	</span>
 </template>

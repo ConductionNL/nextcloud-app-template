@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: EUPL-1.2
-import { defineStore } from 'pinia'
-import { generateUrl } from '@nextcloud/router'
 import { getRequestToken } from '@nextcloud/auth'
+import { generateUrl } from '@nextcloud/router'
+import { defineStore } from 'pinia'
+import logger from '../../logger.js'
 
 export const useSettingsStore = defineStore('settings', {
 	state: () => ({
@@ -26,9 +27,12 @@ export const useSettingsStore = defineStore('settings', {
 		async fetchSettings() {
 			this.loading = true
 			try {
-				const response = await fetch(generateUrl('/apps/app-template/api/settings'), {
-					headers: { requesttoken: getRequestToken() },
-				})
+				const response = await fetch(
+					generateUrl('/apps/apptemplate/api/settings'),
+					{
+						headers: { requesttoken: getRequestToken() },
+					},
+				)
 				if (response.ok) {
 					const data = await response.json()
 					this.settings = data
@@ -37,7 +41,7 @@ export const useSettingsStore = defineStore('settings', {
 					return data
 				}
 			} catch (error) {
-				console.error('Failed to fetch settings:', error)
+				logger.error('Failed to fetch settings', { error })
 			} finally {
 				this.loading = false
 			}
@@ -54,21 +58,24 @@ export const useSettingsStore = defineStore('settings', {
 		async saveSettings(settings) {
 			this.loading = true
 			try {
-				const response = await fetch(generateUrl('/apps/app-template/api/settings'), {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						requesttoken: getRequestToken(),
+				const response = await fetch(
+					generateUrl('/apps/apptemplate/api/settings'),
+					{
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							requesttoken: getRequestToken(),
+						},
+						body: JSON.stringify(settings),
 					},
-					body: JSON.stringify(settings),
-				})
+				)
 				if (response.ok) {
 					const data = await response.json()
 					this.settings = data
 					return data
 				}
 			} catch (error) {
-				console.error('Failed to save settings:', error)
+				logger.error('Failed to save settings', { error })
 			} finally {
 				this.loading = false
 			}

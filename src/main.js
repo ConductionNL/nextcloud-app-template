@@ -1,11 +1,6 @@
 // SPDX-License-Identifier: EUPL-1.2
 // Copyright (C) 2026 Conduction B.V.
 
-import { createApp } from 'vue'
-import { createRouter, createWebHistory } from 'vue-router'
-import { translate as t, translatePlural as n, loadTranslations, register } from '@nextcloud/l10n'
-import enTranslations from '../l10n/en.json'
-import { generateUrl } from '@nextcloud/router'
 import {
 	CnPageRenderer,
 	defaultPageTypes,
@@ -13,19 +8,28 @@ import {
 	registerIcons,
 	registerTranslations,
 } from '@conduction/nextcloud-vue'
-import pinia from './pinia.js'
+import {
+	loadTranslations,
+	translatePlural as n,
+	register,
+	translate as t,
+} from '@nextcloud/l10n'
+import { generateUrl } from '@nextcloud/router'
+import { createApp } from 'vue'
+import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
-import bundledManifest from './manifest.json'
+import enTranslations from '../l10n/en.json'
 import customComponents from './customComponents.js'
+import appIcons from './icons.js'
+import bundledManifest from './manifest.json'
+import pinia from './pinia.js'
 // v2 five-kind registry — the replacement for customComponents.
 // Both props coexist during the v1 → v2 transition.
 // Once fully migrated to v2, remove the customComponents import and prop.
 import registry from './registry.js'
-import appIcons from './icons.js'
 
 // Library CSS — must be explicit import (webpack tree-shakes side-effect imports from aliased packages)
 import '@conduction/nextcloud-vue/css/index.css'
-
 // Global (unscoped) app styles
 import './assets/app.css'
 
@@ -57,14 +61,17 @@ try {
 } catch (e) {
 	// Non-fatal — lib translations fall back to English source.
 	// eslint-disable-next-line no-console
-	console.warn('[app-template] registerTranslations failed; falling back to English', e)
+	console.warn(
+		'[apptemplate] registerTranslations failed; falling back to English',
+		e,
+	)
 }
 
 // Register English translations from the bundled en.json. loadTranslations()
 // short-circuits for the 'en' locale (it assumes the key IS the English text),
 // but this template uses slugged keys like 'app-availability.title', so we must
 // register en.json explicitly to get readable strings instead of raw slugs.
-register('app-template', enTranslations.translations)
+register('apptemplate', enTranslations.translations)
 
 // Fire-and-forget translation load. Some Nextcloud installs (including
 // standard dev containers) only allow the JS/CSS allowlist through
@@ -74,11 +81,17 @@ register('app-template', enTranslations.translations)
 // its callback would silently fail boot when translations can't load.
 // Strings just fall back to their English source on miss; boot MUST
 // not depend on this resolving.
+/**
+ *
+ */
 function tryLoadTranslations() {
 	try {
-		const result = loadTranslations('app-template', () => {})
+		const result = loadTranslations('apptemplate', () => {})
 		if (result && typeof result.then === 'function') {
-			result.then(() => {}, () => {})
+			result.then(
+				() => {},
+				() => {},
+			)
 		}
 	} catch {
 		// no-op
@@ -123,7 +136,7 @@ function routesFromManifest(manifest) {
 }
 
 const router = createRouter({
-	history: createWebHistory(generateUrl('/apps/app-template')),
+	history: createWebHistory(generateUrl('/apps/apptemplate')),
 	routes: routesFromManifest(bundledManifest),
 })
 

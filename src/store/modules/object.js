@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: EUPL-1.2
-import { defineStore } from 'pinia'
 import { getRequestToken } from '@nextcloud/auth'
+import { defineStore } from 'pinia'
+import logger from '../../logger.js'
 
 /**
  * Generic OpenRegister object store.
@@ -30,7 +31,7 @@ export const useObjectStore = defineStore('object', {
 
 		async fetchObjects(type, params = {}) {
 			if (!this.objectTypes[type]) {
-				console.warn(`Object type "${type}" is not registered`)
+				logger.warn(`Object type "${type}" is not registered`)
 				return []
 			}
 
@@ -41,7 +42,9 @@ export const useObjectStore = defineStore('object', {
 				const url = new URL(this.baseUrl, window.location.origin)
 				url.searchParams.set('register', register)
 				url.searchParams.set('schema', schema)
-				Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v))
+				Object.entries(params).forEach(([k, v]) =>
+					url.searchParams.set(k, v),
+				)
 
 				const response = await fetch(url.toString(), {
 					headers: { requesttoken: getRequestToken() },
@@ -52,7 +55,7 @@ export const useObjectStore = defineStore('object', {
 					return this.objects[type]
 				}
 			} catch (error) {
-				console.error(`Failed to fetch ${type} objects:`, error)
+				logger.error(`Failed to fetch ${type} objects`, { error })
 			} finally {
 				this.loading[type] = false
 			}

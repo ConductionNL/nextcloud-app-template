@@ -39,10 +39,10 @@ that the app has a dedicated place to render its configuration form.
 
 - GIVEN the app is installed and enabled
 - WHEN Nextcloud enumerates admin-setting sections
-- THEN `SettingsSection::getID()` MUST return a stable identifier (`app-template` in the template; apps MUST substitute their own id)
+- THEN `SettingsSection::getID()` MUST return a stable identifier (`apptemplate` in the template; apps MUST substitute their own id)
 - AND `SettingsSection::getName()` MUST return a localised display name (via `IL10N::t()`)
 - AND `SettingsSection::getPriority()` MUST return an integer controlling ordering (template uses `75`)
-- AND `SettingsSection::getIcon()` MUST return an image path produced by `IURLGenerator::imagePath()` (template uses `app-template/app-dark.svg`)
+- AND `SettingsSection::getIcon()` MUST return an image path produced by `IURLGenerator::imagePath()` (template uses `apptemplate/app-dark.svg`)
 
 ### REQ-UI-002: Render the admin settings form (ISettings)
 
