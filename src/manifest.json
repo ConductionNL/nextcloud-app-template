@@ -1,5 +1,5 @@
 {
-	"$schema": "https://codeberg.org/Conduction/nextcloud-vue/raw/branch/main/src/schemas/app-manifest-v2.schema.json",
+	"$schema": "https://github.com/ConductionNL/nextcloud-vue/raw/main/src/schemas/app-manifest-v2.schema.json",
 	"version": "0.2.0",
 	"dependencies": [
 		"openregister"
@@ -50,7 +50,7 @@
 						"type": "stats-block",
 						"iconClass": "icon-files",
 						"dataSource": {
-							"register": "app-template",
+							"register": "apptemplate",
 							"schema": "example",
 							"aggregate": "count"
 						},
@@ -65,7 +65,7 @@
 						"type": "stats-block",
 						"iconClass": "icon-loading",
 						"dataSource": {
-							"register": "app-template",
+							"register": "apptemplate",
 							"schema": "example",
 							"aggregate": "count"
 						},
@@ -80,7 +80,7 @@
 						"type": "stats-block",
 						"iconClass": "icon-checkmark",
 						"dataSource": {
-							"register": "app-template",
+							"register": "apptemplate",
 							"schema": "example",
 							"aggregate": "count"
 						},
@@ -88,54 +88,48 @@
 							"countLabel": "examples",
 							"variant": "success"
 						}
+					},
+					{
+						"id": "recent-examples",
+						"title": "Recent examples",
+						"type": "object-table",
+						"content": {
+							"source": {
+								"register": "apptemplate",
+								"schema": "example",
+								"filter": { "created": { "lt": "@today" } },
+								"order": { "created": "desc" },
+								"limit": 5
+							},
+							"columns": [
+								{ "key": "title", "cellClass": "cn-cell--strong" },
+								{ "key": "created", "formatter": "daysSince", "cellClass": "cn-cell--muted cn-cell--end" }
+							],
+							"hideHeader": true,
+							"borderless": true,
+							"rowRoute": "ExampleDetail",
+							"viewAllRoute": { "name": "Examples" },
+							"emptyText": "No examples yet",
+							"actions": [
+								{
+									"id": "close-example",
+									"label": "Close example",
+									"type": "object-op",
+									"op": "patch",
+									"values": { "status": "closed" },
+									"confirm": true
+								}
+							]
+						}
 					}
 				],
 				"layout": [
 					{ "id": 1, "widgetId": "open-examples", "gridX": 0, "gridY": 0, "gridWidth": 3, "gridHeight": 1 },
 					{ "id": 2, "widgetId": "in-progress", "gridX": 3, "gridY": 0, "gridWidth": 3, "gridHeight": 1 },
-					{ "id": 3, "widgetId": "closed", "gridX": 6, "gridY": 0, "gridWidth": 3, "gridHeight": 1 }
+					{ "id": 3, "widgetId": "closed", "gridX": 6, "gridY": 0, "gridWidth": 3, "gridHeight": 1 },
+					{ "id": 4, "widgetId": "recent-examples", "gridX": 0, "gridY": 1, "gridWidth": 6, "gridHeight": 4 }
 				]
-			},
-			"widgets": [
-				{
-					"id": "recent-examples",
-					"widgetKey": "object-table",
-					"slot": "body",
-					"gridX": 0,
-					"gridY": 1,
-					"gridWidth": 6,
-					"gridHeight": 4,
-					"props": {
-						"title": "Recent examples",
-						"source": {
-							"register": "app-template",
-							"schema": "example",
-							"filter": { "created": { "lt": "@today" } },
-							"order": { "created": "desc" },
-							"limit": 5
-						},
-						"columns": [
-							{ "key": "title", "cellClass": "cn-cell--strong" },
-							{ "key": "created", "formatter": "daysSince", "cellClass": "cn-cell--muted cn-cell--end" }
-						],
-						"hideHeader": true,
-						"borderless": true,
-						"rowRoute": "ExampleDetail",
-						"viewAllRoute": { "name": "Examples" },
-						"emptyText": "No examples yet",
-						"actions": [
-							{
-								"id": "close-example",
-								"label": "Close example",
-								"type": "object-op",
-								"op": "patch",
-								"values": { "status": "closed" },
-								"confirm": true
-							}
-						]
-					}
-				}
-			]
+			}
 		},
 		{
 			"id": "Examples",
@@ -143,7 +137,7 @@
 			"type": "index",
 			"title": "Examples",
 			"config": {
-				"register": "app-template",
+				"register": "apptemplate",
 				"schema": "example",
 				"columns": [
 					"title",
@@ -154,17 +148,7 @@
 					"enabled": true,
 					"showMetadata": true
 				}
-			},
-			"widgets": [
-				{
-					"widgetKey": "object-table",
-					"slot": "body",
-					"gridX": 0,
-					"gridY": 0,
-					"gridWidth": 12,
-					"gridHeight": 6
-				}
-			]
+			}
 		},
 		{
 			"id": "ExampleDetail",
@@ -172,7 +156,7 @@
 			"type": "detail",
 			"title": "Example",
 			"config": {
-				"register": "app-template",
+				"register": "apptemplate",
 				"schema": "example",
 				"sidebar": true
 			},
@@ -196,32 +180,6 @@
 					"gridHeight": 1
 				}
 			]
-		},
-		{
-			"id": "Settings",
-			"route": "/settings",
-			"type": "settings",
-			"title": "Settings",
-			"config": {
-				"saveEndpoint": "/index.php/apps/app-template/api/settings",
-				"sections": [
-					{
-						"title": "Version",
-						"widgets": [
-							{
-								"type": "version-info",
-								"props": {
-									"appName": "App Template",
-									"showUpdateButton": false,
-									"isUpToDate": true,
-									"title": "Version Information",
-									"description": "Information about the current installation."
-								}
-							}
-						]
-					}
-				]
-			}
 		},
 		{
 			"id": "FeaturesRoadmap",

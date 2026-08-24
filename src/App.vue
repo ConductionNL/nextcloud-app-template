@@ -15,29 +15,34 @@
  NcAppSettingsDialog via CnAppRoot's cnOpenUserSettings inject.
  Feed your settings sections into the #user-settings slot below.
 
- @spec openspec/changes/template-manifest-v1/specs/template-manifest-v1/spec.md
- @spec openspec/changes/scaffold-v2/specs/scaffold-v2/spec.md
+ Point @spec at the canonical spec under openspec/specs/, never at
+ openspec/changes/<name>/ — a change directory is archived or deleted when the
+ change completes, and every tag into it dangles from that moment on
+ (ConductionNL/.github#228).
+
+ @spec openspec/specs/template-manifest-v1/spec.md#REQ-TMV1-4
+ @spec openspec/specs/scaffold-v2/spec.md#requirement-app-vue-accepts-and-forwards-registry-prop
 -->
 <template>
 	<CnAppRoot
 		:manifest="manifest"
-		:custom-components="customComponents"
-		:page-types="pageTypes"
+		:customComponents="customComponents"
+		:pageTypes="pageTypes"
 		:registry="registry"
-		app-id="app-template"
+		appId="apptemplate"
 		:translate="translateForApp"
 		:permissions="permissions"
-		:requires-apps="[]">
+		:requiresApps="[]">
 		<template #sidebar>
 			<CnObjectSidebar
 				v-if="objectSidebarState.active"
 				:title="objectSidebarState.title"
 				:subtitle="objectSidebarState.subtitle"
-				:object-type="objectSidebarState.objectType"
-				:object-id="objectSidebarState.objectId"
+				:objectType="objectSidebarState.objectType"
+				:objectId="objectSidebarState.objectId"
 				:register="objectSidebarState.register"
 				:schema="objectSidebarState.schema"
-				:hidden-tabs="objectSidebarState.hiddenTabs"
+				:hiddenTabs="objectSidebarState.hiddenTabs"
 				:tabs="objectSidebarState.tabs"
 				:open="objectSidebarState.open"
 				@update:open="objectSidebarState.open = $event" />
@@ -49,11 +54,14 @@
 		  Replace the placeholder section with your app's actual settings.
 		-->
 		<template #user-settings>
-			<NcAppSettingsSection
-				id="general"
-				:name="t('app-template', 'General')">
+			<NcAppSettingsSection id="general" :name="t('apptemplate', 'General')">
 				<p class="app-root__settings-hint">
-					{{ t('app-template', 'Add your settings fields here. See src/views/AdminRoot.vue for the pre-boot admin panel.') }}
+					{{
+						t(
+							'apptemplate',
+							'Add your settings fields here. See src/views/AdminRoot.vue for the pre-boot admin panel.',
+						)
+					}}
 				</p>
 			</NcAppSettingsSection>
 		</template>
@@ -61,10 +69,10 @@
 </template>
 
 <script>
-import { reactive } from 'vue'
+import { CnAppRoot, CnObjectSidebar } from '@conduction/nextcloud-vue'
 import { translate as ncT } from '@nextcloud/l10n'
 import { NcAppSettingsSection } from '@nextcloud/vue'
-import { CnAppRoot, CnObjectSidebar } from '@conduction/nextcloud-vue'
+import { reactive } from 'vue'
 
 export default {
 	name: 'App',
@@ -105,6 +113,7 @@ export default {
 			type: Object,
 			required: true,
 		},
+
 		/**
 		 * Registry of consumer-injected components used by:
 		 *   - `type: "custom"` pages (`page.component`)
@@ -116,6 +125,7 @@ export default {
 			type: Object,
 			default: () => ({}),
 		},
+
 		/**
 		 * Page-type registry — `{ index, detail, dashboard, settings, ... }`.
 		 * Wired through to descendant `CnPageRenderer` instances via
@@ -125,6 +135,7 @@ export default {
 			type: Object,
 			default: null,
 		},
+
 		/**
 		 * v2 five-kind component registry — `{ "<key>": { kind, component, ...metadata } }`.
 		 * Introduced by hydra ADR-036; passed through to CnAppRoot which provides
@@ -182,7 +193,7 @@ export default {
 		 * @return {string} Translated string (or the key on miss).
 		 */
 		translateForApp(key) {
-			return ncT('app-template', key)
+			return ncT('apptemplate', key)
 		},
 	},
 }

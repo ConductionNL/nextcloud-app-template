@@ -14,11 +14,10 @@
  */
 
 import { createApp } from 'vue'
-
-import pinia from './pinia.js'
 import ExampleWidget from './views/widgets/ExampleWidget.vue'
+import pinia from './pinia.js'
 
-OCA.Dashboard.register('app-template_example_widget', (el, { widget }) => {
+OCA.Dashboard.register('apptemplate_example_widget', (el, { widget }) => {
 	// Vue 3: one app instance per widget mount. `Vue.extend` + `propsData` +
 	// `$mount(el)` are all gone — root props are the second argument to
 	// `createApp`, and `mount(el)` REPLACES the element's content rather than

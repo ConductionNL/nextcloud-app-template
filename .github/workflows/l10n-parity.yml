@@ -1,0 +1,36 @@
+# Translation-PARITY hard gate — every official European language (+ ru, tr)
+# must be 100% complete (no missing keys, no empty values) for both the
+# frontend (l10n/*.js) and backend (l10n/*.json) sets. Pure Node, no NC.
+#
+# Ported from .forgejo/workflows/l10n-parity.yml, which has never executed:
+# Codeberg was retired on 2026-08-04 and Forgejo Actions reported
+# total_count: 0 tasks for these repos, so the gate existed on disk and
+# gated nothing. GitHub is the only forge now, so it lives here.
+#
+# `tests/l10n/check-l10n-parity.js` exits 1 on a missing key or an empty
+# value and 0 otherwise — verified both ways before this file was added, by
+# blanking a de.json value (exit 1) and restoring it (exit 0). A gate that
+# cannot fail is not worth running.
+name: l10n-parity
+
+on:
+  pull_request:
+  push:
+    branches: [main, master, development]
+
+jobs:
+  l10n-parity:
+    name: l10n translation parity (European languages)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Assert every required locale is at full parity
+        run: node tests/l10n/check-l10n-parity.js

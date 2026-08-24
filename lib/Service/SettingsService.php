@@ -35,187 +35,178 @@ use Psr\Log\LoggerInterface;
 /**
  * Service for managing AppTemplate application configuration and settings.
  */
-class SettingsService
-{
+class SettingsService {
 
-    /**
-     * Configuration keys managed by this service.
-     *
-     * @var array<string>
-     */
-    private const CONFIG_KEYS = [
-        'register',
-    ];
+	/**
+	 * Configuration keys managed by this service.
+	 *
+	 * @var array<string>
+	 */
+	private const CONFIG_KEYS = [
+		'register',
+	];
 
-    /**
-     * Constructor for the SettingsService.
-     *
-     * @param IAppConfig         $appConfig    The app config interface
-     * @param IAppManager        $appManager   The app manager
-     * @param ContainerInterface $container    The container
-     * @param IGroupManager      $groupManager The group manager
-     * @param IUserSession       $userSession  The user session
-     * @param LoggerInterface    $logger       The logger
-     *
-     * @return void
-     */
-    public function __construct(
-        private IAppConfig $appConfig,
-        private IAppManager $appManager,
-        private ContainerInterface $container,
-        private IGroupManager $groupManager,
-        private IUserSession $userSession,
-        private LoggerInterface $logger,
-    ) {
-    }//end __construct()
+	/**
+	 * Constructor for the SettingsService.
+	 *
+	 * @param IAppConfig $appConfig The app config interface
+	 * @param IAppManager $appManager The app manager
+	 * @param ContainerInterface $container The container
+	 * @param IGroupManager $groupManager The group manager
+	 * @param IUserSession $userSession The user session
+	 * @param LoggerInterface $logger The logger
+	 *
+	 * @return void
+	 */
+	public function __construct(
+		private IAppConfig $appConfig,
+		private IAppManager $appManager,
+		private ContainerInterface $container,
+		private IGroupManager $groupManager,
+		private IUserSession $userSession,
+		private LoggerInterface $logger,
+	) {
+	}//end __construct()
 
-    /**
-     * Check whether OpenRegister is installed and available.
-     *
-     * @return bool
-     */
-    public function isOpenRegisterAvailable(): bool
-    {
-        return $this->appManager->isInstalled('openregister');
-    }//end isOpenRegisterAvailable()
+	/**
+	 * Check whether OpenRegister is installed and available.
+	 *
+	 * @return bool
+	 */
+	public function isOpenRegisterAvailable(): bool {
+		return $this->appManager->isInstalled('openregister');
+	}//end isOpenRegisterAvailable()
 
-    /**
-     * Retrieve all current settings.
-     *
-     * Returns a flat array containing all app config values plus metadata
-     * fields (openregisters, isAdmin) consumed by the frontend.
-     *
-     * @return array<string,mixed>
-     *
-     * @spec openspec/specs/settings-management/spec.md#REQ-CFG-001
-     */
-    public function getSettings(): array
-    {
-        $settings = [];
-        foreach (self::CONFIG_KEYS as $key) {
-            $settings[$key] = $this->appConfig->getValueString(Application::APP_ID, $key, '');
-        }
+	/**
+	 * Retrieve all current settings.
+	 *
+	 * Returns a flat array containing all app config values plus metadata
+	 * fields (openregisters, isAdmin) consumed by the frontend.
+	 *
+	 * @return array<string,mixed>
+	 *
+	 * @spec openspec/specs/settings-management/spec.md#REQ-CFG-001
+	 */
+	public function getSettings(): array {
+		$settings = [];
+		foreach (self::CONFIG_KEYS as $key) {
+			$settings[$key] = $this->appConfig->getValueString(Application::APP_ID, $key, '');
+		}
 
-        $user    = $this->userSession->getUser();
-        $isAdmin = ($user !== null && $this->groupManager->isAdmin($user->getUID()));
+		$user = $this->userSession->getUser();
+		$isAdmin = ($user !== null && $this->groupManager->isAdmin($user->getUID()));
 
-        return array_merge(
-            $settings,
-            [
-                'openregisters' => $this->isOpenRegisterAvailable(),
-                'isAdmin'       => $isAdmin,
-            ]
-        );
-    }//end getSettings()
+		return array_merge(
+			$settings,
+			[
+				'openregisters' => $this->isOpenRegisterAvailable(),
+				'isAdmin' => $isAdmin,
+			]
+		);
+	}//end getSettings()
 
-    /**
-     * Update settings with the provided data.
-     *
-     * @param array<string,mixed> $data The data to update
-     *
-     * @return array<string,mixed> The updated settings
-     *
-     * @spec openspec/specs/settings-management/spec.md#REQ-CFG-002
-     */
-    public function updateSettings(array $data): array
-    {
-        foreach (self::CONFIG_KEYS as $key) {
-            if (isset($data[$key]) === true) {
-                $this->appConfig->setValueString(Application::APP_ID, $key, (string) $data[$key]);
-            }
-        }
+	/**
+	 * Update settings with the provided data.
+	 *
+	 * @param array<string,mixed> $data The data to update
+	 *
+	 * @return array<string,mixed> The updated settings
+	 *
+	 * @spec openspec/specs/settings-management/spec.md#REQ-CFG-002
+	 */
+	public function updateSettings(array $data): array {
+		foreach (self::CONFIG_KEYS as $key) {
+			if (isset($data[$key]) === true) {
+				$this->appConfig->setValueString(Application::APP_ID, $key, (string)$data[$key]);
+			}
+		}
 
-        return $this->getSettings();
-    }//end updateSettings()
+		return $this->getSettings();
+	}//end updateSettings()
 
-    /**
-     * Load configuration from app_template_register.json via OpenRegister,
-     * letting OpenRegister skip the import when the installed version is
-     * already current. This is the install/upgrade path.
-     *
-     * @return array<string,mixed> Result with success flag, message, and version.
-     *
-     * @spec openspec/specs/settings-management/spec.md#REQ-CFG-003
-     */
-    public function loadConfiguration(): array
-    {
-        return $this->importConfiguration(force: false);
+	/**
+	 * Load configuration from apptemplate_register.json via OpenRegister,
+	 * letting OpenRegister skip the import when the installed version is
+	 * already current. This is the install/upgrade path.
+	 *
+	 * @return array<string,mixed> Result with success flag, message, and version.
+	 *
+	 * @spec openspec/specs/settings-management/spec.md#REQ-CFG-003
+	 */
+	public function loadConfiguration(): array {
+		return $this->importConfiguration(force: false);
+	}//end loadConfiguration()
 
-    }//end loadConfiguration()
+	/**
+	 * Re-import the configuration from apptemplate_register.json regardless of
+	 * the installed version. This is the admin-triggered reload path.
+	 *
+	 * @return array<string,mixed> Result with success flag, message, and version.
+	 *
+	 * @spec openspec/specs/settings-management/spec.md#REQ-CFG-003
+	 */
+	public function reloadConfiguration(): array {
+		return $this->importConfiguration(force: true);
+	}//end reloadConfiguration()
 
-    /**
-     * Re-import the configuration from app_template_register.json regardless of
-     * the installed version. This is the admin-triggered reload path.
-     *
-     * @return array<string,mixed> Result with success flag, message, and version.
-     *
-     * @spec openspec/specs/settings-management/spec.md#REQ-CFG-003
-     */
-    public function reloadConfiguration(): array
-    {
-        return $this->importConfiguration(force: true);
+	/**
+	 * Shared import routine behind loadConfiguration() and reloadConfiguration().
+	 *
+	 * @param bool $force Whether to re-import regardless of installed version.
+	 *
+	 * @return array<string,mixed> Result with success flag, message, and version.
+	 *
+	 * @spec openspec/specs/settings-management/spec.md#REQ-CFG-003
+	 */
+	private function importConfiguration(bool $force): array {
+		if ($this->isOpenRegisterAvailable() === false) {
+			$this->logger->warning('AppTemplate: OpenRegister not available, skipping register initialization');
+			return [
+				'success' => false,
+				'message' => 'OpenRegister is not installed or enabled.',
+			];
+		}
 
-    }//end reloadConfiguration()
+		try {
+			$configurationService = $this->container->get('OCA\OpenRegister\Service\ConfigurationService');
 
-    /**
-     * Shared import routine behind loadConfiguration() and reloadConfiguration().
-     *
-     * @param bool $force Whether to re-import regardless of installed version.
-     *
-     * @return array<string,mixed> Result with success flag, message, and version.
-     *
-     * @spec openspec/specs/settings-management/spec.md#REQ-CFG-003
-     */
-    private function importConfiguration(bool $force): array
-    {
-        if ($this->isOpenRegisterAvailable() === false) {
-            $this->logger->warning('AppTemplate: OpenRegister not available, skipping register initialization');
-            return [
-                'success' => false,
-                'message' => 'OpenRegister is not installed or enabled.',
-            ];
-        }
+			$absPath = $this->appManager->getAppPath(Application::APP_ID) . '/lib/Settings/' . Application::APP_ID . '_register.json';
+			$version = '0.1.0';
+			$data = [];
+			if (is_file($absPath) === true) {
+				$data = json_decode(file_get_contents($absPath), true) ?? [];
+				$version = $data['info']['version'] ?? $version;
+			}
 
-        try {
-            $configurationService = $this->container->get('OCA\OpenRegister\Service\ConfigurationService');
+			$result = $configurationService->importFromApp(
+				appId: Application::APP_ID,
+				data: $data,
+				version: $version,
+				force: $force
+			);
 
-            $absPath = $this->appManager->getAppPath(Application::APP_ID).'/lib/Settings/'.Application::APP_ID.'_register.json';
-            $version = '0.1.0';
-            $data    = [];
-            if (is_file($absPath) === true) {
-                $data    = json_decode(file_get_contents($absPath), true) ?? [];
-                $version = $data['info']['version'] ?? $version;
-            }
+			if (empty($result) === false) {
+				$this->logger->info('AppTemplate: register configuration imported successfully');
+				return [
+					'success' => true,
+					'message' => 'Configuration imported successfully.',
+					'version' => ($result['version'] ?? $version),
+				];
+			}
 
-            $result = $configurationService->importFromApp(
-                appId: Application::APP_ID,
-                data: $data,
-                version: $version,
-                force: $force
-            );
-
-            if (empty($result) === false) {
-                $this->logger->info('AppTemplate: register configuration imported successfully');
-                return [
-                    'success' => true,
-                    'message' => 'Configuration imported successfully.',
-                    'version' => ($result['version'] ?? $version),
-                ];
-            }
-
-            return [
-                'success' => false,
-                'message' => 'Import returned an empty result.',
-            ];
-        } catch (\Throwable $e) {
-            $this->logger->error(
-                'AppTemplate: configuration import failed',
-                ['exception' => $e->getMessage()]
-            );
-            return [
-                'success' => false,
-                'message' => $e->getMessage(),
-            ];
-        }//end try
-    }//end importConfiguration()
+			return [
+				'success' => false,
+				'message' => 'Import returned an empty result.',
+			];
+		} catch (\Throwable $e) {
+			$this->logger->error(
+				'AppTemplate: configuration import failed',
+				['exception' => $e->getMessage()]
+			);
+			return [
+				'success' => false,
+				'message' => $e->getMessage(),
+			];
+		}//end try
+	}//end importConfiguration()
 }//end class

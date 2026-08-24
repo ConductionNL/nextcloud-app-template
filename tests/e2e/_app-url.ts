@@ -5,12 +5,12 @@
  * Resolve app URLs the way the APP resolves them.
  *
  * `src/main.js` builds the router with
- * `createWebHistory(generateUrl('/apps/app-template'))`, so the history base
+ * `createWebHistory(generateUrl('/apps/apptemplate'))`, so the history base
  * is whatever `@nextcloud/router` produces on THIS instance. That is not a
  * fixed string:
  *
- *   - mod_rewrite configured  ->  /apps/app-template
- *   - no mod_rewrite          ->  /index.php/apps/app-template
+ *   - mod_rewrite configured  ->  /apps/apptemplate
+ *   - no mod_rewrite          ->  /index.php/apps/apptemplate
  *
  * The shared CI workflow serves Nextcloud from `php -S` with a router script
  * and no mod_rewrite, so the second form is the canonical one there.
@@ -61,7 +61,9 @@ export async function appBase(page: Page): Promise<string> {
 		await page.goto('/index.php/apps/dashboard/')
 	}
 
-	const base = await page.evaluate(() => window.OC?.generateUrl('/apps/app-template'))
+	const base = await page.evaluate(() =>
+		window.OC?.generateUrl('/apps/apptemplate'),
+	)
 
 	if (!base) {
 		// Refuse to fall back to a literal. A guessed base is exactly the
@@ -69,8 +71,8 @@ export async function appBase(page: Page): Promise<string> {
 		// content mismatch three files away from the cause.
 		throw new Error(
 			'Could not read OC.generateUrl from the page. Without it the app URL '
-			+ 'base is a guess, and a wrong base silently redirects every route to '
-			+ 'the dashboard instead of failing.',
+				+ 'base is a guess, and a wrong base silently redirects every route to '
+				+ 'the dashboard instead of failing.',
 		)
 	}
 

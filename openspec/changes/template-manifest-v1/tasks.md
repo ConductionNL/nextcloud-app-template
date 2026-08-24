@@ -7,14 +7,14 @@
 - [x] 1.3 Declare `dependencies: ["openregister"]` (the template's pre-wired default; downstream apps remove if they don't need OR).
 - [x] 1.4 Settings page declares a `version-info` rich-section widget; the `register-mapping` widget is NOT in the template manifest (per-app decision).
 - [x] 1.5 Set top-level `version` to `0.1.0` (template content version, distinct from the schema version).
-- [x] 1.6 Set `$schema` to `https://codeberg.org/Conduction/nextcloud-vue/raw/branch/main/src/schemas/app-manifest.schema.json`.
+- [x] 1.6 Set `$schema` to `https://github.com/ConductionNL/nextcloud-vue/raw/main/src/schemas/app-manifest.schema.json`.
 
 ## 2. Bootstrap pattern
 
 - [x] 2.1 Rewrite `src/main.js` to the mount-survivable Tier-4 bootstrap pattern (decidesk's `50e4df7c` + `866ff132`): import `bundledManifest from './manifest.json'` and `customComponents from './customComponents.js'`; shallow-clone `CnPageRenderer`, `defaultPageTypes`, and `customComponents` before passing to App.vue; build vue-router routes from `manifest.pages[*].{id, route}` via a `routesFromManifest()` helper.
 - [x] 2.2 Mount immediately on `#content`; do NOT wait for `loadTranslations` (NC dev installs commonly 404 the `/l10n/*.json` route).
 - [x] 2.3 Replace `src/App.vue` with `<CnAppRoot>` shell receiving `manifest`, `customComponents`, `pageTypes`, `app-id`, `translate`, and `permissions`. Provide an `objectSidebarState` Vue.observable channel. Mount a `CnObjectSidebar` in the `#sidebar` slot driven by that channel.
-- [x] 2.4 Pass `translateForApp(key)` closure that delegates to `@nextcloud/l10n`'s `translate('app-template', key)`.
+- [x] 2.4 Pass `translateForApp(key)` closure that delegates to `@nextcloud/l10n`'s `translate('apptemplate', key)`.
 
 ## 3. Custom components registry
 

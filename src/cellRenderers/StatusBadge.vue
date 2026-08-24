@@ -16,12 +16,10 @@
      appropriate appliesTo.schema + appliesTo.property.
   3. The object table will auto-bind it to matching columns.
 
-  @spec openspec/changes/scaffold-v2/specs/scaffold-v2/spec.md
+  @spec openspec/specs/scaffold-v2/spec.md#requirement-five-kind-registry-shipped
 -->
 <template>
-	<span
-		class="status-badge"
-		:class="`status-badge--${normalised}`">
+	<span class="status-badge" :class="`status-badge--${normalised}`">
 		{{ value }}
 	</span>
 </template>

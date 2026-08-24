@@ -9,9 +9,9 @@
 </p>
 
 <p align="center">
-  <a href="https://codeberg.org/Conduction/nextcloud-app-template/releases"><img src="https://img.shields.io/gitea/v/release/Conduction/nextcloud-app-template?gitea_url=https%3A%2F%2Fcodeberg.org" alt="Latest release"></a>
-  <a href="https://codeberg.org/Conduction/nextcloud-app-template/src/branch/main/LICENSE"><img src="https://img.shields.io/badge/license-EUPL--1.2-blue" alt="License"></a>
-  <a href="https://ci.codeberg.org/repos/Conduction/nextcloud-app-template"><img src="https://ci.codeberg.org/api/badges/Conduction/nextcloud-app-template/status.svg" alt="Code quality"></a>
+  <a href="https://github.com/ConductionNL/nextcloud-app-template/releases"><img src="https://img.shields.io/github/v/release/ConductionNL/nextcloud-app-template" alt="Latest release"></a>
+  <a href="https://github.com/ConductionNL/nextcloud-app-template/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-EUPL--1.2-blue" alt="License"></a>
+  <a href="https://github.com/ConductionNL/nextcloud-app-template/actions/workflows/code-quality.yml"><img src="https://github.com/ConductionNL/nextcloud-app-template/actions/workflows/code-quality.yml/badge.svg" alt="Code quality"></a>
 </p>
 
 ---
@@ -20,7 +20,7 @@ A starting point for building Nextcloud apps following ConductionNL conventions.
 
 > **Manifest-first** — pages, navigation, and dependencies are declared in `src/manifest.json`. The shell (CnAppRoot) reads the manifest at boot and renders index / detail / dashboard / settings pages without per-page Vue files. Reach for a custom Vue component only when the page is `type: "custom"`. See `openspec/architecture/` and hydra ADR-024 for the architectural rationale.
 
-> **Pre-wired for [OpenRegister](https://codeberg.org/Conduction/openregister)** — `manifest.dependencies` lists `openregister`, so CnAppRoot's dependency-check phase ensures the OR app is installed and enabled before the UI mounts. If your app does not need OpenRegister, remove the entry from `src/manifest.json`, `appinfo/info.xml`, and `openspec/app-config.json`.
+> **Pre-wired for [OpenRegister](https://github.com/ConductionNL/openregister)** — `manifest.dependencies` lists `openregister`, so CnAppRoot's dependency-check phase ensures the OR app is installed and enabled before the UI mounts. If your app does not need OpenRegister, remove the entry from `src/manifest.json`, `appinfo/info.xml`, and `openspec/app-config.json`.
 
 > **Canonical root configs** — `phpcs.xml`, `phpmd.xml`, `psalm.xml`, `phpstan.neon`, and `phpstan-bootstrap.php` in this repo are the fleet canonical. All Conduction PHP apps are expected to mirror these files byte-for-byte; per-app deviations belong in baselines (`phpstan-baseline.neon`, `psalm-baseline.xml`) not in the canonical files. Submit changes here and they propagate to the fleet via the template-sync flow — do **not** diverge per-app.
 
@@ -66,10 +66,48 @@ _Update this diagram during `/app-explore` sessions as the architecture evolves.
 
 _Data model is defined using OpenRegister schemas. See [`openspec/specs/`](openspec/specs/) for feature-level design decisions and [`openspec/architecture/`](openspec/architecture/) for architectural decisions._
 
+#### Who can read a schema
+
+Declare an `authorization` block on **every** schema. Access is decided by
+OpenRegister's RBAC groups and by nothing else — `public` is a special group
+meaning "an anonymous visitor", and `authenticated` means "any logged-in user".
+
+```jsonc
+// authenticated users only — the safe default, and what this template ships
+"authorization": { "read": ["authenticated"] }
+
+// genuinely public content
+"authorization": { "read": ["public"] }
+
+// public, but only once a condition holds — e.g. a publication that is live.
+// RBAC then answers "may they read it" and "is it ready" in one place, instead
+// of every call site having to remember the second question.
+"authorization": {
+  "read": [
+    { "group": "public", "match": { "status": "published" } },
+    "authenticated"
+  ]
+}
+
+// a named group, for role-gated data
+"authorization": { "read": ["some-group-id"] }
+```
+
+> ⚠️ **`x-openregister.publicRead` / `publicWrite` are not a thing.** Earlier
+> versions of this template shipped them and they are not part of
+> OpenRegister's schema contract — nothing reads them, so a schema marked
+> `"publicRead": false` was never protected by that line. They have been
+> removed. If you find them in an app, replace them with an `authorization`
+> block.
+
+> ⚠️ **A schema that declares nothing inherits a default**, which is not a
+> decision anyone made about your data. Declare the block even when the answer
+> is the boring one.
+
 ### Directory Structure
 
 ```
-app-template/
+apptemplate/
 ├── appinfo/                    # Nextcloud app manifest, routes, navigation
 ├── lib/                        # PHP backend
 │   ├── AppInfo/Application.php
@@ -79,7 +117,7 @@ app-template/
 │   ├── Service/SettingsService.php
 │   ├── Listener/DeepLinkRegistrationListener.php
 │   ├── Repair/InitializeSettings.php
-│   └── Settings/               # AdminSettings, app_template_register.json
+│   └── Settings/               # AdminSettings, apptemplate_register.json
 ├── templates/                  # PHP templates (SPA shells)
 ├── src/                        # Vue 3 frontend
 │   ├── manifest.json           # Pages + menu + dependencies (v2 — the source of truth)
@@ -130,7 +168,7 @@ app-template/
 | Nextcloud | 28 – 33 |
 | PHP | 8.1+ |
 | Node.js | 20+ |
-| [OpenRegister](https://codeberg.org/Conduction/openregister) | latest |
+| [OpenRegister](https://github.com/ConductionNL/openregister) | latest |
 
 ## Installation
 
@@ -146,10 +184,10 @@ app-template/
 
 ```bash
 cd /var/www/html/custom_apps
-git clone https://codeberg.org/Conduction/nextcloud-app-template.git app-template
-cd app-template
+git clone https://github.com/ConductionNL/nextcloud-app-template.git apptemplate
+cd apptemplate
 npm install && npm run build
-php occ app:enable app-template
+php occ app:enable apptemplate
 ```
 
 ## Development
@@ -209,12 +247,38 @@ canonical example.
 
 ### Renaming the app
 
-Search-and-replace `app-template` (the `<id>` from `appinfo/info.xml`)
-in: `appinfo/info.xml`, `package.json`, `openspec/app-config.json`,
+Search-and-replace `apptemplate` (the `<id>` from `appinfo/info.xml`)
+in: `appinfo/info.xml` (`<id>`, the navigation `<id>`, and the navigation
+`<route>` — the route name is `<app-id>.<controller>.<method>`),
+`lib/AppInfo/Application.php` (`APP_ID`), `lib/Sections/SettingsSection.php`
+(`getID()` and the `imagePath()` app name), `lib/Settings/AdminSettings.php`
+(`getSection()`), `lib/Listener/DeepLinkRegistrationListener.php`,
+`lib/Controller/MetricsController.php` (`METRIC_PREFIX`), `package.json`,
+`composer.json`, `phpcs.xml`, `eslint.config.js`,
+`openspec/app-config.json`, `openspec/config.yaml` (the mount path),
 `src/main.js` (the `app-id` prop, the `loadTranslations` arg, and the
 `generateUrl` base path), `src/App.vue` (the `app-id` prop and
-`translateForApp` argument), and `webpack.config.js` (the `appId`
-constant). The manifest itself does not carry the app id.
+`translateForApp` argument), the remaining `t('apptemplate', …)` call sites
+and `/apps/apptemplate/…` URLs under `src/`, the `#apptemplate-settings`
+mount id in `templates/settings/admin.php` + `src/settings.js`,
+`src/exampleWidget.js` (the dashboard widget id), `webpack.config.js` (the
+`appId` constant), `Makefile` (the `dev-link` symlink name), the
+`app-name:` / `app-id:` inputs in `.github/workflows/*.yml` and
+`.forgejo/workflows/app-tests.yml`, and `tests/` (`APP_ID`, the e2e URLs,
+`tests/bootstrap.php`). Two files are named after the id and must be
+renamed, not just edited: `lib/Settings/apptemplate_register.json` (the path
+is built as `Application::APP_ID . '_register.json'`, so a stale name makes
+the register import silently seed nothing) and
+`tests/integration/apptemplate.postman_collection.json`.
+
+Two things that are *not* the app id and must stay put: the repository name
+`nextcloud-app-template` (clone paths, remotes, `ConductionNL/…` URLs) and
+the PHP namespace `AppTemplate`, which `appinfo/info.xml` declares explicitly
+via `<namespace>` and which is therefore independent of the id.
+
+The app id must match `[a-z]+[a-z0-9_]*[a-z0-9]+` — the App Store's own
+`info.xsd` pattern. Hyphens are rejected; the `info.xml lint` CI job is what
+catches it. The manifest itself does not carry the app id.
 
 ### Manifest v2 ready
 
@@ -224,7 +288,7 @@ shapes into a single uniform `widgets[]` array with grid coordinates on every
 page type, and introduces a five-kind component registry.
 
 **Design reference:** hydra
-[ADR-036 (Universal Widget Manifest v2)](https://codeberg.org/Conduction/hydra/src/branch/development/openspec/architecture/adr-036-universal-widget-manifest.md)
+[ADR-036 (Universal Widget Manifest v2)](https://github.com/ConductionNL/hydra/blob/development/openspec/architecture/adr-036-universal-widget-manifest.md)
 
 **Migration guide** (for apps migrating from v1): `@conduction/nextcloud-vue`
 docs `migrating-to-v2.md` covers the codemod CLI and manual migration steps.
@@ -308,13 +372,13 @@ Companion (a floating assistant rendered by `CnAppRoot` from
 
 - `lib/Mcp/ExampleToolProvider.php` — the heavily-commented starting point. It
   implements `OCA\OpenRegister\Mcp\IMcpToolProvider` and exposes two trivial
-  tools: `app-template.ping` (echoes a message) and `app-template.describeApp`
+  tools: `apptemplate.ping` (echoes a message) and `apptemplate.describeApp`
   (returns the app id, version, and name).
 - `lib/AppInfo/Application.php` — registers the provider under the service
   alias `OCA\OpenRegister\Mcp\IMcpToolProvider::{appId}`; OpenRegister's
   `McpToolsService` discovers per-app providers by exactly that alias.
 - `tests/Stubs/Mcp/IMcpToolProvider.php` — a stand-in for the interface until
-  [openregister PR #1466](https://codeberg.org/Conduction/openregister/pulls/1466)
+  openregister PR #1466 (Codeberg PR number, pre-migration, not mapped to GitHub)
   merges; once the openregister app is installed alongside your app the real
   interface takes over transparently.
 - `tests/Unit/Mcp/ExampleToolProviderTest.php` — the contract test.
@@ -332,7 +396,7 @@ Companion (a floating assistant rendered by `CnAppRoot` from
    structured `['error' => ['code' => ..., 'message' => ...]]` array.
 
 References: hydra
-[ADR-034 (AI Chat Companion)](https://codeberg.org/Conduction/hydra/src/branch/development/openspec/architecture/adr-034-ai-chat-companion.md)
+[ADR-034 (AI Chat Companion)](https://github.com/ConductionNL/hydra/blob/development/openspec/architecture/adr-034-ai-chat-companion.md)
 and ADR-035; and decidesk's `OCA\Decidesk\Mcp\DecideskToolProvider` as the
 production example (five real tools, deep links, source descriptors).
 
@@ -352,7 +416,7 @@ npm run stylelint       # CSS linting
 
 ### Enable locally
 
-Nextcloud requires the app directory name to match the `<id>` in `appinfo/info.xml` (`app-template`).
+Nextcloud requires the app directory name to match the `<id>` in `appinfo/info.xml` (`apptemplate`).
 When this repo is cloned as `nextcloud-app-template`, create a relative symlink first.
 
 > **Note:** The `js/` build output is not committed. You must build the frontend before enabling the app, or the UI will be blank.
@@ -360,7 +424,7 @@ When this repo is cloned as `nextcloud-app-template`, create a relative symlink 
 ```bash
 make dev-link
 npm install && npm run build
-docker exec nextcloud php occ app:enable app-template
+docker exec nextcloud php occ app:enable apptemplate
 ```
 
 ### End-to-end tests
@@ -413,7 +477,7 @@ container, or the suite silently tests a stale bundle.
 
 The user-facing documentation site lives in [`docs/`](docs/) — a Docusaurus site built on [`@conduction/docusaurus-preset`](https://www.npmjs.com/package/@conduction/docusaurus-preset) with the brand `<DetailHero>` / `<WidgetShelf>` landing page, the journeydoc tutorial scaffold ([`docs/tutorials/`](docs/tutorials/) — user "first launch" + admin "manage settings"), and the Playwright `docs-capture` project for screenshots (hydra ADR-030).
 
-`.github/workflows/documentation.yml` deploys the site on every push to `development`: it runs `cd docs && npm ci && npm run build` and publishes to `<slug>.conduction.nl` (the template's placeholder slug is `app-template`, so `app-template.conduction.nl` — `docs/static/CNAME` carries this and is rewritten by the renaming pass). Build the site locally with:
+`.github/workflows/documentation.yml` deploys the site on every push to `development`: it runs `cd docs && npm ci && npm run build` and publishes to `<slug>.conduction.nl`. That slug is the **documentation-site** slug, not the app id — it is carried by `docs/static/CNAME` (and mirrored in `docusaurus.config.js` and the `cname:` input of `documentation.yml`), and the template's placeholder value is `app-template`, so `app-template.conduction.nl`. Rewrite it to your own docs hostname during the renaming pass; renaming the *app id* does not move it. Build the site locally with:
 
 ```bash
 cd docs
@@ -441,7 +505,7 @@ Project / spec documentation:
 
 ## Related Apps
 
-- **[OpenRegister](https://codeberg.org/Conduction/openregister)** — Object storage layer (required dependency)
+- **[OpenRegister](https://github.com/ConductionNL/openregister)** — Object storage layer (required dependency)
 
 _Add related apps here as integrations are built._
 
@@ -455,18 +519,18 @@ The `js/` build output is not committed to the repo. Run the frontend build befo
 npm install && npm run build
 ```
 
-### "Could not download app app-template" when running `occ app:enable`
+### "Could not download app apptemplate" when running `occ app:enable`
 
 Nextcloud requires the app directory name to exactly match the `<id>` in `appinfo/info.xml`. When this repo is cloned as `nextcloud-app-template`, create a symlink first:
 
 ```bash
-make dev-link   # creates apps-extra/app-template -> nextcloud-app-template
+make dev-link   # creates apps-extra/apptemplate -> nextcloud-app-template
 ```
 
 Then enable the app again:
 
 ```bash
-docker exec nextcloud php occ app:enable app-template
+docker exec nextcloud php occ app:enable apptemplate
 ```
 
 ## Support

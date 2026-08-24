@@ -42,7 +42,7 @@ target as a semantically-typed Article.
 - WHEN `DeepLinkRegistrationListener::handle()` receives the event
 - THEN the system MUST call `$event->register()` with a URL pattern that places
   the UUID as a path segment, not as a hash fragment
-  (e.g. `/apps/app-template/items/{uuid}`, not `/apps/app-template#/items/{uuid}`)
+  (e.g. `/apps/apptemplate/items/{uuid}`, not `/apps/apptemplate#/items/{uuid}`)
 - AND the registration MUST declare the `schema.org/Article` type
 
 #### Scenario: A foreign event type is dispatched

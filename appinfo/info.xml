@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
-    <id>app-template</id>
+    <id>apptemplate</id>
     <name lang="en">{APP_NAME}</name>
     <name lang="nl">{APP_NAME}</name>
     <summary lang="en">{APP_SUMMARY}</summary>
@@ -13,46 +13,60 @@
     <author mail="info@conduction.nl" homepage="https://www.conduction.nl/">Conduction</author>
     <namespace>AppTemplate</namespace>
     <documentation>
-        <user>https://codeberg.org/Conduction/nextcloud-app-template</user>
-        <admin>https://codeberg.org/Conduction/nextcloud-app-template</admin>
-        <developer>https://codeberg.org/Conduction/nextcloud-app-template</developer>
+        <user>https://github.com/ConductionNL/nextcloud-app-template</user>
+        <admin>https://github.com/ConductionNL/nextcloud-app-template</admin>
+        <developer>https://github.com/ConductionNL/nextcloud-app-template</developer>
     </documentation>
     <category>tools</category>
-    <website>https://codeberg.org/Conduction/nextcloud-app-template</website>
-    <discussion>https://codeberg.org/Conduction/nextcloud-app-template/discussions</discussion>
-    <bugs>https://codeberg.org/Conduction/nextcloud-app-template/issues</bugs>
-    <repository>https://codeberg.org/Conduction/nextcloud-app-template</repository>
+    <website>https://github.com/ConductionNL/nextcloud-app-template</website>
+    <discussion>https://github.com/ConductionNL/nextcloud-app-template/discussions</discussion>
+    <bugs>https://github.com/ConductionNL/nextcloud-app-template/issues</bugs>
+    <repository>https://github.com/ConductionNL/nextcloud-app-template</repository>
 
-    <screenshot>https://codeberg.org/Conduction/nextcloud-app-template/raw/branch/main/img/app-store.svg</screenshot>
+    <screenshot>https://raw.githubusercontent.com/ConductionNL/nextcloud-app-template/development/img/app-store.svg</screenshot>
 
+    <!-- Element order in this file is not cosmetic: appstore's info.xsd models
+         <info> and <dependencies> as xs:sequence, so a correct element in the
+         wrong position is a validation error. Inside <dependencies> the order is
+         php, database, command, lib, owncloud, nextcloud, architecture, backend;
+         at top level, repair-steps precedes settings and navigations follows it. -->
     <dependencies>
-        <nextcloud min-version="28" max-version="34"/>
         <php min-version="8.3"/>
+        <nextcloud min-version="32" max-version="34"/>
     </dependencies>
 
-    <navigations>
-        <navigation>
-            <id>app-template</id>
-            <name>App Template</name>
-            <route>app-template.dashboard.page</route>
-            <icon>app.svg</icon>
-        </navigation>
-    </navigations>
-
     <!-- @spec openspec/architecture/adr-023-action-authorization.md -->
+    <!-- <repair-steps> is itself an xs:sequence: pre-migration, post-migration,
+         live-migration, install, uninstall. <install> therefore has to come
+         LAST, after <post-migration>. The order carries no runtime meaning —
+         Nextcloud resolves these hooks by element name, not by position — so
+         this is purely what the schema requires.
+         Both hooks list the same steps on purpose: a FIRST install runs
+         <install> and skips every migration hook, while an upgrade runs
+         <post-migration> and skips <install>. Dropping either one leaves the
+         initialisation dead on one of the two paths. -->
     <repair-steps>
-        <install>
-            <step>OCA\AppTemplate\Repair\InitializeSettings</step>
-            <step>OCA\AppTemplate\Repair\InitializeActions</step>
-        </install>
         <post-migration>
             <step>OCA\AppTemplate\Repair\InitializeSettings</step>
             <step>OCA\AppTemplate\Repair\InitializeActions</step>
         </post-migration>
+        <install>
+            <step>OCA\AppTemplate\Repair\InitializeSettings</step>
+            <step>OCA\AppTemplate\Repair\InitializeActions</step>
+        </install>
     </repair-steps>
 
     <settings>
         <admin>OCA\AppTemplate\Settings\AdminSettings</admin>
         <admin-section>OCA\AppTemplate\Sections\SettingsSection</admin-section>
     </settings>
+
+    <navigations>
+        <navigation>
+            <id>apptemplate</id>
+            <name>App Template</name>
+            <route>apptemplate.dashboard.page</route>
+            <icon>app.svg</icon>
+        </navigation>
+    </navigations>
 </info>
