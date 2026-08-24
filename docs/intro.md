@@ -48,7 +48,7 @@ directory name must equal the app id — Nextcloud loads an app from
 
 ```bash
 cd /var/www/html/custom_apps
-git clone https://codeberg.org/Conduction/nextcloud-app-template.git apptemplate
+git clone https://github.com/ConductionNL/nextcloud-app-template.git apptemplate
 cd apptemplate
 npm install && npm run build
 php occ app:enable apptemplate
