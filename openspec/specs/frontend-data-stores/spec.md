@@ -21,10 +21,12 @@ Per ADR-022, template-derived apps own no database of their own — the Vue SPA
 talks to OpenRegister's object API directly through a thin Pinia store layer.
 This capability defines that store layer:
 
-- A **generic object store** (`src/store/modules/object.js`) that is configured
-  once with the OpenRegister API base URLs, then accepts the registration of
-  named object types (each mapping a logical type name to a register + schema),
-  and fetches collections of those objects on demand.
+- A **generic object store** obtained from `createObjectStore` in
+  `@conduction/nextcloud-vue` and instantiated in `src/store/store.js`. The app
+  does NOT define one of its own: per ADR-071 Decision 2 the library's factory
+  is the only generic OpenRegister object store, and per ADR-026 an app-local
+  copy drifts from the lib's action surface until a manifest-rendered page calls
+  an action that no longer exists.
 - An **app-settings store** (`src/store/modules/settings.js`) that reads and
   writes the app's own settings through the backend `GET`/`POST /api/settings`
   endpoints defined by the settings-management capability — it is the frontend
@@ -32,72 +34,82 @@ This capability defines that store layer:
 - A **boot-time initializer** (`src/store/store.js`) that wires the object store
   to OpenRegister's URLs and primes the settings store before the SPA renders.
 
-All store actions MUST degrade gracefully: a failed network request MUST be
-logged client-side and resolve to a safe empty/`null` value so that a single
-failing fetch never breaks the SPA mount (mirrors ADR-005's "log server-side,
-return safe fallback" rule on the client).
+All store actions MUST degrade gracefully: a failed network request MUST NOT
+throw out of the action, so a single failing fetch never breaks the SPA mount
+(mirrors ADR-005's "log server-side, return safe fallback" rule on the client).
+
+**Degrading is not the same as going quiet.** An action that resolves to
+`null`/`[]` on failure MUST also record the failure where a caller can see it —
+logged client-side AND exposed in store state. The earlier wording required only
+the safe value, and `null` was simultaneously the legitimate "nothing yet"
+value, so a settings endpoint returning 500 was indistinguishable from a fresh
+install for as long as anyone cared to look.
 
 ## Requirements
 
-### REQ-STORE-001: Configure the object store with OpenRegister URLs
+### REQ-STORE-001: The object store comes from the library, not from the app
 
-The object store MUST expose a `configure({ baseUrl, schemaBaseUrl })` action
-that records the OpenRegister object-API and schema-API base URLs. No object
-fetch may be attempted before the store has been configured.
+The app MUST obtain its generic OpenRegister object store from
+`createObjectStore` in `@conduction/nextcloud-vue`, instantiated once in
+`src/store/store.js` with the app's register and schema slugs. The app MUST NOT
+define its own generic object store.
 
-#### Scenario: Store is configured at boot
+Per ADR-071 Decision 2 the library's factory is the only generic object store in
+the fleet; per ADR-026 an app-local copy drifts from the lib's action surface,
+and the observed failure mode is a manifest-rendered page calling an action the
+local store never had (`fetchObject is not a function`, decidesk#162).
 
-- GIVEN a freshly created object store with empty `baseUrl`
-- WHEN `configure({ baseUrl, schemaBaseUrl })` is called with the OpenRegister object/schema API URLs
-- THEN the store MUST persist `baseUrl` and `schemaBaseUrl` in its state
-- AND subsequent `fetchObjects` calls MUST build their request URL from the stored `baseUrl`
+#### Scenario: The store is created from the library factory
 
-### REQ-STORE-002: Register named object types
+- GIVEN an app scaffolded from this template
+- WHEN `src/store/store.js` is loaded
+- THEN it MUST call `createObjectStore` imported from `@conduction/nextcloud-vue`
+- AND it MUST pass the app's `register` and `schema` slugs
+- AND the module MUST export the resulting store as `useObjectStore`
 
-The object store MUST expose a `registerObjectType(type, schema, register)`
-action that maps a logical type name to its OpenRegister `schema` + `register`
-identifiers and initialises an empty result bucket for that type. Fetching an
-unregistered type MUST be a no-op that warns rather than throwing.
+#### Scenario: No app-local generic object store exists
 
-#### Scenario: A type is registered
+- GIVEN the app's `src/store/` tree
+- WHEN it is searched for a Pinia store defining generic OpenRegister CRUD
+- THEN no module other than `store.js` MAY define one
+- AND in particular `src/store/modules/object.js` MUST NOT exist
 
-- GIVEN a configured object store
-- WHEN `registerObjectType('item', '<schemaId>', '<registerId>')` is called
-- THEN the store MUST record `{ schema, register }` under `objectTypes.item`
-- AND it MUST initialise `objects.item` to an empty array if it was unset
+### REQ-STORE-002: Object types are registered through the library's surface
 
-#### Scenario: Fetching an unregistered type
+Registering a logical type name against a register + schema, fetching
+collections, pagination, single-flight de-duplication and error surfacing are
+all the library store's responsibility. The app MUST use that surface rather
+than re-implementing any part of it.
 
-- GIVEN a configured store with no `item` type registered
-- WHEN `fetchObjects('item')` is called
-- THEN the store MUST emit a client-side warning naming the unregistered type
-- AND it MUST return an empty array without performing a network request
+This requirement deliberately does not restate the library's action names. The
+previous version of this spec pinned `configure()`, `registerObjectType()` and
+`fetchObjects()` — an API the app's own dead module had and the library store
+does not — so the spec described a module nothing imported while the code used a
+different one.
 
-### REQ-STORE-003: Fetch a collection of objects
+#### Scenario: The app needs a collection
 
-The object store MUST expose an async `fetchObjects(type, params)` action that
-issues a `GET` to the configured `baseUrl` with the registered `register` and
-`schema` as query parameters (plus any caller-supplied `params`), carrying the
-Nextcloud request token. On success it MUST store and return the result
-collection; on any failure it MUST log client-side and return an empty array,
-and it MUST clear the per-type loading flag in all cases.
+- GIVEN a store created by `createObjectStore`
+- WHEN the app needs a collection of objects
+- THEN it MUST call the library store's own collection action
+- AND it MUST NOT construct the OpenRegister request URL itself
 
-#### Scenario: Successful fetch
+### REQ-STORE-003: App code does not hand-set the request token
 
-- GIVEN a registered, configured `item` type
-- WHEN `fetchObjects('item', { limit: 10 })` resolves with HTTP 200
-- THEN the request URL MUST carry `register`, `schema`, and `limit=10` query parameters
-- AND the request MUST send the `requesttoken` header
-- AND the store MUST set `objects.item` to `data.results` (or `data` when no `results` envelope) and return it
-- AND `loading.item` MUST be cleared to `false`
+Any HTTP the app performs outside the object store MUST go through `cnFetch` or
+`cnFetchJson` from `@conduction/nextcloud-vue`. A raw `fetch()` carrying a
+hand-set `requesttoken` header is forbidden (ADR-071 Decision 1): the library
+owns the one blessed CSRF idiom, URL prefixing and error normalisation, so a
+Nextcloud-version or CSP change is one fix rather than one per app.
 
-#### Scenario: Network failure
+#### Scenario: The settings store reads the backend
 
-- GIVEN a registered type
-- WHEN the fetch rejects or returns a non-OK status
-- THEN the store MUST log the error client-side
-- AND it MUST return an empty array
-- AND `loading.item` MUST still be cleared to `false`
+- GIVEN the settings store issues `GET /api/settings`
+- WHEN the request is constructed
+- THEN it MUST be issued through `cnFetchJson`
+- AND the app MUST NOT import `getRequestToken` to build the header itself
+- AND the URL MUST be resolved with `generateUrl` so an instance served from a
+  webroot subdirectory is addressed correctly
 
 ### REQ-STORE-004: Read and write app settings from the SPA
 
@@ -105,10 +117,12 @@ The settings store MUST expose an async `fetchSettings()` action that `GET`s
 `/api/settings` and a `saveSettings(payload)` action that `POST`s a partial
 settings payload to the same endpoint, both carrying the request token. These
 are the client counterparts of the settings-management capability's REQ-CFG-001
-and REQ-CFG-002. `fetchSettings()` MUST additionally derive the
+and REQ-CFG-002. Both actions MUST be issued through `cnFetchJson`
+(REQ-STORE-003). `fetchSettings()` MUST additionally derive the
 `hasOpenRegisters` and `isAdmin` flags from the response so the UI can degrade
-gracefully (ADR-005 / REQ-CFG-004). Both actions MUST log and return `null` on
-failure rather than throwing.
+gracefully (ADR-005 / REQ-CFG-004). Both actions MUST return `null` on failure
+rather than throwing, and MUST record the failure in the store's `error` state
+so that "the request failed" is distinguishable from "there is nothing yet".
 
 #### Scenario: Settings load
 
@@ -131,18 +145,31 @@ failure rather than throwing.
 - WHEN the action handles the failure
 - THEN it MUST log the error client-side
 - AND it MUST return `null`
+- AND it MUST set `error` to the failure
 - AND `loading` MUST be reset to `false`
+
+#### Scenario: A failure is distinguishable from an empty result
+
+- GIVEN `fetchSettings()` has returned `null`
+- WHEN a caller needs to know whether the backend failed or simply had nothing
+- THEN `error` MUST be non-null if and only if the request failed
+- AND `error` MUST be cleared at the start of the next request
 
 ### REQ-STORE-005: Initialise the stores before the SPA renders
 
 The system MUST expose an async `initializeStores()` boot helper that
-configures the object store to point at OpenRegister's object/schema API URLs
-and primes the settings store with a first `fetchSettings()` call, returning
-both store handles to the caller.
+instantiates the object store and primes the settings store with a first
+`fetchSettings()` call, returning both store handles to the caller.
+
+The library store is configured by the `register`/`schema` passed to
+`createObjectStore` at module load, so there is no separate `configure()` step.
+The previous wording required one, describing the app-local store this template
+no longer ships.
 
 #### Scenario: Boot sequence
 
 - WHEN `initializeStores()` is awaited during SPA bootstrap
-- THEN it MUST call `objectStore.configure()` with the OpenRegister `/api/objects` and `/api/schemas` URLs
+- THEN it MUST instantiate the object store created by `createObjectStore`
 - AND it MUST await `settingsStore.fetchSettings()` so the first render has settings available
 - AND it MUST return `{ settingsStore, objectStore }`
+- AND it MUST NOT fail the boot when `fetchSettings()` resolves to `null`
