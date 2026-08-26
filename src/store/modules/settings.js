@@ -4,7 +4,8 @@ import { generateUrl } from '@nextcloud/router'
 import { defineStore } from 'pinia'
 import logger from '../../logger.js'
 
-/** The app's settings endpoint, resolved through Nextcloud's router.
+/**
+ * The app's settings endpoint, resolved through Nextcloud's router.
  *
  * `generateUrl` rather than a bare path because it is the only thing that
  * knows the instance's webroot — an install under `https://host/nextcloud`
@@ -47,7 +48,12 @@ export const useSettingsStore = defineStore('settings', {
 	getters: {
 		getSettings: (state) => state.settings,
 		getIsAdmin: (state) => state.isAdmin,
-		/** True when the last request failed. */
+		/**
+		 * True when the last request failed.
+		 *
+		 * @param {object} state The store state.
+		 * @return {boolean} Whether the last request failed.
+		 */
 		hasError: (state) => state.error !== null,
 	},
 
