@@ -40,7 +40,10 @@
 
 let failures = 0
 const ok = (m) => console.log(`  ok   — ${m}`)
-const bad = (m) => { console.log(`  FAIL — ${m}`); failures += 1 }
+function bad(m) {
+	console.log(`  FAIL — ${m}`)
+	failures += 1
+}
 
 // ---------------------------------------------------------------------------
 // A minimal stand-in for the store: the same state shape and the same action
@@ -58,7 +61,9 @@ function makeStore(fetchJson) {
 		isAdmin: false,
 		error: null,
 
-		get hasError() { return store.error !== null },
+		get hasError() {
+			return store.error !== null
+		},
 
 		async fetchSettings() {
 			store.loading = true
@@ -99,18 +104,33 @@ function makeStore(fetchJson) {
 }
 
 const resolving = (value) => async () => value
-const rejecting = (err) => async () => { throw err }
+function rejecting(err) {
+	return async () => {
+		throw err
+	}
+}
 
 async function main() {
 	// ---- arm 1: a successful read populates state and clears error ---------
 	{
-		const store = makeStore(resolving({ openregisters: true, isAdmin: true, foo: 'bar' }))
+		const store = makeStore(
+			resolving({ openregisters: true, isAdmin: true, foo: 'bar' }),
+		)
 		const out = await store.fetchSettings()
-		if (out?.foo === 'bar' && store.hasOpenRegisters === true
-			&& store.isAdmin === true && store.error === null && store.loading === false) {
-			ok('a successful read populates settings, derives the flags, and clears error')
+		if (
+			out?.foo === 'bar'
+			&& store.hasOpenRegisters === true
+			&& store.isAdmin === true
+			&& store.error === null
+			&& store.loading === false
+		) {
+			ok(
+				'a successful read populates settings, derives the flags, and clears error',
+			)
 		} else {
-			bad(`successful read left state wrong: ${JSON.stringify({ out, e: store.error, l: store.loading })}`)
+			bad(
+				`successful read left state wrong: ${JSON.stringify({ out, e: store.error, l: store.loading })}`,
+			)
 		}
 	}
 
@@ -119,9 +139,15 @@ async function main() {
 		const store = makeStore(rejecting(new Error('boom')))
 		let threw = false
 		let out
-		try { out = await store.fetchSettings() } catch { threw = true }
+		try {
+			out = await store.fetchSettings()
+		} catch {
+			threw = true
+		}
 		if (!threw && out === null && store.loading === false) {
-			ok('a failed read resolves to null rather than throwing, and clears loading')
+			ok(
+				'a failed read resolves to null rather than throwing, and clears loading',
+			)
 		} else {
 			bad(`failed read threw (${threw}) or returned ${JSON.stringify(out)}`)
 		}
@@ -147,9 +173,13 @@ async function main() {
 		const broken = makeStore(rejecting(new Error('500')))
 		await broken.fetchSettings()
 		if (empty.error === null && broken.error !== null) {
-			ok('"the backend had nothing" and "the backend failed" are distinguishable')
+			ok(
+				'"the backend had nothing" and "the backend failed" are distinguishable',
+			)
 		} else {
-			bad(`indistinguishable: empty.error=${String(empty.error)} broken.error=${String(broken.error)}`)
+			bad(
+				`indistinguishable: empty.error=${String(empty.error)} broken.error=${String(broken.error)}`,
+			)
 		}
 	}
 
@@ -161,7 +191,9 @@ async function main() {
 			return { ok: true }
 		})
 		await store.fetchSettings()
-		if (store.error === null) { bad('precondition: error should be set after a failure'); }
+		if (store.error === null) {
+			bad('precondition: error should be set after a failure')
+		}
 		mode = 'succeed'
 		await store.fetchSettings()
 		if (store.error === null) {
@@ -176,11 +208,24 @@ async function main() {
 		const store = makeStore(rejecting(new Error('nope')))
 		let threw = false
 		let out
-		try { out = await store.saveSettings({ register: 'x' }) } catch { threw = true }
-		if (!threw && out === null && store.error !== null && store.loading === false) {
-			ok('a failed save resolves to null, records the error, and clears loading')
+		try {
+			out = await store.saveSettings({ register: 'x' })
+		} catch {
+			threw = true
+		}
+		if (
+			!threw
+			&& out === null
+			&& store.error !== null
+			&& store.loading === false
+		) {
+			ok(
+				'a failed save resolves to null, records the error, and clears loading',
+			)
 		} else {
-			bad(`failed save behaved wrongly: threw=${threw} out=${JSON.stringify(out)} err=${String(store.error)}`)
+			bad(
+				`failed save behaved wrongly: threw=${threw} out=${JSON.stringify(out)} err=${String(store.error)}`,
+			)
 		}
 	}
 
