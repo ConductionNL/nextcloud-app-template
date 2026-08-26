@@ -20,8 +20,9 @@
     "check:manifest-v2": "node tests/manifest-v2.spec.js",
     "check:register": "node tests/validate-register.js",
     "check:registry": "node tests/registry.spec.js",
+    "check:settings-store": "node tests/settings-store.spec.js",
     "check:json-strict": "node tests/validate-json-strict.js",
-    "check:specs": "npm run check:json-strict && npm run check:manifest-v2 && npm run check:register && npm run check:registry",
+    "check:specs": "npm run check:json-strict && npm run check:manifest-v2 && npm run check:register && npm run check:registry && npm run check:settings-store",
     "prepare": "git config core.hooksPath .githooks || true"
   },
   "browserslist": [
@@ -31,7 +32,7 @@
   "dependencies": {
     "@babel/core": "^7.29.0",
     "@babel/preset-env": "^7.29.5",
-    "@conduction/nextcloud-vue": "^2.3.0",
+    "@conduction/nextcloud-vue": "^2.16.0",
     "@nextcloud/auth": "^2.5.0",
     "@nextcloud/axios": "~2.5.2",
     "@nextcloud/capabilities": "^1.2.1",
