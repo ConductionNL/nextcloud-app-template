@@ -8,9 +8,12 @@
  * @category Repair
  * @package  OCA\AppTemplate\Repair
  *
- * @author    Conduction Development Team <dev@conductio.nl>
- * @copyright 2024 Conduction B.V.
+ * @author    Conduction Development Team <info@conduction.nl>
+ * @copyright 2026 Conduction B.V.
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ * SPDX-License-Identifier: EUPL-1.2
  *
  * @version GIT: <git-id>
  *
@@ -61,6 +64,8 @@ class InitializeSettings implements IRepairStep
      * @param IOutput $output The output interface for progress reporting
      *
      * @return void
+     *
+     * @spec openspec/specs/configuration-initialization/spec.md#REQ-INIT-002
      */
     public function run(IOutput $output): void
     {
@@ -77,7 +82,7 @@ class InitializeSettings implements IRepairStep
         }
 
         try {
-            $result = $this->settingsService->loadConfiguration(force: true);
+            $result = $this->settingsService->loadConfiguration(force: false);
 
             if ($result['success'] === true) {
                 $version = ($result['version'] ?? 'unknown');
