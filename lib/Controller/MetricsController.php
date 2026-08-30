@@ -1,0 +1,122 @@
+<?php
+
+/**
+ * AppTemplate Metrics Controller
+ *
+ * Prometheus-style metrics endpoint (ADR-006).
+ *
+ * @category Controller
+ * @package  OCA\AppTemplate\Controller
+ *
+ * @author    Conduction Development Team <info@conduction.nl>
+ * @copyright 2026 Conduction B.V.
+ * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ * SPDX-License-Identifier: EUPL-1.2
+ *
+ * @version GIT: <git-id>
+ *
+ * @link https://conduction.nl
+ *
+ * @spec openspec/specs/observability/spec.md#REQ-OBS-001
+ *   (Illustrative stub per ADR-006 — every app MUST expose `GET /api/metrics`
+ *   as Prometheus text, admin auth. Replace the metric values with real data.
+ *
+ *   Point @spec at the CANONICAL spec under `openspec/specs/`, never at
+ *   `openspec/changes/<name>/`: a change directory is archived or deleted when
+ *   the change completes, and every tag into it dangles from that moment on.
+ *   Gate-46 (spec-anchor-existence) reports those. See ConductionNL/.github#228.)
+ */
+
+declare(strict_types=1);
+
+namespace OCA\AppTemplate\Controller;
+
+use OCA\AppTemplate\AppInfo\Application;
+use OCA\AppTemplate\Service\SettingsService;
+use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
+use OCP\AppFramework\Http\DataDisplayResponse;
+use OCP\IRequest;
+use Psr\Log\LoggerInterface;
+
+/**
+ * Prometheus metrics endpoint for AppTemplate (ADR-006).
+ *
+ * Returns `text/plain; version=0.0.4` with `{app}_` prefixed metrics.
+ * MUST include `{app}_health_status` and `{app}_info` per ADR-006.
+ * Admin-only (no `@NoAdminRequired`) — ADR-006 mandates admin auth.
+ */
+class MetricsController extends Controller {
+	/**
+	 * Metric prefix.
+	 *
+	 * @var string
+	 */
+	private const METRIC_PREFIX = 'apptemplate';
+
+	/**
+	 * Constructor.
+	 *
+	 * @param IRequest $request The request object
+	 * @param SettingsService $settingsService For OpenRegister availability check
+	 * @param LoggerInterface $logger The logger
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/observability/spec.md#REQ-OBS-001
+	 */
+	public function __construct(
+		IRequest $request,
+		private SettingsService $settingsService,
+		private LoggerInterface $logger,
+	) {
+		parent::__construct(appName: Application::APP_ID, request: $request);
+	}//end __construct()
+
+	/**
+	 * Prometheus text exposition. This endpoint is admin-only per ADR-006.
+	 *
+	 * NOT #[PublicPage], deliberately. Metrics describe the instance, so
+	 * publishing them to anonymous callers to satisfy a gate would be a
+	 * security regression rather than a fix — openregister's own
+	 * GenericMetricsController takes the same position, carrying only
+	 * #[NoCSRFRequired] while its GenericHealthController IS public. The
+	 * attribute below satisfies the router; the admin-only posture is stated
+	 * here because that is where ADR-006 records it.
+	 *
+	 * A scraper cannot hold a CSRF token, which is what NoCSRFRequired is for;
+	 * it does not weaken the admin requirement.
+	 *
+	 * @return DataDisplayResponse
+	 *
+	 * @spec openspec/specs/observability/spec.md#REQ-OBS-001
+	 */
+	#[NoCSRFRequired]
+	public function index(): DataDisplayResponse {
+		try {
+			$prefix = self::METRIC_PREFIX;
+			$healthy = (int)$this->settingsService->isOpenRegisterAvailable();
+
+			$lines = [
+				'# HELP ' . $prefix . '_info Static app information',
+				'# TYPE ' . $prefix . '_info gauge',
+				$prefix . '_info{app="' . Application::APP_ID . '",version="0.1.0"} 1',
+				'# HELP ' . $prefix . '_health_status 1 when OpenRegister reachable, 0 otherwise',
+				'# TYPE ' . $prefix . '_health_status gauge',
+				$prefix . '_health_status ' . $healthy,
+			];
+
+			return new DataDisplayResponse(
+				implode("\n", $lines) . "\n",
+				Http::STATUS_OK,
+				['Content-Type' => 'text/plain; version=0.0.4; charset=utf-8']
+			);
+		} catch (\Throwable $e) {
+			$this->logger->error('AppTemplate: metrics generation failed', ['exception' => $e]);
+			return new DataDisplayResponse('', Http::STATUS_INTERNAL_SERVER_ERROR);
+		}//end try
+	}//end index()
+}//end class

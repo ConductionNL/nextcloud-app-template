@@ -14,14 +14,20 @@ enable-newman: true
 
 ```bash
 npm install -g newman
-newman run tests/integration/app-template.postman_collection.json \
+newman run tests/integration/apptemplate.postman_collection.json \
   --env-var base_url=http://nextcloud.local \
   --env-var admin_user=admin \
   --env-var admin_password=admin
 ```
 
 The variable names (`base_url`, `admin_user`, `admin_password`) match what the CI workflow passes.
-In CI the server runs on `http://localhost:8080` (PHP built-in server); locally use `http://nextcloud.local`.
+
+`base_url` has **no default** — you must pass `--env-var base_url=...`. It used to
+default to `http://localhost:8080`, which on a developer machine is the *shared*
+Nextcloud dev container, so a local `newman run` quietly created fixtures and fired
+failed logins inside an instance other people were using. In CI the ephemeral PHP
+built-in server is on `:8080` and the workflow passes it explicitly; locally, point
+at your own disposable instance (e.g. `http://localhost:8096`) or `http://nextcloud.local`.
 
 ## Structure
 

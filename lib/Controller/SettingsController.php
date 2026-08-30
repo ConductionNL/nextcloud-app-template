@@ -8,9 +8,12 @@
  * @category Controller
  * @package  OCA\AppTemplate\Controller
  *
- * @author    Conduction Development Team <dev@conductio.nl>
- * @copyright 2024 Conduction B.V.
+ * @author    Conduction Development Team <info@conduction.nl>
+ * @copyright 2026 Conduction B.V.
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ *
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ * SPDX-License-Identifier: EUPL-1.2
  *
  * @version GIT: <git-id>
  *
@@ -23,74 +26,95 @@ namespace OCA\AppTemplate\Controller;
 
 use OCA\AppTemplate\AppInfo\Application;
 use OCA\AppTemplate\Service\SettingsService;
+use OCA\AppTemplate\Settings\AdminSettings;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IRequest;
 
 /**
  * Controller for managing AppTemplate application settings.
  */
-class SettingsController extends Controller
-{
-    /**
-     * Constructor for the SettingsController.
-     *
-     * @param IRequest        $request         The request object
-     * @param SettingsService $settingsService The settings service
-     *
-     * @return void
-     */
-    public function __construct(
-        IRequest $request,
-        private SettingsService $settingsService,
-    ) {
-        parent::__construct(appName: Application::APP_ID, request: $request);
-    }//end __construct()
+class SettingsController extends Controller {
+	/**
+	 * Constructor for the SettingsController.
+	 *
+	 * @param IRequest $request The request object
+	 * @param SettingsService $settingsService The settings service
+	 *
+	 * @return void
+	 */
+	public function __construct(
+		IRequest $request,
+		private SettingsService $settingsService,
+	) {
+		parent::__construct(appName: Application::APP_ID, request: $request);
+	}//end __construct()
 
-    /**
-     * Retrieve all current settings.
-     *
-     * @NoAdminRequired
-     *
-     * @return JSONResponse
-     */
-    public function index(): JSONResponse
-    {
-        return new JSONResponse(
-            $this->settingsService->getSettings()
-        );
-    }//end index()
+	/**
+	 * Retrieve all current settings.
+	 *
+	 * Admin-sensitive fields (register binding) are stripped for non-admin users
+	 * so the register UUID is not exposed to regular authenticated users.
+	 *
+	 * @NoAdminRequired
+	 *
+	 * @return JSONResponse
+	 *
+	 * @spec openspec/specs/settings-management/spec.md#REQ-CFG-001
+	 */
+	public function index(): JSONResponse {
+		$settings = $this->settingsService->getSettings();
+		$isAdmin = ($settings['isAdmin'] ?? false);
 
-    /**
-     * Update settings with provided data.
-     *
-     * @return JSONResponse
-     */
-    public function create(): JSONResponse
-    {
-        $data   = $this->request->getParams();
-        $config = $this->settingsService->updateSettings($data);
+		if ($isAdmin === false) {
+			unset($settings['register']);
+		}
 
-        return new JSONResponse(
-            [
-                'success' => true,
-                'config'  => $config,
-            ]
-        );
-    }//end create()
+		return new JSONResponse($settings);
+	}//end index()
 
-    /**
-     * Re-import the configuration from app_template_register.json.
-     *
-     * Forces a fresh import regardless of version, auto-configuring
-     * all schema and register IDs from the import result.
-     *
-     * @return JSONResponse
-     */
-    public function load(): JSONResponse
-    {
-        $result = $this->settingsService->loadConfiguration(force: true);
+	/**
+	 * Update settings with provided data.
+	 *
+	 * Admin-only, and now says so. This method writes app configuration and
+	 * carried no auth attribute at all, so its protection came entirely from
+	 * Nextcloud's admin-required default — correct, but invisible to the
+	 * router, to an audit and to a reader. index() above is deliberately
+	 * @NoAdminRequired and strips admin-sensitive fields; the WRITE is not.
+	 *
+	 * @return JSONResponse
+	 *
+	 * @spec openspec/specs/settings-management/spec.md#REQ-CFG-002
+	 */
+	#[AuthorizedAdminSetting(AdminSettings::class)]
+	public function create(): JSONResponse {
+		$data = $this->request->getParams();
+		$config = $this->settingsService->updateSettings($data);
 
-        return new JSONResponse($result);
-    }//end load()
+		return new JSONResponse(
+			[
+				'success' => true,
+				'config' => $config,
+			]
+		);
+	}//end create()
+
+	/**
+	 * Re-import the configuration from apptemplate_register.json.
+	 *
+	 * Forces a fresh import regardless of version, auto-configuring
+	 * all schema and register IDs from the import result.
+	 *
+	 * @NoCSRFRequired
+	 *
+	 * @return JSONResponse
+	 *
+	 * @spec openspec/specs/settings-management/spec.md#REQ-CFG-003
+	 */
+	public function load(): JSONResponse {
+		$result = $this->settingsService->reloadConfiguration();
+
+		return new JSONResponse($result);
+	}//end load()
 }//end class

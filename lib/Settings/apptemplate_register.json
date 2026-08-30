@@ -1,0 +1,51 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "App Template Register",
+    "description": "Register containing all schemas for the App Template application.",
+    "version": "0.1.0"
+  },
+  "x-openregister": {
+    "type": "application",
+    "app": "apptemplate",
+    "openregister": "^v0.2.10",
+    "description": "App Template — replace with your app description",
+    "rbac": true,
+    "multitenancy": true
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "example": {
+        "slug": "example",
+        "icon": "FileDocumentOutline",
+        "version": "0.1.0",
+        "title": "Example",
+        "description": "Example schema — replace with your app's actual schemas. NOTE the `authorization` block below: declare one on EVERY schema you add. A schema that declares none inherits whatever OpenRegister's default happens to be, which is not a decision anyone made about your data.",
+        "type": "object",
+        "required": [
+          "title"
+        ],
+        "authorization": {
+          "read": [
+            "authenticated"
+          ]
+        },
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "description": "The title of the example object",
+            "example": "My example"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "An optional description",
+            "example": "This is an example"
+          }
+        }
+      }
+    }
+  }
+}

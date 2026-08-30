@@ -28,7 +28,18 @@
         "Settings saved successfully": "Instellingen succesvol opgeslagen",
         "Saving...": "Opslaan...",
         "This app needs OpenRegister to store and manage data. Please install OpenRegister from the app store to get started.": "Deze app heeft OpenRegister nodig om gegevens op te slaan en te beheren. Installeer OpenRegister via de app store om te beginnen.",
-        "User settings will appear here in a future update.": "Gebruikersinstellingen verschijnen hier in een toekomstige update."
+        "User settings will appear here in a future update.": "Gebruikersinstellingen verschijnen hier in een toekomstige update.",
+        "app-availability.title": "Vereiste applicatie niet beschikbaar",
+        "app-availability.description": "Deze applicatie vereist dat OpenRegister is geïnstalleerd en ingeschakeld.",
+        "app-availability.action": "OpenRegister installeren",
+        "Custom example component": "Custom example component",
+        "Items": "Items",
+        "Item": "Item",
+        "Replace the body of this component with whatever bespoke behaviour your page needs — realtime UI, vendor integrations, anything that does not fit the built-in page types.": "Replace the body of this component with whatever bespoke behaviour your page needs — realtime UI, vendor integrations, anything that does not fit the built-in page types.",
+        "This is the canonical example of a custom-type page in the manifest renderer pattern. It is rendered when a manifest page declares `type: \"custom\"` and `component: \"CustomExample\"`.": "This is the canonical example of a custom-type page in the manifest renderer pattern. It is rendered when a manifest page declares `type: \"custom\"` and `component: \"CustomExample\"`.",
+        "Version Information": "Version Information",
+        "Information about the current installation.": "Information about the current installation.",
+        "items": "items"
     },
     "plurals": ""
 }

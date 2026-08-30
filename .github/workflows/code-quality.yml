@@ -2,7 +2,46 @@ name: Code Quality
 
 on:
   push:
-    branches: [main, development, feature/**, bugfix/**, hotfix/**]
+    # DEFAULT BRANCHES ONLY. `pull_request` below carries every other branch.
+    #
+    # This was an allow-list of branch prefixes, and that was a gate with a
+    # SILENT hole: a branch matching nothing got no CI at all, and its last
+    # visible status was whatever it inherited — indistinguishable, on every
+    # dashboard, from a branch that passed. Two live examples, both found
+    # 2026-08-14: `perf/**` was uncovered in openconnector, where a merge
+    # carrying unresolved conflict markers and 84 failing tests was pushed and
+    # nothing ran; and `feat/**` was uncovered in openregister, because the
+    # list said `feature/**`.
+    #
+    # The comment that stood here said adding prefixes was not the durable fix,
+    # and that the durable fix was to let the pull_request trigger gate it.
+    # THIS IS THAT CHANGE.
+    #
+    # What forced it now: a push to a branch with an open PR ran the SAME 34
+    # jobs TWICE on the same commit. `concurrency` cannot dedupe them — the
+    # group is suffixed by event name deliberately (.github#540: a
+    # default-branch push carries jobs a PR run does not, and a dispatch must
+    # not be cancellable by a standing release PR), so the two events sit in
+    # different lanes BY DESIGN and both run to completion. Measured fleet-wide
+    # 2026-08-25..27, 659 of 2,106 Code Quality runs were that duplicate — 31%
+    # of the fleet's most expensive workflow, re-deciding a commit another run
+    # was already deciding. The account ceiling is 60 concurrent jobs (Team
+    # plan); the fleet was measured at 53 running with 1,528 jobs queued behind
+    # them, the oldest run 7 hours old and not yet started.
+    #
+    # NO BRANCH LOSES ITS FLOOR. merge-hygiene.yml runs on `'**'` — every
+    # branch anyone pushes, no prefix list to forget — and it is the check
+    # `development` actually requires. That is the smoke alarm; this workflow
+    # is the fire brigade and belongs on the PR. Of 668 feature-branch push
+    # runs in that window, only NINE were on a branch with no PR run beside
+    # them.
+    #
+    # The default branches STAY: their push runs are not duplicates, they are
+    # the only carrier of Coverage Baseline Check, SBOM and Features Extract,
+    # none of which run on a pull_request event.
+    branches:
+      - main
+      - development
   pull_request:
     branches: [main, master, development, beta]
   workflow_dispatch:
@@ -11,10 +50,17 @@ jobs:
   quality:
     uses: ConductionNL/.github/.github/workflows/quality.yml@main
     with:
-      app-name: app-template
+      app-name: apptemplate
       php-version: "8.3"
       php-test-versions: '["8.3", "8.4"]'
-      nextcloud-test-refs: '["stable31", "stable32", "stable33"]'
+      # The whole range `appinfo/info.xml` declares (min-version="32",
+      # max-version="34"), not just its top. With only `stable34` listed, 32 and
+      # 33 were advertised as supported and tested by nothing.
+      # `stable34` MUST stay FIRST: newman, playwright and journeydoc-capture
+      # each read `fromJSON(inputs.nextcloud-test-refs)[0]` as their single
+      # server, so element 0 is the ref those legs run against — it has to be
+      # the newest supported release, not whichever ref happens to sort first.
+      nextcloud-test-refs: '["stable34", "stable32", "stable33"]'
       enable-psalm: true
       enable-phpstan: true
       enable-phpmetrics: true
@@ -22,6 +68,87 @@ jobs:
       enable-eslint: true
       enable-phpunit: true
       enable-newman: true
-      # additional-apps: '[]'  # Add app dependencies here if needed, e.g.:
-      # additional-apps: '[{"repo":"ConductionNL/openregister","app":"openregister","ref":"main"}]'
+      # `src/manifest.json` declares `"dependencies": ["openregister"]`, and
+      # nc-vue's CnAppRoot honours that at runtime: when a declared dependency
+      # app is not enabled it renders the "Required apps are missing" gate
+      # INSTEAD of the router outlet. That gate has no <main>, no
+      # `#app-navigation-vue`, and no `.cn-widget-wrapper` — so on a bare CI
+      # Nextcloud every app-shell assertion fails with "element(s) not found"
+      # while the app itself is behaving exactly as designed. The app mounts
+      # fine (the CnAppRoot / manifest-prop test passes); it simply refuses to
+      # render an app whose backing store is absent.
+      #
+      # So the dependency has to exist in the e2e instance, not be asserted
+      # around. Checked out and `occ app:enable`d by the shared workflow.
+      additional-apps: '[{"repo":"ConductionNL/openregister","app":"openregister","ref":"main"}]'
       enable-sbom: true
+      # tests/e2e/app-shell.spec.ts is small (7 tests) but every one of them
+      # exists because the Vue 2 -> Vue 3 migration can break it SILENTLY:
+      # a failed `createApp().mount()` leaves the server-rendered container in
+      # place, an unregistered icon paints nothing rather than a fallback,
+      # a tree-shaken widget registration renders `.cn-unknown-widget` with an
+      # empty console, and Vue Router 4's dropped `path: '*'` leaves <main>
+      # blank with no 404. None of those produce an error a unit test or a
+      # build could see — they only differ from "working" under a browser.
+      #
+      # This is the app every Conduction app is scaffolded from, so a silent
+      # break here propagates to the whole fleet on the next `app-create`.
+      #
+      # `playwright-test-path` stays at its default (`tests/e2e`); the root
+      # `playwright.config.ts` is used, whose `chromium` project depends on the
+      # `setup` project for auth and testIgnores the journeydoc capture spec.
+      enable-playwright: true
+
+      # ── Frontend Check legs ──────────────────────────────────────────────
+      # `frontend-checks` defaults to `[]`, and an empty list means the shared
+      # workflow emits NO "Frontend Check" job at all — so this repo's validator
+      # family ran nowhere while the run still looked complete. That matters
+      # more here than anywhere else: this repo is the template every new
+      # Conduction app is scaffolded from, so a validator that is dark here is
+      # dark in every app created from it.
+      # `check:specs` is the aggregate (json-strict + manifest-v2 + register +
+      # registry), listed as ONE leg rather than four because each leg is a
+      # fresh job with its own checkout + `npm ci`. `check:manifest` is separate:
+      # it is not part of that aggregate.
+      # Measured on this tree before enabling: `check:specs` PASSES,
+      # `check:manifest` FAILS (`pages[4].type: "roadmap" not in v1.1 enum`).
+      #
+      # `format` (prettier --check) is listed here because the shared workflow
+      # has NO prettier job of its own — it runs eslint and stylelint only.
+      # Without this leg, `npm run format` would take effect solely on a
+      # developer's keystrokes and the repo would drift straight back out of
+      # prettier format between merges, which is precisely the failure mode
+      # that made the old inert `.prettierrc` worth deleting.
+      frontend-checks: '["check:specs", "check:manifest", "format"]'
+
+      # ── Coverage ratchet ─────────────────────────────────────────────────
+      # `enable-coverage-guard` defaults to FALSE, which is why both
+      # "Coverage Baseline Protection" and "Coverage Baseline Check" have only
+      # ever reported `skipped`. It needs two inputs this repo did not have,
+      # both added in this commit: `scripts/coverage-guard.php` (byte-identical
+      # to openregister's) and `.coverage-baseline` = 23.55, this repo's own
+      # measured coverage (81 of 344 statements) read from clover.xml in the
+      # `coverage-report` artifact of run 30911186142.
+      enable-coverage-guard: true
+
+      # ── Hydra mechanical gates ───────────────────────────────────────────
+      # `enable-hydra-gates` defaults to FALSE, so this tier has never executed
+      # here — the job reported `skipped`, which the Quality Report renders
+      # identically to a pass. Again, this is the scaffold template: a gate that
+      # is off here is off in every app generated from it.
+      # `enable-axe` deliberately NOT set: a vanilla Nextcloud 34 already carries
+      # serious/critical violations from core's own UI.
+      #
+      # No `hydra-gates-ref` here on purpose — and because this is the scaffold
+      # template, that absence is what every generated app inherits. The shared
+      # workflow defaults the input to @main, and this workflow is itself
+      # consumed at @main, so the two sides move together and a gate fix reaches
+      # this repo (and its descendants) without a commit in this repo. A pin is
+      # a silent expiry date: 22 repos sat on v1.0.1 and 16 gates were dead
+      # fleet-wide while every one reported PASS (.github#159), and a default
+      # flipped at @main later reached those old runners and made them red on
+      # gates they had no subject matter for (.github#173).
+      # To hold one app still for a specific reason, set the input explicitly
+      # there and say why — it is still honoured. To roll back for everyone,
+      # revert on ConductionNL/.github main.
+      enable-hydra-gates: true
