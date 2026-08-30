@@ -1,0 +1,21 @@
+OC.L10N.register(
+    "apptemplate",
+    {
+        "Custom example component": "Mukautettu esimerkkikomponentti",
+        "Dashboard": "Kojelauta",
+        "Documentation": "Dokumentaatio",
+        "Items": "Kohteet",
+        "Item": "Kohde",
+        "Open items": "Avoimet kohteet",
+        "Replace the body of this component with whatever bespoke behaviour your page needs — realtime UI, vendor integrations, anything that does not fit the built-in page types.": "Korvaa tämän komponentin runko millä tahansa räätälöidyllä toiminnallisuudella, jota sivusi tarvitsee — reaaliaikainen käyttöliittymä, toimittajaintegraatiot tai mikä tahansa, joka ei sovi sisäänrakennettuihin sivutyyppeihin.",
+        "Settings": "Asetukset",
+        "This is the canonical example of a custom-type page in the manifest renderer pattern. It is rendered when a manifest page declares `type: \"custom\"` and `component: \"CustomExample\"`.": "Tämä on kanoninen esimerkki mukautetun tyypin sivusta manifest-renderöintimallissa. Se renderöidään, kun manifest-sivu määrittää `type: \"custom\"` ja `component: \"CustomExample\"`.",
+        "Version Information": "Versiotiedot",
+        "Information about the current installation.": "Tietoja nykyisestä asennuksesta.",
+        "items": "kohdetta",
+        "app-availability.title": "Required application unavailable",
+        "app-availability.description": "This application requires OpenRegister to be installed and enabled.",
+        "app-availability.action": "Install OpenRegister"
+    },
+    "nplurals=2; plural=(n != 1);"
+)

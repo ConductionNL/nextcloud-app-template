@@ -1,0 +1,21 @@
+OC.L10N.register(
+    "apptemplate",
+    {
+        "Custom example component": "Власний приклад компонента",
+        "Dashboard": "Інформаційна панель",
+        "Documentation": "Документація",
+        "Items": "Елементи",
+        "Item": "Елемент",
+        "Open items": "Відкриті елементи",
+        "Replace the body of this component with whatever bespoke behaviour your page needs — realtime UI, vendor integrations, anything that does not fit the built-in page types.": "Замініть тіло цього компонента будь-якою власною поведінкою, яку потребує ваша сторінка — інтерфейс у реальному часі, інтеграції з постачальниками, усе, що не вписується у вбудовані типи сторінок.",
+        "Settings": "Налаштування",
+        "This is the canonical example of a custom-type page in the manifest renderer pattern. It is rendered when a manifest page declares `type: \"custom\"` and `component: \"CustomExample\"`.": "Це канонічний приклад сторінки власного типу в шаблоні відображувача маніфесту. Вона відображається, коли сторінка маніфесту оголошує `type: \"custom\"` та `component: \"CustomExample\"`.",
+        "Version Information": "Інформація про версію",
+        "Information about the current installation.": "Інформація про поточну інсталяцію.",
+        "items": "елементи",
+        "app-availability.title": "Required application unavailable",
+        "app-availability.description": "This application requires OpenRegister to be installed and enabled.",
+        "app-availability.action": "Install OpenRegister"
+    },
+    "nplurals=2; plural=(n != 1);"
+)
