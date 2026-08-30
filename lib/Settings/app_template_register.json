@@ -9,7 +9,9 @@
     "type": "application",
     "app": "app-template",
     "openregister": "^v0.2.10",
-    "description": "App Template — replace with your app description"
+    "description": "App Template — replace with your app description",
+    "rbac": true,
+    "multitenancy": true
   },
   "paths": {},
   "components": {
@@ -24,6 +26,10 @@
         "required": [
           "title"
         ],
+        "x-openregister": {
+          "publicRead": false,
+          "publicWrite": false
+        },
         "properties": {
           "title": {
             "type": "string",

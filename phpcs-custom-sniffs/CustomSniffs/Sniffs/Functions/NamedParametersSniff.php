@@ -1,4 +1,5 @@
 <?php
+// SPDX-License-Identifier: EUPL-1.2
 /**
  * Enforce named parameters for all calls to internal (our own) code.
  *

@@ -1,5 +1,7 @@
+// SPDX-License-Identifier: EUPL-1.2
 import { defineStore } from 'pinia'
 import { generateUrl } from '@nextcloud/router'
+import { getRequestToken } from '@nextcloud/auth'
 
 export const useSettingsStore = defineStore('settings', {
 	state: () => ({
@@ -15,11 +17,17 @@ export const useSettingsStore = defineStore('settings', {
 	},
 
 	actions: {
+		/**
+		 * Read the app's settings from the backend `GET /api/settings`.
+		 *
+		 * @spec openspec/specs/frontend-data-stores/spec.md#REQ-STORE-004
+		 * @return {Promise<object|null>} The settings object, or null on failure.
+		 */
 		async fetchSettings() {
 			this.loading = true
 			try {
 				const response = await fetch(generateUrl('/apps/app-template/api/settings'), {
-					headers: { requesttoken: OC.requestToken },
+					headers: { requesttoken: getRequestToken() },
 				})
 				if (response.ok) {
 					const data = await response.json()
@@ -36,6 +44,13 @@ export const useSettingsStore = defineStore('settings', {
 			return null
 		},
 
+		/**
+		 * Persist a partial settings payload via `POST /api/settings`.
+		 *
+		 * @spec openspec/specs/frontend-data-stores/spec.md#REQ-STORE-004
+		 * @param {object} settings Partial settings payload.
+		 * @return {Promise<object|null>} The freshly-read config, or null on failure.
+		 */
 		async saveSettings(settings) {
 			this.loading = true
 			try {
@@ -43,7 +58,7 @@ export const useSettingsStore = defineStore('settings', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
-						requesttoken: OC.requestToken,
+						requesttoken: getRequestToken(),
 					},
 					body: JSON.stringify(settings),
 				})
