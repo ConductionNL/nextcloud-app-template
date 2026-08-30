@@ -1,5 +1,6 @@
-{
-    "translations": {
+OC.L10N.register(
+    "apptemplate",
+    {
         "App Template settings": "App Template instellingen",
         "Configure the app settings": "Configureer de app-instellingen",
         "Configuration": "Configuratie",
@@ -50,5 +51,5 @@
         "Close example": "Voorbeeld sluiten",
         "Features & roadmap": "Functies en roadmap"
     },
-    "plurals": ""
-}
+    "nplurals=2; plural=(n != 1);"
+)

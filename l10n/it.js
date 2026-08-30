@@ -1,0 +1,21 @@
+OC.L10N.register(
+    "apptemplate",
+    {
+        "Custom example component": "Componente di esempio personalizzato",
+        "Dashboard": "Dashboard",
+        "Documentation": "Documentazione",
+        "Items": "Elementi",
+        "Item": "Elemento",
+        "Open items": "Elementi aperti",
+        "Replace the body of this component with whatever bespoke behaviour your page needs — realtime UI, vendor integrations, anything that does not fit the built-in page types.": "Sostituisci il corpo di questo componente con il comportamento su misura di cui la tua pagina ha bisogno — interfaccia in tempo reale, integrazioni di terze parti, qualsiasi cosa non rientri nei tipi di pagina integrati.",
+        "Settings": "Impostazioni",
+        "This is the canonical example of a custom-type page in the manifest renderer pattern. It is rendered when a manifest page declares `type: \"custom\"` and `component: \"CustomExample\"`.": "Questo è l'esempio canonico di una pagina di tipo personalizzato nel modello di rendering del manifesto. Viene visualizzata quando una pagina del manifesto dichiara `type: \"custom\"` e `component: \"CustomExample\"`.",
+        "Version Information": "Informazioni sulla versione",
+        "Information about the current installation.": "Informazioni sull'installazione corrente.",
+        "items": "elementi",
+        "app-availability.title": "Required application unavailable",
+        "app-availability.description": "This application requires OpenRegister to be installed and enabled.",
+        "app-availability.action": "Install OpenRegister"
+    },
+    "nplurals=2; plural=(n != 1);"
+)

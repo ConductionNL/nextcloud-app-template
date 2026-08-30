@@ -1,0 +1,21 @@
+OC.L10N.register(
+    "apptemplate",
+    {
+        "Custom example component": "Vlastní ukázková komponenta",
+        "Dashboard": "Nástěnka",
+        "Documentation": "Dokumentace",
+        "Items": "Položky",
+        "Item": "Položka",
+        "Open items": "Otevřené položky",
+        "Replace the body of this component with whatever bespoke behaviour your page needs — realtime UI, vendor integrations, anything that does not fit the built-in page types.": "Nahraďte tělo této komponenty jakýmkoli vlastním chováním, které vaše stránka potřebuje — uživatelské rozhraní v reálném čase, integrace dodavatelů, cokoli, co nezapadá do vestavěných typů stránek.",
+        "Settings": "Nastavení",
+        "This is the canonical example of a custom-type page in the manifest renderer pattern. It is rendered when a manifest page declares `type: \"custom\"` and `component: \"CustomExample\"`.": "Toto je kanonický příklad stránky vlastního typu ve vzoru vykreslovače manifestu. Vykresluje se, když stránka manifestu deklaruje `type: \"custom\"` a `component: \"CustomExample\"`.",
+        "Version Information": "Informace o verzi",
+        "Information about the current installation.": "Informace o aktuální instalaci.",
+        "items": "položky",
+        "app-availability.title": "Required application unavailable",
+        "app-availability.description": "This application requires OpenRegister to be installed and enabled.",
+        "app-availability.action": "Install OpenRegister"
+    },
+    "nplurals=2; plural=(n != 1);"
+)

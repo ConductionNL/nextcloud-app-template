@@ -1,0 +1,21 @@
+OC.L10N.register(
+    "apptemplate",
+    {
+        "Custom example component": "Прилагођена примерна компонента",
+        "Dashboard": "Контролна табла",
+        "Documentation": "Документација",
+        "Items": "Ставке",
+        "Item": "Ставка",
+        "Open items": "Отворене ставке",
+        "Replace the body of this component with whatever bespoke behaviour your page needs — realtime UI, vendor integrations, anything that does not fit the built-in page types.": "Замените тело ове компоненте било којим прилагођеним понашањем које ваша страница захтева — кориснички интерфејс у реалном времену, интеграције са добављачима, било шта што се не уклапа у уграђене типове страница.",
+        "Settings": "Подешавања",
+        "This is the canonical example of a custom-type page in the manifest renderer pattern. It is rendered when a manifest page declares `type: \"custom\"` and `component: \"CustomExample\"`.": "Ово је канонски пример странице прилагођеног типа у обрасцу приказивача манифеста. Приказује се када страница манифеста декларише `type: \"custom\"` и `component: \"CustomExample\"`.",
+        "Version Information": "Информације о верзији",
+        "Information about the current installation.": "Информације о тренутној инсталацији.",
+        "items": "ставке",
+        "app-availability.title": "Required application unavailable",
+        "app-availability.description": "This application requires OpenRegister to be installed and enabled.",
+        "app-availability.action": "Install OpenRegister"
+    },
+    "nplurals=2; plural=(n != 1);"
+)
