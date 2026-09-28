@@ -12,8 +12,6 @@
 .phpunit.cache/
 
 /node_modules/
-/website/node_modules/
-/website/.docusaurus/
 /js/
 /custom_apps/
 /config/
@@ -83,10 +81,6 @@ docker/dolphin/models/
 # Issues folder should be tracked
 !issues/
 !issues/**
-
-/docusaurus/node_modules/
-/docusaurus/build/
-/docusaurus/.docusaurus/
 
 # Docusaurus documentation site (docs/) — build artefacts only; sources are tracked
 /docs/node_modules/

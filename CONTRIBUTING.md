@@ -211,7 +211,7 @@ Each release automatically:
 
 Documentation is built with [Docusaurus](https://docusaurus.io/) and deployed to GitHub Pages.
 
-1. Documentation source lives in the `docs/` (or `docusaurus/`) folder on any branch
+1. Documentation source lives in the `docs/` folder on any branch
 2. Push or merge to the `documentation` branch triggers the build
 3. Docusaurus builds the static site
 4. The site is deployed to GitHub Pages with a custom domain (e.g., `openregister.app`)
