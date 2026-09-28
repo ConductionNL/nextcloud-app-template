@@ -1,13 +1,40 @@
 name: Documentation
 
+# Publishes the docs site in docs/ to the Cloudflare Worker that serves it.
+#
+# Triggers on `development`, like every fleet app. This template used to listen
+# on a `documentation` branch; across the fleet nobody pushed to one after
+# 2026-05-25, so the sites stopped being rebuilt while docs changes merged to
+# development published nothing.
 on:
   push:
-    branches: [documentation]
+    branches: [development]
   pull_request:
-    branches: [documentation]
+    branches: [development]
 
 jobs:
   deploy:
     uses: ConductionNL/.github/.github/workflows/documentation.yml@main
+    # A reusable workflow receives no secrets by default. Without this mapping
+    # the publish step finds CF_API_TOKEN empty, skips itself, and the run ends
+    # green having changed nothing.
+    #
+    # The template repository itself must never publish: the org secrets reach
+    # it, and the deploy registers every host as a Cloudflare custom domain, so
+    # one push here would put a live app-template.conduction.nl site online.
+    # The check reads GitHub's is_template flag rather than the repository name,
+    # because app-create rewrites the template's repository name into the new
+    # app's, which would switch publishing off in every scaffolded app.
+    # The template still builds and validates its docs on every run.
+    secrets:
+      CF_API_TOKEN: ${{ !github.event.repository.is_template && secrets.CF_API_TOKEN || '' }}
+      CF_ACCOUNT_ID: ${{ !github.event.repository.is_template && secrets.CF_ACCOUNT_ID || '' }}
     with:
       cname: app-template.conduction.nl
+      # Every host the worker answers on, in full: the deploy removes any host
+      # left out. After a rename, add the new host and keep the old one here.
+      docs-hosts: app-template.conduction.nl
+      # Pinned, not derived: once the app is renamed the hostname and the worker
+      # no longer share a name, and a derived name makes wrangler create a new
+      # worker while the domain keeps routing to the old one.
+      worker-name: app-template-docs
