@@ -15,17 +15,21 @@ on:
 jobs:
   deploy:
     uses: ConductionNL/.github/.github/workflows/documentation.yml@main
-    # A reusable workflow receives no secrets by default. Without this mapping
-    # the publish step finds CF_API_TOKEN empty, skips itself, and the run ends
-    # green having changed nothing.
-    #
     # The template repository itself must never publish: the org secrets reach
     # it, and the deploy registers every host as a Cloudflare custom domain, so
     # one push here would put a live app-template.conduction.nl site online.
-    # The check reads GitHub's is_template flag rather than the repository name,
-    # because app-create rewrites the template's repository name into the new
-    # app's, which would switch publishing off in every scaffolded app.
-    # The template still builds and validates its docs on every run.
+    # Both guards read GitHub's is_template flag rather than the repository
+    # name, because app-create rewrites the template's repository name into the
+    # new app's, which would switch publishing off in every scaffolded app.
+    #
+    # In the template, pushes skip this job entirely: the shared workflow's
+    # "Verify the LIVE site" step fails every run whose publish was skipped.
+    # Pull requests still run it, and on a pull request the shared workflow
+    # only builds and validates, so the template's docs stay checked.
+    if: ${{ !github.event.repository.is_template || github.event_name == 'pull_request' }}
+    # A reusable workflow receives no secrets by default; without this mapping
+    # the publish step skips and nothing reaches the live site. The template
+    # never gets the secrets, even if the job above is ever made to run.
     secrets:
       CF_API_TOKEN: ${{ !github.event.repository.is_template && secrets.CF_API_TOKEN || '' }}
       CF_ACCOUNT_ID: ${{ !github.event.repository.is_template && secrets.CF_ACCOUNT_ID || '' }}
