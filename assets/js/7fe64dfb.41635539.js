@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkapp_template_docs=globalThis.webpackChunkapp_template_docs||[]).push([[6413],{5582(e){e.exports=JSON.parse('{"features":[],"title":"Features","intro":null}')}}]);

@@ -31,22 +31,36 @@
   display: block;
   shape-rendering: geometricPrecision;
 }
-/* Each house's CSS dimensions = ~0.6 of viewBox dims so the row stays compact. */
-.canal-footer .h-a { width: 48px; height: 120px; }
+/* Each house's CSS dimensions = exactly 0.6 of its viewBox dims, so the row
+   stays compact AND every facade fills its own wrapper edge to edge. That
+   second part is not cosmetic bookkeeping: the svgs carry no
+   preserveAspectRatio, so they default to xMidYMid meet and are letterboxed
+   whenever the box aspect differs from the viewBox aspect. h-d was 102px
+   against a 90x180 viewBox, which scaled the drawing to 51px inside a 54px
+   box and left 1.5px of white down each side — enough to out-run the -2px
+   wrapper overlap and show as a seam. h-a was off by the same mistake, just
+   too little to see. Keep these at viewBox x 0.6 or the seams come back. */
+.canal-footer .h-a { width: 48px; height: 121.2px; }
 .canal-footer .h-b { width: 60px; height: 132px; }
 .canal-footer .h-c { width: 42px; height: 144px; }
-.canal-footer .h-d { width: 54px; height: 102px; }
+.canal-footer .h-d { width: 54px; height: 108px; }
 .canal-footer .h-e { width: 57px; height: 126px; }
 .canal-footer .house.flipped { transform: scaleX(-1); }
 
-/* "House #14" — the Conduction office. Centre of the skyline, painted
-   in light cobalt blue with a small white house-number next to the door. */
+/* "House #14" — the Conduction office. Centre of the skyline, always the
+   same facade (see OFFICE_HOUSE in canal-footer.js), painted in light
+   cobalt blue with a small white house-number next to the door. */
 .canal-footer .house-conduction .house path { fill: var(--c-blue-cobalt); }
 .canal-footer .house-conduction::after {
   content: '14';
   position: absolute;
   bottom: 8px;
-  left: calc(50% + 12px);
+  /* Anchored to the facade's own right edge. Offsetting from the centre
+     instead — the old calc(50% + 12px) — put the number at 33-43px along
+     a 42px-wide facade, hanging it over the house next door. Every door
+     renders 9.6px wide whatever the type, so 4px in from the right still
+     clears it on all five. */
+  right: 4px;
   color: white;
   font-family: var(--conduction-typography-font-family-base, 'Inter', system-ui, sans-serif);
   font-size: 9px;
@@ -170,7 +184,11 @@
   letter-spacing: -0.02em; color: white;
   margin: 0 0 12px;
 }
-.canal-footer .next-blue { color: var(--c-nextcloud-blue); }
+/* The cyan, because this footer paints its own cobalt-900 ground in both
+   themes. Nextcloud's own darker blue is 4.28:1 there, just under the
+   4.5:1 body text needs, and the footer is on every page of the site.
+   The cyan is 7.33:1. The hover rule below already knew this. */
+.canal-footer .next-blue { color: var(--c-nextcloud-cyan); }
 .canal-footer .brand p {
   font-size: 14px; line-height: 1.55;
   color: rgba(255,255,255,0.7);
@@ -189,6 +207,29 @@
   background: var(--c-orange-knvb);
   display: inline-block; margin-right: 6px;
   vertical-align: middle;
+}
+/* "Conduction ♥ Nextcloud" citation: a vermillion-red heart between
+   the producer chain and the Nextcloud platform link. Sized to the
+   surrounding 11px caption with a small inline lift so the heart
+   centres on the cap-height. */
+.canal-footer .brand .triad .heart {
+  width: 11px; height: 11px;
+  color: var(--c-red-vermillion);
+  display: inline-block;
+  vertical-align: -1px;
+  margin: 0 2px;
+}
+/* Resting is the cyan for the same reason as above, 7.33:1 on this
+   ground against 4.28:1 for the darker blue. Hover moves to white, which
+   is the footer's own link colour (--ifm-footer-link-color), since cyan
+   is no longer available as the hover state. */
+.canal-footer .brand .triad a.next-blue {
+  color: var(--c-nextcloud-cyan);
+  text-decoration: none;
+  transition: color 140ms ease;
+}
+.canal-footer .brand .triad a.next-blue:hover {
+  color: var(--c-white);
 }
 .canal-footer .brand .socials {
   display: flex; gap: 10px;
@@ -222,6 +263,25 @@
 
 /* Canal items respond to clicks (override the overlay's pointer-events). */
 .canal-footer .ci { cursor: pointer; pointer-events: auto; }
+
+/* The footer doubles as the game board, and the canal and the link columns
+   are one text flow — so a burst of sinking clicks used to highlight half the
+   footer, and a press on that highlight started a text drag that swallowed
+   every click after it. Nothing up here is worth selecting, so nothing up
+   here is selectable; canal-footer.js does the same at mousedown, and this
+   also stops the long-press callout on a phone.
+
+   The legal bar and the game-over card keep their text: they sit away from
+   the boats, so a selection there can't turn into a drag mid-game. */
+.canal-footer {
+  -webkit-user-select: none;
+  user-select: none;
+}
+.canal-footer .legal-bar,
+.canal-footer .game-over {
+  -webkit-user-select: text;
+  user-select: text;
+}
 .canal-footer h4 {
   font-family: var(--conduction-typography-font-family-code);
   font-size: 11px; letter-spacing: 0.14em;
@@ -387,7 +447,7 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   background: var(--c-orange-knvb);
-  color: var(--c-cobalt-900);
+  color: var(--conduction-color-text-strong);
   border: 0;
   border-radius: 4px;
   padding: 7px 14px;
@@ -415,4 +475,114 @@
 .canal-footer .ci .hp-pips .pip.hit {
   opacity: 0.18;
   fill: rgba(255,255,255,0.4);
+}
+
+/* ============================================================
+   Responsive collapse.
+
+   The grid above is five `fr` columns with a 48px gap inside 56px
+   side padding. An `fr` track carries an automatic min-content
+   floor, so the columns never shrink below their longest link
+   label ("OpenRegister", "Way of Work"): measured on a 390px
+   phone the footer demanded 773px and the site's
+   `overflow-x: clip` silently swallowed the difference. Three of
+   the five columns were off-screen with no way to scroll to them,
+   and the other two were cut off mid-word.
+
+   `minmax(0, …)` on every track below removes that floor so the
+   declared column count is actually honoured.
+   ============================================================ */
+
+/* Tablet: keep five columns but stop the gap eating the row. */
+@media (max-width: 1100px) {
+  .canal-footer .water { padding: 80px 32px 28px; }
+  .canal-footer .footer-grid {
+    grid-template-columns: 1.5fr repeat(4, minmax(0, 1fr));
+    gap: 32px;
+  }
+}
+
+/* Small tablet and large phone: two columns, brand across the top. */
+@media (max-width: 900px) {
+  .canal-footer .footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px 24px;
+    margin-bottom: 40px;
+  }
+  .canal-footer .brand { grid-column: 1 / -1; }
+}
+
+/* Phone: one column, and every link becomes a real touch target.
+   The link lists lose their 10px gap because the 44px row height
+   provides the separation. SC 2.5.8 (AA) sets the floor at 24px;
+   44px is the comfortable thumb target we aim for on controls. */
+@media (max-width: 600px) {
+  .canal-footer .water { padding: 72px 16px 24px; }
+
+  .canal-footer .footer-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+
+  .canal-footer ul { gap: 0; }
+  .canal-footer ul a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 15px;
+  }
+
+  .canal-footer .brand p { max-width: none; }
+
+  /* Legal bar: stack the two halves instead of forcing them onto one
+     line, and give the legal links and ISO badges room to breathe. */
+  .canal-footer .legal-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+  .canal-footer .legal-bar .left,
+  .canal-footer .legal-bar .right {
+    gap: 12px;
+  }
+  /* Short labels fail on WIDTH, not height. "ISO" measured 21x44, and
+     SC 2.5.8 takes the smaller dimension, so the padding is what brings
+     it over 24. */
+  .canal-footer .legal-bar .legal-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 24px;
+    padding: 0 8px;
+  }
+
+  /* The "Conduction loves Nextcloud" citation is a 14px-tall caption
+     link. It reads as running text, but it is the only link in its
+     line, so it does not get the sentence exemption. */
+  .canal-footer .brand .triad a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+  }
+  .canal-footer .legal-bar .iso-badge {
+    min-height: 44px;
+    padding: 5px 12px;
+  }
+
+  /* Social and contact icons. 34px is above the 24px AA floor but below
+     a comfortable thumb, and these five sit side by side with a 10px
+     gap, which is where mis-taps happen. */
+  .canal-footer .brand .socials { gap: 12px; }
+  .canal-footer .brand .socials a {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* The mini-game HUD and its game-over panel are pinned to the old
+     56px gutter; bring them inside the narrower one so they cannot
+     hang off the edge of the canal band. */
+  .canal-footer .game-hud,
+  .canal-footer .game-over { right: 16px; }
+  .canal-footer .game-over { min-width: 0; max-width: calc(100vw - 32px); }
 }
