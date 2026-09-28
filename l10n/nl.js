@@ -49,7 +49,11 @@ OC.L10N.register(
         "Recent examples": "Recente voorbeelden",
         "No examples yet": "Nog geen voorbeelden",
         "Close example": "Voorbeeld sluiten",
-        "Features & roadmap": "Functies en roadmap"
+        "Features & roadmap": "Functies en roadmap",
+        "Store": "Store",
+        "Reports": "Rapporten",
+        "Flows": "Flows",
+        "Flow": "Flow"
     },
     "nplurals=2; plural=(n != 1);"
 )

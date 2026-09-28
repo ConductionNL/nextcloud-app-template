@@ -15,7 +15,11 @@ OC.L10N.register(
         "items": "vienumi",
         "app-availability.title": "Required application unavailable",
         "app-availability.description": "This application requires OpenRegister to be installed and enabled.",
-        "app-availability.action": "Install OpenRegister"
+        "app-availability.action": "Install OpenRegister",
+        "Store": "Veikals",
+        "Reports": "Pārskati",
+        "Flows": "Plūsmas",
+        "Flow": "Plūsma"
     },
     "nplurals=2; plural=(n != 1);"
 )

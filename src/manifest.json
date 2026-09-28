@@ -28,12 +28,36 @@
 			"order": 90
 		},
 		{
+			"id": "StoreMenu",
+			"label": "Store",
+			"icon": "StoreOutline",
+			"route": "Store",
+			"section": "footer",
+			"order": 92
+		},
+		{
+			"id": "ReportsMenu",
+			"label": "Reports",
+			"icon": "ChartBoxOutline",
+			"route": "Reports",
+			"section": "footer",
+			"order": 95
+		},
+		{
 			"id": "FeaturesRoadmapMenu",
 			"label": "Features & roadmap",
 			"icon": "MapMarkerPath",
 			"route": "FeaturesRoadmap",
 			"section": "footer",
 			"order": 100
+		},
+		{
+			"id": "FlowsMenu",
+			"label": "Flows",
+			"icon": "Sitemap",
+			"route": "Flows",
+			"section": "settings",
+			"order": 50
 		}
 	],
 	"pages": [
@@ -188,6 +212,90 @@
 			"title": "Features & roadmap",
 			"config": {
 				"documentationUrl": "https://nextcloud-app-template.conduction.nl"
+			}
+		},
+		{
+			"id": "Store",
+			"route": "/store",
+			"type": "store",
+			"title": "Store",
+			"config": {
+				"app": "apptemplate",
+				"title": "Store"
+			}
+		},
+		{
+			"id": "Reports",
+			"route": "/reports",
+			"type": "reports",
+			"title": "Reports",
+			"config": {
+				"cards": [
+					{
+						"id": "ExamplesReport",
+						"label": "Examples",
+						"icon": "ClipboardTextOutline",
+						"route": "ExamplesReport"
+					}
+				]
+			}
+		},
+		{
+			"id": "ExamplesReport",
+			"route": "/reports/examples",
+			"type": "dashboard",
+			"title": "Examples",
+			"config": {
+				"widgets": [
+					{
+						"id": "report-examples-total",
+						"title": "Examples",
+						"type": "stat",
+						"content": {
+							"label": "Examples",
+							"icon": "ClipboardTextOutline",
+							"route": { "name": "Examples" },
+							"format": { "style": "decimal", "decimals": 0 },
+							"source": { "register": "apptemplate", "schema": "example", "metric": "count" }
+						}
+					},
+					{
+						"id": "report-examples-closed",
+						"title": "Closed",
+						"type": "stat",
+						"content": {
+							"label": "Closed",
+							"icon": "CheckCircleOutline",
+							"route": { "name": "Examples" },
+							"format": { "style": "decimal", "decimals": 0 },
+							"source": { "register": "apptemplate", "schema": "example", "metric": "count", "filter": { "status": "closed" } }
+						}
+					}
+				],
+				"layout": [
+					{ "id": 1, "widgetId": "report-examples-total", "gridX": 0, "gridY": 0, "gridWidth": 4, "gridHeight": 2, "showTitle": false },
+					{ "id": 2, "widgetId": "report-examples-closed", "gridX": 4, "gridY": 0, "gridWidth": 4, "gridHeight": 2, "showTitle": false }
+				]
+			}
+		},
+		{
+			"id": "Flows",
+			"route": "/flows",
+			"type": "index",
+			"title": "Flows",
+			"config": {
+				"entitySource": "flows",
+				"app": "apptemplate",
+				"rowRoute": "FlowDetail"
+			}
+		},
+		{
+			"id": "FlowDetail",
+			"route": "/flows/:id",
+			"type": "flow",
+			"title": "Flow",
+			"config": {
+				"app": "apptemplate"
 			}
 		}
 	]
