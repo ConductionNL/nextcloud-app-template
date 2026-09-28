@@ -15,7 +15,11 @@ OC.L10N.register(
         "items": "položky",
         "app-availability.title": "Required application unavailable",
         "app-availability.description": "This application requires OpenRegister to be installed and enabled.",
-        "app-availability.action": "Install OpenRegister"
+        "app-availability.action": "Install OpenRegister",
+        "Store": "Obchod",
+        "Reports": "Zostavy",
+        "Flows": "Toky",
+        "Flow": "Tok"
     },
     "nplurals=2; plural=(n != 1);"
 )

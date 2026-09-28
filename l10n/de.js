@@ -15,7 +15,11 @@ OC.L10N.register(
         "items": "Elemente",
         "app-availability.title": "Required application unavailable",
         "app-availability.description": "This application requires OpenRegister to be installed and enabled.",
-        "app-availability.action": "Install OpenRegister"
+        "app-availability.action": "Install OpenRegister",
+        "Store": "Store",
+        "Reports": "Berichte",
+        "Flows": "Abläufe",
+        "Flow": "Ablauf"
     },
     "nplurals=2; plural=(n != 1);"
 )

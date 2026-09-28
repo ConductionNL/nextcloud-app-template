@@ -46,14 +46,15 @@ test.describe('app shell', () => {
 		const [app] = await findMounted(page, 'App')
 		expect(app, 'App component should be mounted').toBeTruthy()
 		expect(app.props.manifest, 'manifest prop must reach App').toBeTruthy()
-		// FOUR, not five. The manifest used to declare an in-app
-		// `type: "settings"` page at /settings alongside the Nextcloud admin
-		// section, which is two homes for one concern and an ADR-079 D1
-		// violation (gate-63). That page was removed; app configuration lives
-		// at /settings/admin/apptemplate. Update this number deliberately if a
-		// page is added — it is here to catch a manifest that silently stopped
-		// reaching App, and a wrong number would hide exactly that.
-		expect((app.props.manifest as { pages?: unknown[] }).pages?.length).toBe(4)
+		// NINE: Dashboard, Examples, ExampleDetail and FeaturesRoadmap, plus the
+		// ADR-114 chrome added with gate-107: Store, Reports, the Examples
+		// report, Flows and FlowDetail. The in-app `type: "settings"` page that
+		// once made it five is gone for good (ADR-079 D1, gate-63); app
+		// configuration lives at /settings/admin/apptemplate. Update this number
+		// deliberately if a page is added — it is here to catch a manifest that
+		// silently stopped reaching App, and a wrong number would hide exactly
+		// that.
+		expect((app.props.manifest as { pages?: unknown[] }).pages?.length).toBe(9)
 	})
 
 	test('every manifest page renders its own content', async ({ page }) => {
@@ -108,6 +109,12 @@ test.describe('app shell', () => {
 			await appUrl(page, 'examples'),
 			await appUrl(page, 'features-roadmap'),
 			await appUrl(page, 'examples/1'),
+			// The ADR-114 chrome pages. The Examples report is built from
+			// `stat` widgets, which no other page here uses.
+			await appUrl(page, 'store'),
+			await appUrl(page, 'reports'),
+			await appUrl(page, 'reports/examples'),
+			await appUrl(page, 'flows'),
 		]) {
 			await page.goto(path)
 			// `#content`, not `main`: the FeaturesRoadmap page renders its own
@@ -129,7 +136,10 @@ test.describe('app shell', () => {
 
 		// An icon name that is not in src/icons.js renders NOTHING — not a
 		// fallback glyph — so a missing registration is invisible unless the
-		// painted size is measured. Four manifest menu entries carry an icon.
+		// painted size is measured. Six manifest menu entries paint an icon:
+		// Dashboard and Examples, then Documentation, Store, Reports and
+		// Features & roadmap in the footer. Flows sits in the settings foldout,
+		// which is collapsed on load, so its icon has no painted size.
 		const navIcons = page.locator(
 			'#app-navigation-vue a svg, nav[aria-label] a svg',
 		)
@@ -151,8 +161,8 @@ test.describe('app shell', () => {
 		const painted = sizes.filter((s) => s.w > 0)
 		expect(
 			painted.length,
-			`expected 4 painted nav icons, got ${JSON.stringify(sizes)}`,
-		).toBe(4)
+			`expected 6 painted nav icons, got ${JSON.stringify(sizes)}`,
+		).toBe(6)
 	})
 
 	test('dashboard widgets have non-zero width', async ({ page }) => {
