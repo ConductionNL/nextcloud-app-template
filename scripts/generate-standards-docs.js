@@ -61,7 +61,7 @@ function appInfo() {
 /**
  * Escape a value for a Markdown table cell.
  *
- * @param {*} value Cell value.
+ * @param {string|number|undefined} value Cell value.
  * @return {string}
  */
 function cell(value) {
@@ -252,10 +252,28 @@ function placeInReadme(readme, section) {
 	return readme.replace(/\s*$/, '\n\n') + section + '\n'
 }
 
+/**
+ * Read the `discovery` block, or an empty one for an app without a manifest
+ * (an app that is not manifest-driven declares nothing and is not listed).
+ *
+ * @return {object}
+ */
+function readDiscovery() {
+	if (!fs.existsSync(MANIFEST)) {
+		return {}
+	}
+	const manifest = JSON.parse(fs.readFileSync(MANIFEST, 'utf8'))
+	return manifest.discovery && typeof manifest.discovery === 'object' ? manifest.discovery : {}
+}
+
+/**
+ * Write (or, with --check, verify) the docs page and the README section.
+ *
+ * @return {void}
+ */
 function main() {
 	const check = process.argv.includes('--check')
-	const manifest = JSON.parse(fs.readFileSync(MANIFEST, 'utf8'))
-	const discovery = manifest.discovery && typeof manifest.discovery === 'object' ? manifest.discovery : {}
+	const discovery = readDiscovery()
 	const app = appInfo()
 
 	const page = renderPage(app, discovery)
