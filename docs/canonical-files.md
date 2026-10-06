@@ -30,7 +30,7 @@ tool — run locally by a developer — opens a PR on every app in the fleet.
 | `.gitattributes` | Line-ending normalization + binary-file marks. |
 | `.npmrc` | npm registry policy (cooldown + `legacy-peer-deps=true`). |
 | `.nvmrc` | Node version floor (currently `20`). |
-| `scripts/generate-standards-docs.js` | Generates `docs/standards-and-federation.md` and the README "Standards & federation" section from the manifest `discovery` block (`npm run docs:standards`; `check:standards-docs` fails when they are stale). |
+| `scripts/generate-standards-docs.cjs` | Generates `docs/standards-and-federation.md` and the README "Standards & federation" section from the manifest `discovery` block (`npm run docs:standards`; `check:standards-docs` fails when they are stale). |
 
 **No per-app deviations.** The canonical files sync byte-for-byte including
 their description / ruleset-name strings. If an app needs different rules, the
