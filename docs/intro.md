@@ -33,6 +33,13 @@ ships:
 - **OpenRegister integration** — `manifest.dependencies` lists
   `openregister`, so the dependency-check phase ensures it is installed
   before the UI mounts. Remove the entry if your app does not need it.
+- **Standards & federation discovery** — the `discovery` block in
+  `src/manifest.json` lists the interoperability standards the app
+  provides or consumes. OpenRegister publishes it to other servers
+  without login (`<appId>.discovery` in the Nextcloud capabilities), and
+  `npm run docs:standards` turns the same block into
+  [Standards & federation](standards-and-federation.md) and the README
+  section, so the docs and what the server publishes cannot disagree.
 - **The quality pipeline** — PHPCS, PHPMD, Psalm, PHPStan, ESLint,
   Stylelint, plus manifest/register/JSON-strict validators.
 - **This documentation site** — Docusaurus on `@conduction/docusaurus-preset`,

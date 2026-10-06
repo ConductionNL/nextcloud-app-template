@@ -298,5 +298,9 @@
 				"app": "apptemplate"
 			}
 		}
-	]
+	],
+	"discovery": {
+		"public": true,
+		"standards": []
+	}
 }
